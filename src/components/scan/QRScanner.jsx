@@ -38,7 +38,7 @@ export default function QRScanner({ onScan, onClose }) {
   };
 
   const scanQRCode = () => {
-    if (!videoRef.current || !canvasRef.current || !scanning) return;
+    if (!videoRef.current || !canvasRef.current) return;
 
     const video = videoRef.current;
     const canvas = canvasRef.current;
@@ -50,10 +50,11 @@ export default function QRScanner({ onScan, onClose }) {
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       
       const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(imageData.data, imageData.width, imageData.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: "dontInvert",
+      });
 
       if (code) {
-        setScanning(false);
         if (streamRef.current) {
           streamRef.current.getTracks().forEach(track => track.stop());
         }
@@ -62,7 +63,9 @@ export default function QRScanner({ onScan, onClose }) {
       }
     }
 
-    requestAnimationFrame(scanQRCode);
+    if (scanning) {
+      requestAnimationFrame(scanQRCode);
+    }
   };
 
   return (
