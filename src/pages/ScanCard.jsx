@@ -301,12 +301,55 @@ Phone: ${phoneData.phone_mobile || phoneData.phone_landline || "N/A"}`;
   };
 
   const handleQRScan = async (data) => {
+    console.log("QR Code scanned:", data);
     setShowQRScanner(false);
     setProcessing(true);
     setStatusMessage("Processing QR code data...");
     
     try {
-      const prompt = `Extract contact information from this QR code data: ${data}
+      // Try to parse vCard format first (common for business cards)
+      let extractedInfo = {
+        full_name: "",
+        company: "",
+        position: "",
+        email: "",
+        phone_mobile: "",
+        phone_landline: "",
+        website: "",
+        address: "",
+        country: "",
+        phone_fax: "",
+        phone_other: "",
+        notes: ""
+      };
+
+      // Check if it's a vCard (BEGIN:VCARD)
+      if (data.includes("BEGIN:VCARD") || data.includes("BEGIN:vCard")) {
+        const lines = data.split('\n');
+        for (const line of lines) {
+          if (line.startsWith('FN:')) extractedInfo.full_name = line.substring(3).trim();
+          if (line.startsWith('ORG:')) extractedInfo.company = line.substring(4).trim();
+          if (line.startsWith('TITLE:')) extractedInfo.position = line.substring(6).trim();
+          if (line.startsWith('EMAIL')) extractedInfo.email = line.split(':')[1]?.trim() || "";
+          if (line.startsWith('TEL')) {
+            const phone = line.split(':')[1]?.trim() || "";
+            if (line.includes('CELL') || line.includes('MOBILE')) {
+              extractedInfo.phone_mobile = phone;
+            } else if (line.includes('FAX')) {
+              extractedInfo.phone_fax = phone;
+            } else if (!extractedInfo.phone_mobile) {
+              extractedInfo.phone_mobile = phone;
+            } else {
+              extractedInfo.phone_landline = phone;
+            }
+          }
+          if (line.startsWith('URL:')) extractedInfo.website = line.substring(4).trim();
+          if (line.startsWith('ADR')) extractedInfo.address = line.split(':')[1]?.replace(/;/g, ' ').trim() || "";
+        }
+        setExtractedData(extractedInfo);
+      } else {
+        // Use LLM to extract from other formats
+        const prompt = `Extract contact information from this QR code data: ${data}
 
 Return ONLY a JSON object with these fields (use empty string if not found):
 {
@@ -321,35 +364,37 @@ Return ONLY a JSON object with these fields (use empty string if not found):
   "country": ""
 }`;
 
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            full_name: { type: "string" },
-            company: { type: "string" },
-            position: { type: "string" },
-            email: { type: "string" },
-            phone_mobile: { type: "string" },
-            phone_landline: { type: "string" },
-            website: { type: "string" },
-            address: { type: "string" },
-            country: { type: "string" }
+        const result = await base44.integrations.Core.InvokeLLM({
+          prompt,
+          response_json_schema: {
+            type: "object",
+            properties: {
+              full_name: { type: "string" },
+              company: { type: "string" },
+              position: { type: "string" },
+              email: { type: "string" },
+              phone_mobile: { type: "string" },
+              phone_landline: { type: "string" },
+              website: { type: "string" },
+              address: { type: "string" },
+              country: { type: "string" }
+            }
           }
-        }
-      });
+        });
 
-      setExtractedData({
-        ...result,
-        phone_fax: "",
-        phone_other: "",
-        notes: ""
-      });
+        setExtractedData({
+          ...result,
+          phone_fax: "",
+          phone_other: "",
+          notes: ""
+        });
+      }
+      
       setProcessing(false);
       setStatusMessage("");
     } catch (err) {
       console.error("Error processing QR code:", err);
-      setError("Failed to process QR code data");
+      setError(`Failed to process QR code: ${err.message || 'Unknown error'}`);
       setProcessing(false);
       setStatusMessage("");
     }
