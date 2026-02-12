@@ -2,13 +2,14 @@ import React, { useState, useRef } from "react";
 import { Contact } from "@/entities/Contact";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Camera, Upload, Loader2, Edit, AlertCircle } from "lucide-react";
+import { ArrowLeft, Camera, Upload, Loader2, Edit, AlertCircle, QrCode, FlipHorizontal } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 import CameraCapture from "../components/scan/CameraCapture";
 import ContactPreview from "../components/scan/ContactPreview";
+import QRScanner from "../components/scan/QRScanner";
 
 export default function ScanCard() {
   const navigate = useNavigate();
@@ -16,8 +17,12 @@ export default function ScanCard() {
   const exhibitionId = urlParams.get("exhibition_id");
   
   const [showCamera, setShowCamera] = useState(false);
+  const [showQRScanner, setShowQRScanner] = useState(false);
+  const [scanningDoubleSided, setScanningDoubleSided] = useState(false);
   const [extractedData, setExtractedData] = useState(null);
   const [cardImageUrl, setCardImageUrl] = useState(null);
+  const [cardImageBackUrl, setCardImageBackUrl] = useState(null);
+  const [firstSideData, setFirstSideData] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState(null);
   const [statusMessage, setStatusMessage] = useState("");
@@ -82,10 +87,10 @@ export default function ScanCard() {
     }
   };
 
-  const processImage = async (file) => {
+  const processImage = async (file, isSecondSide = false) => {
     setProcessing(true);
     setError(null);
-    setStatusMessage("Compressing image...");
+    setStatusMessage(isSecondSide ? "Processing back side..." : "Compressing image...");
     
     try {
       console.log("Compressing image...");
@@ -94,7 +99,12 @@ export default function ScanCard() {
       console.log("Uploading file with retry logic...");
       const { file_url } = await uploadWithRetry(compressedFile);
       console.log("File uploaded:", file_url);
-      setCardImageUrl(file_url);
+      
+      if (isSecondSide) {
+        setCardImageBackUrl(file_url);
+      } else {
+        setCardImageUrl(file_url);
+      }
 
       setStatusMessage("Extracting data from business card...");
       console.log("Extracting data from file...");
@@ -165,7 +175,7 @@ Phone: ${phoneData.phone_mobile || phoneData.phone_landline || "N/A"}`;
           console.log("Country:", country);
         }
         
-        setExtractedData({
+        const currentData = {
           full_name: result.output.full_name || "",
           company: result.output.company || "",
           position: result.output.position || "",
@@ -174,13 +184,45 @@ Phone: ${phoneData.phone_mobile || phoneData.phone_landline || "N/A"}`;
           website: result.output.website || "",
           address: result.output.address || "",
           country: country.trim(),
-          notes: "",
-          card_image_url: file_url
-        });
+          notes: ""
+        };
+
+        if (isSecondSide && firstSideData) {
+          // Combine data from both sides
+          setExtractedData({
+            full_name: currentData.full_name || firstSideData.full_name,
+            company: currentData.company || firstSideData.company,
+            position: currentData.position || firstSideData.position,
+            email: currentData.email || firstSideData.email,
+            phone_mobile: currentData.phone_mobile || firstSideData.phone_mobile,
+            phone_landline: currentData.phone_landline || firstSideData.phone_landline,
+            phone_fax: currentData.phone_fax || firstSideData.phone_fax,
+            phone_other: currentData.phone_other || firstSideData.phone_other,
+            website: currentData.website || firstSideData.website,
+            address: currentData.address || firstSideData.address,
+            country: currentData.country || firstSideData.country,
+            notes: "",
+            card_image_url: firstSideData.card_image_url,
+            card_image_back_url: file_url
+          });
+          setFirstSideData(null);
+          setScanningDoubleSided(false);
+        } else if (scanningDoubleSided) {
+          // Save first side data and prompt for second side
+          setFirstSideData({ ...currentData, card_image_url: file_url });
+          setProcessing(false);
+          setStatusMessage("");
+          setShowCamera(true);
+          return;
+        } else {
+          setExtractedData({
+            ...currentData,
+            card_image_url: file_url
+          });
+        }
       } else {
         console.log("Extraction failed, using empty data");
-        setExtractedData({
-          card_image_url: file_url,
+        const emptyData = {
           full_name: "",
           company: "",
           position: "",
@@ -193,7 +235,27 @@ Phone: ${phoneData.phone_mobile || phoneData.phone_landline || "N/A"}`;
           address: "",
           country: "",
           notes: ""
-        });
+        };
+
+        if (isSecondSide && firstSideData) {
+          setExtractedData({
+            ...firstSideData,
+            card_image_back_url: file_url
+          });
+          setFirstSideData(null);
+          setScanningDoubleSided(false);
+        } else if (scanningDoubleSided) {
+          setFirstSideData({ ...emptyData, card_image_url: file_url });
+          setProcessing(false);
+          setStatusMessage("");
+          setShowCamera(true);
+          return;
+        } else {
+          setExtractedData({
+            ...emptyData,
+            card_image_url: file_url
+          });
+        }
       }
       
       setProcessing(false);
@@ -233,8 +295,69 @@ Phone: ${phoneData.phone_mobile || phoneData.phone_landline || "N/A"}`;
   const handleFileSelect = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      processImage(file);
+      const isSecondSide = scanningDoubleSided && firstSideData !== null;
+      processImage(file, isSecondSide);
     }
+  };
+
+  const handleQRScan = async (data) => {
+    setShowQRScanner(false);
+    setProcessing(true);
+    setStatusMessage("Processing QR code data...");
+    
+    try {
+      const prompt = `Extract contact information from this QR code data: ${data}
+
+Return ONLY a JSON object with these fields (use empty string if not found):
+{
+  "full_name": "",
+  "company": "",
+  "position": "",
+  "email": "",
+  "phone_mobile": "",
+  "phone_landline": "",
+  "website": "",
+  "address": "",
+  "country": ""
+}`;
+
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            full_name: { type: "string" },
+            company: { type: "string" },
+            position: { type: "string" },
+            email: { type: "string" },
+            phone_mobile: { type: "string" },
+            phone_landline: { type: "string" },
+            website: { type: "string" },
+            address: { type: "string" },
+            country: { type: "string" }
+          }
+        }
+      });
+
+      setExtractedData({
+        ...result,
+        phone_fax: "",
+        phone_other: "",
+        notes: ""
+      });
+      setProcessing(false);
+      setStatusMessage("");
+    } catch (err) {
+      console.error("Error processing QR code:", err);
+      setError("Failed to process QR code data");
+      setProcessing(false);
+      setStatusMessage("");
+    }
+  };
+
+  const handleDoubleSidedScan = () => {
+    setScanningDoubleSided(true);
+    setShowCamera(true);
   };
 
   const handleSave = async (contactData) => {
@@ -250,6 +373,9 @@ Phone: ${phoneData.phone_mobile || phoneData.phone_landline || "N/A"}`;
     if (extractedData) {
       setExtractedData(null);
       setCardImageUrl(null);
+      setCardImageBackUrl(null);
+      setFirstSideData(null);
+      setScanningDoubleSided(false);
     } else {
       navigate(createPageUrl(`ExhibitionDetail?id=${exhibitionId}`));
     }
@@ -261,6 +387,9 @@ Phone: ${phoneData.phone_mobile || phoneData.phone_landline || "N/A"}`;
         <Loader2 className="w-16 h-16 text-blue-600 animate-spin mb-4" />
         <p className="text-gray-600 font-medium">{statusMessage || "Processing card..."}</p>
         <p className="text-sm text-gray-500 mt-2">This may take a few seconds</p>
+        {scanningDoubleSided && firstSideData && (
+          <p className="text-sm text-blue-600 mt-2 font-semibold">Processing back side...</p>
+        )}
       </div>
     );
   }
@@ -270,6 +399,7 @@ Phone: ${phoneData.phone_mobile || phoneData.phone_landline || "N/A"}`;
       <ContactPreview
         data={extractedData}
         imageUrl={cardImageUrl}
+        imageBackUrl={cardImageBackUrl}
         onSave={handleSave}
         onCancel={handleCancel}
       />
@@ -277,10 +407,35 @@ Phone: ${phoneData.phone_mobile || phoneData.phone_landline || "N/A"}`;
   }
 
   if (showCamera) {
+    const isSecondSide = scanningDoubleSided && firstSideData !== null;
     return (
-      <CameraCapture
-        onCapture={processImage}
-        onClose={() => setShowCamera(false)}
+      <div>
+        {isSecondSide && (
+          <div className="absolute top-4 left-0 right-0 z-50 text-center">
+            <div className="bg-blue-600 text-white px-4 py-3 rounded-lg mx-4 shadow-lg">
+              <p className="font-semibold">Now scan the BACK side of the card</p>
+            </div>
+          </div>
+        )}
+        <CameraCapture
+          onCapture={(file) => processImage(file, isSecondSide)}
+          onClose={() => {
+            setShowCamera(false);
+            if (scanningDoubleSided) {
+              setScanningDoubleSided(false);
+              setFirstSideData(null);
+            }
+          }}
+        />
+      </div>
+    );
+  }
+
+  if (showQRScanner) {
+    return (
+      <QRScanner
+        onScan={handleQRScan}
+        onClose={() => setShowQRScanner(false)}
       />
     );
   }
@@ -325,8 +480,34 @@ Phone: ${phoneData.phone_mobile || phoneData.phone_landline || "N/A"}`;
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
                 <Camera className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="text-lg font-semibold mb-1">Use Camera</h3>
+              <h3 className="text-lg font-semibold mb-1">Scan Single Side</h3>
               <p className="text-sm text-gray-500">Take a photo of the card</p>
+            </div>
+          </button>
+
+          <button
+            onClick={handleDoubleSidedScan}
+            className="w-full p-8 rounded-2xl border-2 border-gray-200 hover:border-indigo-400 hover:bg-indigo-50 transition-all"
+          >
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+                <FlipHorizontal className="w-8 h-8 text-indigo-600" />
+              </div>
+              <h3 className="text-lg font-semibold mb-1">Scan Both Sides</h3>
+              <p className="text-sm text-gray-500">For double-sided cards</p>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setShowQRScanner(true)}
+            className="w-full p-8 rounded-2xl border-2 border-gray-200 hover:border-orange-400 hover:bg-orange-50 transition-all"
+          >
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                <QrCode className="w-8 h-8 text-orange-600" />
+              </div>
+              <h3 className="text-lg font-semibold mb-1">Scan QR Code</h3>
+              <p className="text-sm text-gray-500">For QR-based cards</p>
             </div>
           </button>
 

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Contact } from "@/entities/Contact";
 import { Card, CardContent } from "@/components/ui/card";
@@ -134,9 +133,17 @@ export default function ContactCard({ contact, onUpdate }) {
                 </div>
               )}
               {contact.card_image_url && (
-                <div className="mt-4">
-                  <p className="text-xs text-gray-500 mb-2">Original Card:</p>
-                  <img src={contact.card_image_url} alt="Card" className="w-full rounded-lg border" />
+                <div className="mt-4 space-y-4">
+                  <div>
+                    <p className="text-xs text-gray-500 mb-2">Card Front:</p>
+                    <img src={contact.card_image_url} alt="Card Front" className="w-full rounded-lg border" />
+                  </div>
+                  {contact.card_image_back_url && (
+                    <div>
+                      <p className="text-xs text-gray-500 mb-2">Card Back:</p>
+                      <img src={contact.card_image_back_url} alt="Card Back" className="w-full rounded-lg border" />
+                    </div>
+                  )}
                 </div>
               )}
               <Button 

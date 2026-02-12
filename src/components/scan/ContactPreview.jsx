@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Save } from "lucide-react";
 
-export default function ContactPreview({ data, imageUrl, onSave, onCancel }) {
+export default function ContactPreview({ data, imageUrl, imageBackUrl, onSave, onCancel }) {
   const [formData, setFormData] = useState(data);
   const [saving, setSaving] = useState(false);
 
@@ -24,8 +24,17 @@ export default function ContactPreview({ data, imageUrl, onSave, onCancel }) {
         </CardHeader>
         <CardContent>
           {imageUrl && (
-            <div className="mb-6">
-              <img src={imageUrl} alt="Card" className="w-full rounded-lg border" />
+            <div className="mb-6 space-y-4">
+              <div>
+                <p className="text-xs text-gray-500 mb-2">Card Front:</p>
+                <img src={imageUrl} alt="Card Front" className="w-full rounded-lg border" />
+              </div>
+              {imageBackUrl && (
+                <div>
+                  <p className="text-xs text-gray-500 mb-2">Card Back:</p>
+                  <img src={imageBackUrl} alt="Card Back" className="w-full rounded-lg border" />
+                </div>
+              )}
             </div>
           )}
 
