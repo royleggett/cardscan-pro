@@ -22,14 +22,18 @@ export default function QRScanner({ onScan, onClose }) {
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" }
+        video: { 
+          facingMode: "environment",
+          width: { ideal: 1920 },
+          height: { ideal: 1080 }
+        }
       });
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play();
+        await videoRef.current.play();
         setScanning(true);
-        scanQRCode();
+        requestAnimationFrame(scanQRCode);
       }
     } catch (err) {
       setError("Camera access denied");
@@ -38,7 +42,7 @@ export default function QRScanner({ onScan, onClose }) {
   };
 
   const scanQRCode = () => {
-    if (!videoRef.current || !canvasRef.current) return;
+    if (!videoRef.current || !canvasRef.current || !scanning) return;
 
     const video = videoRef.current;
     const canvas = canvasRef.current;
@@ -51,10 +55,12 @@ export default function QRScanner({ onScan, onClose }) {
       
       const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
       const code = jsQR(imageData.data, imageData.width, imageData.height, {
-        inversionAttempts: "dontInvert",
+        inversionAttempts: "attemptBoth",
       });
 
-      if (code) {
+      if (code && code.data) {
+        console.log("QR Code detected:", code.data);
+        setScanning(false);
         if (streamRef.current) {
           streamRef.current.getTracks().forEach(track => track.stop());
         }
@@ -63,9 +69,7 @@ export default function QRScanner({ onScan, onClose }) {
       }
     }
 
-    if (scanning) {
-      requestAnimationFrame(scanQRCode);
-    }
+    requestAnimationFrame(scanQRCode);
   };
 
   return (
