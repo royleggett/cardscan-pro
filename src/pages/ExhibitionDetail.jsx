@@ -1,0 +1,290 @@
+import React, { useState, useEffect } from "react";
+import { base44 } from "@/api/base44Client";
+import { Exhibition } from "@/entities/Exhibition";
+import { Contact } from "@/entities/Contact";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Link, useNavigate } from "react-router-dom";
+import { createPageUrl } from "@/utils";
+import { Plus, ArrowLeft, Search, Download, Settings, MapPin } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+
+import ContactCard from "../components/contacts/ContactCard";
+import EditExhibitionDialog from "../components/exhibitions/EditExhibitionDialog";
+
+export default function ExhibitionDetail() {
+  const navigate = useNavigate();
+  const urlParams = new URLSearchParams(window.location.search);
+  const exhibitionId = urlParams.get("id");
+  
+  const [exhibition, setExhibition] = useState(null);
+  const [contacts, setContacts] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showEdit, setShowEdit] = useState(false);
+  const [showExport, setShowExport] = useState(false);
+  const [fileName, setFileName] = useState("");
+
+  useEffect(() => {
+    if (exhibitionId) {
+      loadData();
+    }
+  }, [exhibitionId]);
+
+  const loadData = async () => {
+    try {
+      const currentUser = await base44.auth.me();
+      
+      const allExhibitions = await Exhibition.filter({ created_by: currentUser.email });
+      const ex = allExhibitions.find(e => e.id === exhibitionId);
+      
+      if (!ex) {
+        navigate(createPageUrl("Exhibitions"));
+        return;
+      }
+      
+      setExhibition(ex);
+      
+      const contactsList = await Contact.filter({ 
+        exhibition_id: exhibitionId,
+        created_by: currentUser.email
+      }, "-created_date");
+      setContacts(contactsList);
+    } catch (err) {
+      base44.auth.redirectToLogin();
+    }
+  };
+
+  const handleSaveExhibition = async (updatedData) => {
+    await Exhibition.update(exhibitionId, updatedData);
+    setShowEdit(false);
+    loadData();
+  };
+
+  const handleDeleteExhibition = async () => {
+    for (const contact of contacts) {
+      await Contact.delete(contact.id);
+    }
+    await Exhibition.delete(exhibitionId);
+    navigate(createPageUrl("Exhibitions"));
+  };
+
+  const exportToExcel = async () => {
+    const exportData = contacts.map(contact => ({
+      'Exhibition': exhibition?.name || '',
+      'Name': contact.full_name || '',
+      'Company': contact.company || '',
+      'Position': contact.position || '',
+      'Email': contact.email || '',
+      'Mobile': contact.phone_mobile || '',
+      'Landline': contact.phone_landline || '',
+      'Fax': contact.phone_fax || '',
+      'Other Phone': contact.phone_other || '',
+      'Country/Area': contact.country || '',
+      'Website': contact.website || '',
+      'Address': contact.address || '',
+      'Notes': contact.notes || ''
+    }));
+
+    const headers = Object.keys(exportData[0] || {});
+    const csvContent = [
+      headers.join(','),
+      ...exportData.map(row => headers.map(header => {
+        const value = String(row[header]).replace(/"/g, '""');
+        return `"${value}"`;
+      }).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${fileName || exhibition?.name || 'exhibition'}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    setShowExport(false);
+    setFileName("");
+  };
+
+  const filteredContacts = contacts.filter(contact => {
+    const query = searchQuery.toLowerCase();
+    return (
+      (contact.full_name?.toLowerCase().includes(query)) ||
+      (contact.company?.toLowerCase().includes(query)) ||
+      (contact.email?.toLowerCase().includes(query)) ||
+      (contact.country?.toLowerCase().includes(query))
+    );
+  });
+
+  if (!exhibition && exhibitionId) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4 py-6">
+        <div className="max-w-7xl mx-auto text-center py-20 bg-white/50 backdrop-blur-sm rounded-2xl">
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">Exhibition not found</h3>
+          <p className="text-gray-500 mb-4">You don't have access to this exhibition</p>
+          <Button
+            variant="ghost"
+            onClick={() => navigate(createPageUrl("Exhibitions"))}
+            className="hover:bg-white/50"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Exhibitions
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!exhibition) {
+    return null;
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4 py-6 pb-24">
+      <div className="max-w-7xl mx-auto">
+        <Button
+          variant="ghost"
+          onClick={() => navigate(createPageUrl("Exhibitions"))}
+          className="mb-6 hover:bg-white/50"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Exhibitions
+        </Button>
+
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 mb-6 border-2 border-blue-100">
+          <div className="flex justify-between items-start mb-4">
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{exhibition.name}</h1>
+              {exhibition.location && (
+                <div className="flex items-center gap-2 text-gray-600 mb-1">
+                  <MapPin className="w-4 h-4" />
+                  <span>{exhibition.location}</span>
+                </div>
+              )}
+              <p className="text-sm text-gray-500 mt-2">
+                {contacts.length} contact{contacts.length !== 1 ? 's' : ''}
+              </p>
+            </div>
+            
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setShowEdit(true)}
+                className="bg-white hover:bg-gray-50"
+              >
+                <Settings className="w-4 h-4" />
+              </Button>
+              
+              {contacts.length > 0 && (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setFileName(exhibition?.name || '');
+                    setShowExport(true);
+                  }}
+                  className="bg-white hover:bg-gray-50"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Export CSV
+                </Button>
+              )}
+            </div>
+          </div>
+
+          <Link to={createPageUrl(`ScanCard?exhibition_id=${exhibitionId}`)}>
+            <Button className="w-full h-16 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg text-lg">
+              <Plus className="w-5 h-5 mr-2" />
+              Scan Business Card
+            </Button>
+          </Link>
+        </div>
+
+        {contacts.length > 0 && (
+          <div className="mb-6">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Input
+                placeholder="Search contacts..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-12 h-12 bg-white/80 backdrop-blur-sm border-2 border-gray-200 focus:border-blue-400"
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="space-y-4">
+          {filteredContacts.map((contact) => (
+            <ContactCard
+              key={contact.id}
+              contact={contact}
+              onUpdate={loadData}
+            />
+          ))}
+        </div>
+
+        {contacts.length === 0 && (
+          <div className="text-center py-20 bg-white/50 backdrop-blur-sm rounded-2xl">
+            <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Plus className="w-12 h-12 text-blue-600" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No contacts yet</h3>
+            <p className="text-gray-500">Scan your first business card to get started</p>
+          </div>
+        )}
+
+        {filteredContacts.length === 0 && contacts.length > 0 && (
+          <div className="text-center py-16 bg-white/50 backdrop-blur-sm rounded-2xl text-gray-500">
+            No contacts match your search
+          </div>
+        )}
+      </div>
+
+      <EditExhibitionDialog
+        open={showEdit}
+        onOpenChange={setShowEdit}
+        exhibition={exhibition}
+        onSave={handleSaveExhibition}
+        onDelete={handleDeleteExhibition}
+      />
+
+      <Dialog open={showExport} onOpenChange={setShowExport}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Export to CSV</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label htmlFor="filename">File Name</Label>
+              <Input
+                id="filename"
+                value={fileName}
+                onChange={(e) => setFileName(e.target.value)}
+                placeholder="Enter file name"
+              />
+              <p className="text-xs text-gray-500 mt-1">.csv will be added automatically</p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowExport(false)}>
+              Cancel
+            </Button>
+            <Button onClick={exportToExcel} className="bg-blue-600 hover:bg-blue-700">
+              <Download className="w-4 h-4 mr-2" />
+              Export
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
