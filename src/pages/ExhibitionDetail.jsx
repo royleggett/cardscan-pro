@@ -30,6 +30,7 @@ export default function ExhibitionDetail() {
   const [showEdit, setShowEdit] = useState(false);
   const [showExport, setShowExport] = useState(false);
   const [fileName, setFileName] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (exhibitionId) {
@@ -56,6 +57,7 @@ export default function ExhibitionDetail() {
         created_by: currentUser.email
       }, "-created_date");
       setContacts(contactsList);
+      setLoading(false);
     } catch (err) {
       base44.auth.redirectToLogin();
     }
@@ -124,26 +126,7 @@ export default function ExhibitionDetail() {
     );
   });
 
-  if (!exhibition && exhibitionId) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4 py-6">
-        <div className="max-w-7xl mx-auto text-center py-20 bg-white/50 backdrop-blur-sm rounded-2xl">
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">Exhibition not found</h3>
-          <p className="text-gray-500 mb-4">You don't have access to this exhibition</p>
-          <Button
-            variant="ghost"
-            onClick={() => navigate(createPageUrl("Exhibitions"))}
-            className="hover:bg-white/50"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Exhibitions
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!exhibition) {
+  if (loading || !exhibition) {
     return null;
   }
 

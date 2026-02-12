@@ -47,28 +47,28 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import Home from './pages/Home';
+import AddContact from './pages/AddContact';
+import AllContacts from './pages/AllContacts';
+import ExhibitionDetail from './pages/ExhibitionDetail';
 import Exhibitions from './pages/Exhibitions';
+import Home from './pages/Home';
+import ImportContacts from './pages/ImportContacts';
+import MyCard from './pages/MyCard';
 import NewExhibition from './pages/NewExhibition';
 import ScanCard from './pages/ScanCard';
-import ExhibitionDetail from './pages/ExhibitionDetail';
-import AllContacts from './pages/AllContacts';
-import MyCard from './pages/MyCard';
-import ImportContacts from './pages/ImportContacts';
-import AddContact from './pages/AddContact';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Home": Home,
+    "AddContact": AddContact,
+    "AllContacts": AllContacts,
+    "ExhibitionDetail": ExhibitionDetail,
     "Exhibitions": Exhibitions,
+    "Home": Home,
+    "ImportContacts": ImportContacts,
+    "MyCard": MyCard,
     "NewExhibition": NewExhibition,
     "ScanCard": ScanCard,
-    "ExhibitionDetail": ExhibitionDetail,
-    "AllContacts": AllContacts,
-    "MyCard": MyCard,
-    "ImportContacts": ImportContacts,
-    "AddContact": AddContact,
 }
 
 export const pagesConfig = {
