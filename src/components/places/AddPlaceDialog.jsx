@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { MapPin } from "lucide-react";
+import { MapPin, Loader2, Locate } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import {
   Select,
@@ -28,8 +28,31 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
     notes: "",
     rating: 0
   });
+  const [locating, setLocating] = useState(false);
 
 
+
+  const handleLocateMe = async () => {
+    setLocating(true);
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+      
+      const { latitude, longitude } = position.coords;
+      
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Convert these GPS coordinates to a full street address: ${latitude}, ${longitude}. Return only the address as a string.`,
+        add_context_from_internet: true
+      });
+      
+      setPlaceData({ ...placeData, address: result.trim() });
+    } catch (err) {
+      console.error("Location error:", err);
+      alert("Could not get location. Please enable location access.");
+    }
+    setLocating(false);
+  };
 
   const handleSave = async () => {
     await base44.entities.Place.create({
@@ -86,12 +109,22 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
 
           <div>
             <Label>Address</Label>
-            <Input
-              value={placeData.address}
-              onChange={(e) => setPlaceData({ ...placeData, address: e.target.value })}
-              placeholder="Street address"
-              className="mt-1"
-            />
+            <div className="flex gap-2 mt-1">
+              <Input
+                value={placeData.address}
+                onChange={(e) => setPlaceData({ ...placeData, address: e.target.value })}
+                placeholder="Street address"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={handleLocateMe}
+                disabled={locating}
+              >
+                {locating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Locate className="w-4 h-4" />}
+              </Button>
+            </div>
           </div>
 
 
