@@ -1,18 +1,19 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { X, Camera, Loader2 } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import jsQR from "jsqr";
 
 export default function QRScanner({ onScan, onClose }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [error, setError] = useState(null);
-  const [analyzing, setAnalyzing] = useState(false);
   const streamRef = useRef(null);
+  const scanningRef = useRef(true);
 
   useEffect(() => {
     startCamera();
     return () => {
+      scanningRef.current = false;
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
       }
@@ -32,6 +33,7 @@ export default function QRScanner({ onScan, onClose }) {
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
+        scanQRCode();
       }
     } catch (err) {
       setError("Camera access denied");
@@ -39,40 +41,35 @@ export default function QRScanner({ onScan, onClose }) {
     }
   };
 
-  const captureAndScan = async () => {
-    if (!videoRef.current || !canvasRef.current) return;
-    
-    setAnalyzing(true);
+  const scanQRCode = () => {
+    if (!scanningRef.current || !videoRef.current || !canvasRef.current) return;
+
     const video = videoRef.current;
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-    // Try multiple times with different settings
-    for (let attempt = 0; attempt < 5; attempt++) {
-      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
       
+      const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
       const code = jsQR(imageData.data, imageData.width, imageData.height, {
         inversionAttempts: "attemptBoth",
       });
 
       if (code && code.data) {
-        console.log("QR Code found:", code.data);
+        console.log("QR Code detected:", code.data);
+        scanningRef.current = false;
         if (streamRef.current) {
           streamRef.current.getTracks().forEach(track => track.stop());
         }
         onScan(code.data);
         return;
       }
-      
-      await new Promise(resolve => setTimeout(resolve, 100));
     }
-    
-    setAnalyzing(false);
-    setError("No QR code detected. Please try again.");
+
+    requestAnimationFrame(scanQRCode);
   };
 
   return (
@@ -87,7 +84,7 @@ export default function QRScanner({ onScan, onClose }) {
           <X className="w-6 h-6" />
         </Button>
 
-        {error && !analyzing && (
+        {error && (
           <div className="absolute top-20 left-4 right-4 bg-red-500 text-white px-4 py-3 rounded-lg">
             <p className="text-sm">{error}</p>
           </div>
@@ -105,27 +102,10 @@ export default function QRScanner({ onScan, onClose }) {
           <div className="w-72 h-72 border-4 border-white/70 rounded-2xl shadow-lg" />
         </div>
 
-        <div className="absolute bottom-8 left-0 right-0 px-8">
-          {analyzing ? (
-            <div className="text-center text-white mb-4">
-              <Loader2 className="w-8 h-8 mx-auto mb-2 animate-spin" />
-              <p className="text-sm">Analyzing QR code...</p>
-            </div>
-          ) : (
-            <div className="text-center text-white mb-4">
-              <p className="text-lg font-semibold mb-1">Position QR code in frame</p>
-              <p className="text-sm opacity-80">Then tap the capture button</p>
-            </div>
-          )}
-          
-          <Button
-            onClick={captureAndScan}
-            disabled={analyzing}
-            className="w-full h-16 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold"
-          >
-            <Camera className="w-6 h-6 mr-2" />
-            Capture & Scan
-          </Button>
+        <div className="absolute bottom-8 left-0 right-0 text-center text-white px-4">
+          <Loader2 className="w-8 h-8 mx-auto mb-2 animate-spin" />
+          <p className="text-lg font-semibold mb-1">Scanning for QR Code...</p>
+          <p className="text-sm opacity-80">Position the code within the frame</p>
         </div>
       </div>
     </div>

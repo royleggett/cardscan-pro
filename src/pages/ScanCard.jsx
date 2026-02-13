@@ -307,7 +307,6 @@ Phone: ${phoneData.phone_mobile || phoneData.phone_landline || "N/A"}`;
     setStatusMessage("Processing QR code data...");
     
     try {
-      // Try to parse vCard format first (common for business cards)
       let extractedInfo = {
         full_name: "",
         company: "",
@@ -348,10 +347,17 @@ Phone: ${phoneData.phone_mobile || phoneData.phone_landline || "N/A"}`;
         }
         setExtractedData(extractedInfo);
       } else {
-        // Use LLM to extract from other formats
-        const prompt = `Extract contact information from this QR code data: ${data}
+        // Use LLM to intelligently extract from any format (URLs, LinkedIn, etc.)
+        const prompt = `You are extracting contact information from a QR code. The QR code contains: "${data}"
 
-Return ONLY a JSON object with these fields (use empty string if not found):
+This could be a LinkedIn URL, website URL, plain text, or any other format. Extract whatever contact information you can find or infer.
+
+If it's a URL (like LinkedIn, company website, etc.), extract:
+- The person's full name if visible in the URL or if you need to indicate it's from their profile
+- Note the URL type in the website field
+- Leave other fields empty unless the URL contains obvious contact info
+
+Return ONLY this JSON object (use empty string "" for fields you cannot determine):
 {
   "full_name": "",
   "company": "",
@@ -361,11 +367,15 @@ Return ONLY a JSON object with these fields (use empty string if not found):
   "phone_landline": "",
   "website": "",
   "address": "",
-  "country": ""
-}`;
+  "country": "",
+  "notes": ""
+}
+
+For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract the person's name from the URL if present.`;
 
         const result = await base44.integrations.Core.InvokeLLM({
           prompt,
+          add_context_from_internet: true,
           response_json_schema: {
             type: "object",
             properties: {
@@ -377,7 +387,8 @@ Return ONLY a JSON object with these fields (use empty string if not found):
               phone_landline: { type: "string" },
               website: { type: "string" },
               address: { type: "string" },
-              country: { type: "string" }
+              country: { type: "string" },
+              notes: { type: "string" }
             }
           }
         });
@@ -385,8 +396,7 @@ Return ONLY a JSON object with these fields (use empty string if not found):
         setExtractedData({
           ...result,
           phone_fax: "",
-          phone_other: "",
-          notes: ""
+          phone_other: ""
         });
       }
       
