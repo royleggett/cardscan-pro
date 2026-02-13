@@ -61,8 +61,6 @@ export default function PlaceCard({ place, onUpdate }) {
           {place.google_maps_link && (
             <a
               href={place.google_maps_link}
-              target="_blank"
-              rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800"
             >
               <ExternalLink className="w-4 h-4" />
