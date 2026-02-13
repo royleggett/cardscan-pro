@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Plus, ArrowLeft, Search, Download, Settings, MapPin } from "lucide-react";
+import { Plus, ArrowLeft, Search, Download, Settings, MapPin, UtensilsCrossed } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,9 +15,12 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import ContactCard from "../components/contacts/ContactCard";
 import EditExhibitionDialog from "../components/exhibitions/EditExhibitionDialog";
+import AddPlaceDialog from "../components/places/AddPlaceDialog";
+import PlaceCard from "../components/places/PlaceCard";
 
 export default function ExhibitionDetail() {
   const navigate = useNavigate();
@@ -26,9 +29,11 @@ export default function ExhibitionDetail() {
   
   const [exhibition, setExhibition] = useState(null);
   const [contacts, setContacts] = useState([]);
+  const [places, setPlaces] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showEdit, setShowEdit] = useState(false);
   const [showExport, setShowExport] = useState(false);
+  const [showAddPlace, setShowAddPlace] = useState(false);
   const [fileName, setFileName] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -57,6 +62,13 @@ export default function ExhibitionDetail() {
         created_by: currentUser.email
       }, "-created_date");
       setContacts(contactsList);
+      
+      const placesList = await base44.entities.Place.filter({ 
+        exhibition_id: exhibitionId,
+        created_by: currentUser.email
+      }, "-created_date");
+      setPlaces(placesList);
+      
       setLoading(false);
     } catch (err) {
       base44.auth.redirectToLogin();
@@ -153,7 +165,7 @@ export default function ExhibitionDetail() {
                 </div>
               )}
               <p className="text-sm text-gray-500 mt-2">
-                {contacts.length} contact{contacts.length !== 1 ? 's' : ''}
+                {contacts.length} contact{contacts.length !== 1 ? 's' : ''} • {places.length} place{places.length !== 1 ? 's' : ''}
               </p>
             </div>
             
@@ -183,53 +195,93 @@ export default function ExhibitionDetail() {
             </div>
           </div>
 
-          <Link to={createPageUrl(`ScanCard?exhibition_id=${exhibitionId}`)}>
-            <Button className="w-full h-16 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg text-lg">
-              <Plus className="w-5 h-5 mr-2" />
-              Scan Business Card
+          <div className="grid grid-cols-2 gap-3">
+            <Link to={createPageUrl(`ScanCard?exhibition_id=${exhibitionId}`)} className="flex-1">
+              <Button className="w-full h-16 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg">
+                <Plus className="w-5 h-5 mr-2" />
+                Add Contact
+              </Button>
+            </Link>
+            <Button 
+              onClick={() => setShowAddPlace(true)}
+              className="w-full h-16 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 shadow-lg"
+            >
+              <UtensilsCrossed className="w-5 h-5 mr-2" />
+              Add Place
             </Button>
-          </Link>
+          </div>
         </div>
 
-        {contacts.length > 0 && (
-          <div className="mb-6">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <Input
-                placeholder="Search contacts..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 h-12 bg-white/80 backdrop-blur-sm border-2 border-gray-200 focus:border-blue-400"
-              />
+        <Tabs defaultValue="contacts" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="contacts">Contacts ({contacts.length})</TabsTrigger>
+            <TabsTrigger value="places">Places ({places.length})</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="contacts">
+            {contacts.length > 0 && (
+              <div className="mb-6">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Input
+                    placeholder="Search contacts..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-12 h-12 bg-white/80 backdrop-blur-sm border-2 border-gray-200 focus:border-blue-400"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-4">
+              {filteredContacts.map((contact) => (
+                <ContactCard
+                  key={contact.id}
+                  contact={contact}
+                  onUpdate={loadData}
+                />
+              ))}
             </div>
-          </div>
-        )}
 
-        <div className="space-y-4">
-          {filteredContacts.map((contact) => (
-            <ContactCard
-              key={contact.id}
-              contact={contact}
-              onUpdate={loadData}
-            />
-          ))}
-        </div>
+            {contacts.length === 0 && (
+              <div className="text-center py-20 bg-white/50 backdrop-blur-sm rounded-2xl">
+                <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Plus className="w-12 h-12 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">No contacts yet</h3>
+                <p className="text-gray-500">Scan your first business card to get started</p>
+              </div>
+            )}
 
-        {contacts.length === 0 && (
-          <div className="text-center py-20 bg-white/50 backdrop-blur-sm rounded-2xl">
-            <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Plus className="w-12 h-12 text-blue-600" />
+            {filteredContacts.length === 0 && contacts.length > 0 && (
+              <div className="text-center py-16 bg-white/50 backdrop-blur-sm rounded-2xl text-gray-500">
+                No contacts match your search
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="places">
+            <div className="space-y-4">
+              {places.map((place) => (
+                <PlaceCard
+                  key={place.id}
+                  place={place}
+                  onUpdate={loadData}
+                />
+              ))}
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No contacts yet</h3>
-            <p className="text-gray-500">Scan your first business card to get started</p>
-          </div>
-        )}
 
-        {filteredContacts.length === 0 && contacts.length > 0 && (
-          <div className="text-center py-16 bg-white/50 backdrop-blur-sm rounded-2xl text-gray-500">
-            No contacts match your search
-          </div>
-        )}
+            {places.length === 0 && (
+              <div className="text-center py-20 bg-white/50 backdrop-blur-sm rounded-2xl">
+                <div className="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <UtensilsCrossed className="w-12 h-12 text-orange-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">No places yet</h3>
+                <p className="text-gray-500">Add your first restaurant or place</p>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
 
       <EditExhibitionDialog
@@ -238,6 +290,13 @@ export default function ExhibitionDetail() {
         exhibition={exhibition}
         onSave={handleSaveExhibition}
         onDelete={handleDeleteExhibition}
+      />
+
+      <AddPlaceDialog
+        open={showAddPlace}
+        onOpenChange={setShowAddPlace}
+        exhibitionId={exhibitionId}
+        onPlaceAdded={loadData}
       />
 
       <Dialog open={showExport} onOpenChange={setShowExport}>
