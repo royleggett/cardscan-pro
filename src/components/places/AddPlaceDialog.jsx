@@ -10,69 +10,26 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { MapPin, Search, Camera, Loader2 } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
 export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPlaceAdded }) {
-  const [searching, setSearching] = useState(false);
   const [placeData, setPlaceData] = useState({
     name: "",
     address: "",
-    google_maps_link: "",
     notes: "",
     rating: 0
   });
 
-  const handleSearch = async () => {
-    if (!placeData.name) return;
-    
-    setSearching(true);
-    try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Find the location details for: "${placeData.name}". Return location information.`,
-        add_context_from_internet: true,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            full_name: { type: "string" },
-            address: { type: "string" }
-          }
-        }
-      });
 
-      const fullName = result.full_name || placeData.name;
-      const address = result.address || "";
-      
-      // Construct Google Maps search URL
-      const searchQuery = `${fullName} ${address}`.trim().replace(/\s+/g, '+');
-      const mapsLink = `https://www.google.com/maps/search/${searchQuery}`;
-
-      setPlaceData({
-        ...placeData,
-        name: fullName,
-        address: address,
-        google_maps_link: mapsLink
-      });
-    } catch (err) {
-      console.error("Search failed:", err);
-    }
-    setSearching(false);
-  };
 
   const handleSave = async () => {
-    // If no Google Maps link yet, create one from name and address
-    let finalData = { ...placeData };
-    if (!finalData.google_maps_link && finalData.name) {
-      const searchQuery = `${finalData.name} ${finalData.address || ""}`.trim().replace(/\s+/g, '+');
-      finalData.google_maps_link = `https://www.google.com/maps/search/${searchQuery}`;
-    }
-    
     await base44.entities.Place.create({
       exhibition_id: exhibitionId,
-      ...finalData
+      ...placeData
     });
     
-    setPlaceData({ name: "", address: "", google_maps_link: "", notes: "", rating: 0 });
+    setPlaceData({ name: "", address: "", notes: "", rating: 0 });
     onPlaceAdded();
     onOpenChange(false);
   };
@@ -87,22 +44,12 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
         <div className="space-y-4 py-4">
           <div>
             <Label>Place Name *</Label>
-            <div className="flex gap-2 mt-1">
-              <Input
-                value={placeData.name}
-                onChange={(e) => setPlaceData({ ...placeData, name: e.target.value })}
-                placeholder="Restaurant name or place"
-              />
-              <Button 
-                onClick={handleSearch} 
-                disabled={searching || !placeData.name}
-                size="icon"
-                variant="outline"
-              >
-                {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-              </Button>
-            </div>
-            <p className="text-xs text-gray-500 mt-1">Type name and click search to auto-fill</p>
+            <Input
+              value={placeData.name}
+              onChange={(e) => setPlaceData({ ...placeData, name: e.target.value })}
+              placeholder="Restaurant name or place"
+              className="mt-1"
+            />
           </div>
 
           <div>
@@ -115,15 +62,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
             />
           </div>
 
-          <div>
-            <Label>Google Maps Link</Label>
-            <Input
-              value={placeData.google_maps_link}
-              onChange={(e) => setPlaceData({ ...placeData, google_maps_link: e.target.value })}
-              placeholder="https://maps.google.com/..."
-              className="mt-1"
-            />
-          </div>
+
 
           <div>
             <Label>Rating</Label>

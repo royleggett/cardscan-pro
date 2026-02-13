@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, ExternalLink, Trash2, Edit, Star } from "lucide-react";
+import { MapPin, Trash2, Star } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import {
   AlertDialog,
