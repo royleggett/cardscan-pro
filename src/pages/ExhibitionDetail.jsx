@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Plus, ArrowLeft, Search, Download, Settings, MapPin, UtensilsCrossed } from "lucide-react";
+import { Plus, ArrowLeft, Search, Download, Settings, MapPin } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -206,7 +206,7 @@ export default function ExhibitionDetail() {
               onClick={() => setShowAddPlace(true)}
               className="w-full h-16 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 shadow-lg"
             >
-              <UtensilsCrossed className="w-5 h-5 mr-2" />
+              <Plus className="w-5 h-5 mr-2" />
               Add Place
             </Button>
           </div>
@@ -274,7 +274,7 @@ export default function ExhibitionDetail() {
             {places.length === 0 && (
               <div className="text-center py-20 bg-white/50 backdrop-blur-sm rounded-2xl">
                 <div className="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <UtensilsCrossed className="w-12 h-12 text-orange-600" />
+                  <MapPin className="w-12 h-12 text-orange-600" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">No places yet</h3>
                 <p className="text-gray-500">Add your first restaurant or place</p>

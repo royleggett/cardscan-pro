@@ -12,10 +12,18 @@ import {
 } from "@/components/ui/dialog";
 import { MapPin } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPlaceAdded }) {
   const [placeData, setPlaceData] = useState({
     name: "",
+    category: "Restaurant",
     address: "",
     notes: "",
     rating: 0
@@ -29,7 +37,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
       ...placeData
     });
     
-    setPlaceData({ name: "", address: "", notes: "", rating: 0 });
+    setPlaceData({ name: "", category: "Restaurant", address: "", notes: "", rating: 0 });
     onPlaceAdded();
     onOpenChange(false);
   };
@@ -50,6 +58,30 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
               placeholder="Restaurant name or place"
               className="mt-1"
             />
+          </div>
+
+          <div>
+            <Label>Category *</Label>
+            <Select
+              value={placeData.category}
+              onValueChange={(value) => setPlaceData({ ...placeData, category: value })}
+            >
+              <SelectTrigger className="mt-1">
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Restaurant">Restaurant</SelectItem>
+                <SelectItem value="Tourist Attraction">Tourist Attraction</SelectItem>
+                <SelectItem value="Hotel">Hotel</SelectItem>
+                <SelectItem value="Supermarket">Supermarket</SelectItem>
+                <SelectItem value="Bar">Bar</SelectItem>
+                <SelectItem value="Bakery">Bakery</SelectItem>
+                <SelectItem value="Taxi Rank">Taxi Rank</SelectItem>
+                <SelectItem value="Cafe">Cafe</SelectItem>
+                <SelectItem value="Shopping">Shopping</SelectItem>
+                <SelectItem value="Other">Other</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
