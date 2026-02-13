@@ -45,7 +45,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
       
       // Construct Google Maps search URL
       const searchQuery = encodeURIComponent(`${fullName} ${address}`.trim());
-      const mapsLink = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+      const mapsLink = `https://maps.google.com/?q=${searchQuery}`;
 
       setPlaceData({
         ...placeData,
@@ -64,7 +64,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
     let finalData = { ...placeData };
     if (!finalData.google_maps_link && finalData.name) {
       const searchQuery = encodeURIComponent(`${finalData.name} ${finalData.address || ""}`.trim());
-      finalData.google_maps_link = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+      finalData.google_maps_link = `https://maps.google.com/?q=${searchQuery}`;
     }
     
     await base44.entities.Place.create({
