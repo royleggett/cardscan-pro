@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Trash2, Star } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { base44 } from "@/api/base44Client";
 import {
   AlertDialog,
@@ -22,13 +23,33 @@ export default function PlaceCard({ place, onUpdate }) {
     onUpdate();
   };
 
+  const categoryColors = {
+    "Restaurant": "bg-orange-100 text-orange-800",
+    "Tourist Attraction": "bg-purple-100 text-purple-800",
+    "Hotel": "bg-blue-100 text-blue-800",
+    "Supermarket": "bg-green-100 text-green-800",
+    "Bar": "bg-red-100 text-red-800",
+    "Bakery": "bg-yellow-100 text-yellow-800",
+    "Taxi Rank": "bg-gray-100 text-gray-800",
+    "Cafe": "bg-amber-100 text-amber-800",
+    "Shopping": "bg-pink-100 text-pink-800",
+    "Other": "bg-slate-100 text-slate-800"
+  };
+
   return (
     <>
       <Card className="bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all">
         <CardHeader className="pb-3">
           <div className="flex justify-between items-start">
             <div className="flex-1">
-              <CardTitle className="text-lg">{place.name}</CardTitle>
+              <div className="flex items-center gap-2 mb-2">
+                <CardTitle className="text-lg">{place.name}</CardTitle>
+                {place.category && (
+                  <Badge className={categoryColors[place.category] || "bg-gray-100 text-gray-800"}>
+                    {place.category}
+                  </Badge>
+                )}
+              </div>
               {place.rating > 0 && (
                 <div className="flex items-center gap-1 mt-1">
                   {[...Array(5)].map((_, i) => (
