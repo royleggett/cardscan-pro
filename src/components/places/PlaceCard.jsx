@@ -59,13 +59,15 @@ export default function PlaceCard({ place, onUpdate }) {
           )}
           
           {place.google_maps_link && (
-            <a
-              href={place.google_maps_link}
-              className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800"
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.location.href = place.google_maps_link}
+              className="flex items-center gap-2"
             >
               <ExternalLink className="w-4 h-4" />
               Open in Google Maps
-            </a>
+            </Button>
           )}
 
           {place.notes && (
