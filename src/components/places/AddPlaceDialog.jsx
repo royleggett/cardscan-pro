@@ -35,17 +35,23 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
           type: "object",
           properties: {
             full_name: { type: "string" },
-            address: { type: "string" },
-            google_maps_url: { type: "string" }
+            address: { type: "string" }
           }
         }
       });
 
+      const fullName = result.full_name || placeData.name;
+      const address = result.address || "";
+      
+      // Construct Google Maps search URL
+      const searchQuery = encodeURIComponent(`${fullName} ${address}`.trim());
+      const mapsLink = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+
       setPlaceData({
         ...placeData,
-        name: result.full_name || placeData.name,
-        address: result.address || "",
-        google_maps_link: result.google_maps_url || ""
+        name: fullName,
+        address: address,
+        google_maps_link: mapsLink
       });
     } catch (err) {
       console.error("Search failed:", err);
@@ -54,9 +60,16 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
   };
 
   const handleSave = async () => {
+    // If no Google Maps link yet, create one from name and address
+    let finalData = { ...placeData };
+    if (!finalData.google_maps_link && finalData.name) {
+      const searchQuery = encodeURIComponent(`${finalData.name} ${finalData.address || ""}`.trim());
+      finalData.google_maps_link = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+    }
+    
     await base44.entities.Place.create({
       exhibition_id: exhibitionId,
-      ...placeData
+      ...finalData
     });
     
     setPlaceData({ name: "", address: "", google_maps_link: "", notes: "", rating: 0 });
