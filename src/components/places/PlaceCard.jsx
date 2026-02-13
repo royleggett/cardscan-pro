@@ -58,15 +58,17 @@ export default function PlaceCard({ place, onUpdate }) {
             </div>
           )}
           
-          {place.google_maps_link && (
+          {place.address && (
             <Button
               variant="outline"
               size="sm"
-              onClick={() => window.location.href = place.google_maps_link}
+              onClick={() => {
+                navigator.clipboard.writeText(place.address);
+              }}
               className="flex items-center gap-2"
             >
-              <ExternalLink className="w-4 h-4" />
-              Open in Google Maps
+              <MapPin className="w-4 h-4" />
+              Copy Address
             </Button>
           )}
 
