@@ -42,11 +42,17 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
       const { latitude, longitude } = position.coords;
       
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Look up the street address for GPS coordinates ${latitude}, ${longitude}. Return ONLY the street address in plain text format (no markdown, no links, no coordinates). Example format: "123 Main Street, City, PostCode, Country"`,
-        add_context_from_internet: true
+        prompt: `Use Google Maps or reverse geocoding to find the full street address at coordinates ${latitude}, ${longitude}. You must search the internet and return the actual street address found at this location. Return ONLY the address text with no extra information.`,
+        add_context_from_internet: true,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            address: { type: "string" }
+          }
+        }
       });
       
-      setPlaceData({ ...placeData, address: result.trim() });
+      setPlaceData({ ...placeData, address: result.address });
     } catch (err) {
       console.error("Location error:", err);
       alert("Could not get location. Please enable location access.");
