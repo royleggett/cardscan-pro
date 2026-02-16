@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -27,7 +28,8 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
     address: "",
     website: "",
     notes: "",
-    rating: 0
+    rating: 0,
+    is_public: false
   });
   const [locating, setLocating] = useState(false);
 
@@ -64,7 +66,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
       ...placeData
     });
     
-    setPlaceData({ name: "", category: "Restaurant", address: "", website: "", notes: "", rating: 0 });
+    setPlaceData({ name: "", category: "Restaurant", address: "", website: "", notes: "", rating: 0, is_public: false });
     onPlaceAdded();
     onOpenChange(false);
   };
@@ -166,6 +168,17 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
               className="mt-1"
               rows={3}
             />
+          </div>
+
+          <div className="flex items-center space-x-2 pt-2">
+            <Checkbox
+              id="is_public"
+              checked={placeData.is_public}
+              onCheckedChange={(checked) => setPlaceData({ ...placeData, is_public: checked })}
+            />
+            <Label htmlFor="is_public" className="text-sm font-normal cursor-pointer">
+              Share this place with the community
+            </Label>
           </div>
         </div>
 
