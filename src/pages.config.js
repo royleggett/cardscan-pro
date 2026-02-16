@@ -53,10 +53,10 @@ import ExhibitionDetail from './pages/ExhibitionDetail';
 import Exhibitions from './pages/Exhibitions';
 import Home from './pages/Home';
 import ImportContacts from './pages/ImportContacts';
+import ImportExport from './pages/ImportExport';
 import MyCard from './pages/MyCard';
 import NewExhibition from './pages/NewExhibition';
 import ScanCard from './pages/ScanCard';
-import ImportExport from './pages/ImportExport';
 import __Layout from './Layout.jsx';
 
 
@@ -67,10 +67,10 @@ export const PAGES = {
     "Exhibitions": Exhibitions,
     "Home": Home,
     "ImportContacts": ImportContacts,
+    "ImportExport": ImportExport,
     "MyCard": MyCard,
     "NewExhibition": NewExhibition,
     "ScanCard": ScanCard,
-    "ImportExport": ImportExport,
 }
 
 export const pagesConfig = {

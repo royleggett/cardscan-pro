@@ -63,11 +63,23 @@ export default function ExhibitionDetail() {
       }, "-created_date");
       setContacts(contactsList);
       
-      const placesList = await base44.entities.Place.filter({ 
+      // Get user's own places
+      const myPlaces = await base44.entities.Place.filter({ 
         exhibition_id: exhibitionId,
         created_by: currentUser.email
       }, "-created_date");
-      setPlaces(placesList);
+      
+      // Get public places from other users for this exhibition
+      const publicPlaces = await base44.entities.Place.filter({ 
+        exhibition_id: exhibitionId,
+        is_public: true
+      }, "-created_date");
+      
+      // Filter out any public places that the current user created (to avoid duplicates)
+      const otherUsersPublicPlaces = publicPlaces.filter(p => p.created_by !== currentUser.email);
+      
+      // Combine both lists
+      setPlaces([...myPlaces, ...otherUsersPublicPlaces]);
       
       setLoading(false);
     } catch (err) {
