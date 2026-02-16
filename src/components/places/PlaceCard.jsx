@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Trash2, Star, Pencil, ExternalLink } from "lucide-react";
+import { MapPin, Trash2, Star, Pencil, ExternalLink, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { base44 } from "@/api/base44Client";
 import {
@@ -19,6 +19,15 @@ import EditPlaceDialog from "./EditPlaceDialog";
 export default function PlaceCard({ place, onUpdate }) {
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [isMyPlace, setIsMyPlace] = useState(false);
+
+  useEffect(() => {
+    const checkOwnership = async () => {
+      const currentUser = await base44.auth.me();
+      setIsMyPlace(place.created_by === currentUser.email);
+    };
+    checkOwnership();
+  }, [place.created_by]);
 
   const handleDelete = async () => {
     await base44.entities.Place.delete(place.id);
@@ -44,11 +53,17 @@ export default function PlaceCard({ place, onUpdate }) {
         <CardHeader className="pb-3">
           <div className="flex justify-between items-start">
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <CardTitle className="text-lg">{place.name}</CardTitle>
                 {place.category && (
                   <Badge className={categoryColors[place.category] || "bg-gray-100 text-gray-800"}>
                     {place.category}
+                  </Badge>
+                )}
+                {!isMyPlace && place.is_public && (
+                  <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                    <Users className="w-3 h-3 mr-1" />
+                    Community
                   </Badge>
                 )}
               </div>
@@ -63,24 +78,26 @@ export default function PlaceCard({ place, onUpdate }) {
                 </div>
               )}
             </div>
-            <div className="flex gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowEdit(true)}
-                className="text-blue-500 hover:text-blue-700 hover:bg-blue-50"
-              >
-                <Pencil className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowDelete(true)}
-                className="text-red-500 hover:text-red-700 hover:bg-red-50"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </div>
+            {isMyPlace && (
+              <div className="flex gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowEdit(true)}
+                  className="text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+                >
+                  <Pencil className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowDelete(true)}
+                  className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
           </div>
         </CardHeader>
         <CardContent className="space-y-2">
