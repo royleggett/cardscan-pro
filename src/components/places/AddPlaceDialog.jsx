@@ -42,7 +42,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
       const { latitude, longitude } = position.coords;
       
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Convert these GPS coordinates to a full street address: ${latitude}, ${longitude}. Return only the address as a string.`,
+        prompt: `Look up the street address for GPS coordinates ${latitude}, ${longitude}. Return ONLY the street address in plain text format (no markdown, no links, no coordinates). Example format: "123 Main Street, City, PostCode, Country"`,
         add_context_from_internet: true
       });
       
