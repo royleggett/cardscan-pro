@@ -77,12 +77,13 @@ export default function ImportExport() {
           exhibition_id: selectedExhibition
         }));
 
-        if (importType === "contacts") {
-          await base44.entities.Contact.bulkCreate(recordsWithExhibition);
-          alert(`Successfully imported ${records.length} contacts!`);
-        } else {
+        // Import to correct entity based on type
+        if (importType === "places") {
           await base44.entities.Place.bulkCreate(recordsWithExhibition);
           alert(`Successfully imported ${records.length} places!`);
+        } else if (importType === "contacts") {
+          await base44.entities.Contact.bulkCreate(recordsWithExhibition);
+          alert(`Successfully imported ${records.length} contacts!`);
         }
         
         setImportFile(null);
