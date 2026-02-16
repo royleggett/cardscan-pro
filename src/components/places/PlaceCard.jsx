@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Trash2, Star } from "lucide-react";
+import { MapPin, Trash2, Star, Pencil, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { base44 } from "@/api/base44Client";
 import {
@@ -14,9 +14,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import EditPlaceDialog from "./EditPlaceDialog";
 
 export default function PlaceCard({ place, onUpdate }) {
   const [showDelete, setShowDelete] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
 
   const handleDelete = async () => {
     await base44.entities.Place.delete(place.id);
@@ -61,14 +63,24 @@ export default function PlaceCard({ place, onUpdate }) {
                 </div>
               )}
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setShowDelete(true)}
-              className="text-red-500 hover:text-red-700 hover:bg-red-50"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowEdit(true)}
+                className="text-blue-500 hover:text-blue-700 hover:bg-blue-50"
+              >
+                <Pencil className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowDelete(true)}
+                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -77,6 +89,18 @@ export default function PlaceCard({ place, onUpdate }) {
               <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
               <span>{place.address}</span>
             </div>
+          )}
+          
+          {place.website && (
+            <a
+              href={place.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Visit Website
+            </a>
           )}
           
           {place.address && (
@@ -100,6 +124,13 @@ export default function PlaceCard({ place, onUpdate }) {
           )}
         </CardContent>
       </Card>
+
+      <EditPlaceDialog
+        open={showEdit}
+        onOpenChange={setShowEdit}
+        place={place}
+        onPlaceUpdated={onUpdate}
+      />
 
       <AlertDialog open={showDelete} onOpenChange={setShowDelete}>
         <AlertDialogContent>
