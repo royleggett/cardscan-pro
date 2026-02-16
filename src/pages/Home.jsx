@@ -72,10 +72,10 @@ export default function Home() {
             </Button>
           </Link>
 
-          <Link to={createPageUrl("ImportContacts")}>
+          <Link to={createPageUrl("ImportExport")}>
             <Button className="w-full h-20 text-lg bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
               <Upload className="w-6 h-6 mr-3" />
-              Import CSV
+              Import / Export
             </Button>
           </Link>
         </div>

@@ -56,6 +56,7 @@ import ImportContacts from './pages/ImportContacts';
 import MyCard from './pages/MyCard';
 import NewExhibition from './pages/NewExhibition';
 import ScanCard from './pages/ScanCard';
+import ImportExport from './pages/ImportExport';
 import __Layout from './Layout.jsx';
 
 
@@ -69,6 +70,7 @@ export const PAGES = {
     "MyCard": MyCard,
     "NewExhibition": NewExhibition,
     "ScanCard": ScanCard,
+    "ImportExport": ImportExport,
 }
 
 export const pagesConfig = {
