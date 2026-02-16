@@ -41,18 +41,15 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
       
       const { latitude, longitude } = position.coords;
       
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Search Google Maps for the location at ${latitude},${longitude} and find the street address. Go to google.com/maps and search for "${latitude},${longitude}" - what is the full address shown? Return only the street address, city, and country.`,
-        add_context_from_internet: true,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            address: { type: "string" }
-          }
-        }
-      });
+      // Use reverse geocoding API
+      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+      const data = await response.json();
       
-      setPlaceData({ ...placeData, address: result.address || `${latitude}, ${longitude}` });
+      if (data.display_name) {
+        setPlaceData({ ...placeData, address: data.display_name });
+      } else {
+        setPlaceData({ ...placeData, address: `${latitude}, ${longitude}` });
+      }
     } catch (err) {
       console.error("Location error:", err);
       alert("Could not get location. Please enable location access.");
