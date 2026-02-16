@@ -25,6 +25,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
     name: "",
     category: "Restaurant",
     address: "",
+    website: "",
     notes: "",
     rating: 0
   });
@@ -63,7 +64,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
       ...placeData
     });
     
-    setPlaceData({ name: "", category: "Restaurant", address: "", notes: "", rating: 0 });
+    setPlaceData({ name: "", category: "Restaurant", address: "", website: "", notes: "", rating: 0 });
     onPlaceAdded();
     onOpenChange(false);
   };
@@ -130,7 +131,15 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
             </div>
           </div>
 
-
+          <div>
+            <Label>Website</Label>
+            <Input
+              value={placeData.website}
+              onChange={(e) => setPlaceData({ ...placeData, website: e.target.value })}
+              placeholder="https://example.com"
+              className="mt-1"
+            />
+          </div>
 
           <div>
             <Label>Rating</Label>
