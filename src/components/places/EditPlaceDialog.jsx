@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -158,6 +159,17 @@ export default function EditPlaceDialog({ open, onOpenChange, place, onPlaceUpda
               className="mt-1"
               rows={3}
             />
+          </div>
+
+          <div className="flex items-center space-x-2 pt-2">
+            <Checkbox
+              id="is_public_edit"
+              checked={placeData.is_public || false}
+              onCheckedChange={(checked) => setPlaceData({ ...placeData, is_public: checked })}
+            />
+            <Label htmlFor="is_public_edit" className="text-sm font-normal cursor-pointer">
+              Share this place with the community
+            </Label>
           </div>
         </div>
 
