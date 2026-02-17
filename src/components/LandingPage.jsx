@@ -14,6 +14,11 @@ export default function LandingPage() {
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-16 md:py-24">
         <div className="text-center max-w-4xl mx-auto mb-16">
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68e3b1d0b387a294f20142e9/bcdfcf951_CardScanPro_Icon.png" 
+            alt="CardScanner Pro" 
+            className="h-32 w-32 mx-auto mb-8"
+          />
           <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
             <Zap className="w-4 h-4" />
             Your Network, Captured. Organized. Always With You.
