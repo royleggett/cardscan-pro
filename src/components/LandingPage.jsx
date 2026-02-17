@@ -138,14 +138,17 @@ export default function LandingPage() {
                   </div>
                 </DialogHeader>
                 <div className="space-y-6">
-                  {selectedFeature.videoUrl ? (
-                    <div className="rounded-lg overflow-hidden">
-                      <iframe
-                        src={selectedFeature.videoUrl}
-                        className="w-full h-96"
-                        allow="autoplay; fullscreen"
-                        allowFullScreen
-                      />
+                  {selectedFeature.screenshots ? (
+                    <div className="grid grid-cols-2 gap-4">
+                      {selectedFeature.screenshots.map((screenshot, index) => (
+                        <div key={index} className="rounded-lg overflow-hidden">
+                          <img 
+                            src={screenshot} 
+                            alt={`${selectedFeature.title} ${index + 1}`}
+                            className="w-full h-64 object-cover"
+                          />
+                        </div>
+                      ))}
                     </div>
                   ) : (
                     <div className="rounded-lg overflow-hidden">
