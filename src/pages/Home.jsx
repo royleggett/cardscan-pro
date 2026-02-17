@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Plus, FolderOpen, Users, Upload } from "lucide-react";
-import LandingPage from "../components/LandingPage";
+import LandingPage from "@/components/LandingPage";
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -16,13 +16,12 @@ export default function Home() {
 
   const loadUser = async () => {
     try {
-      const isAuth = await base44.auth.isAuthenticated();
-      if (isAuth) {
-        const currentUser = await base44.auth.me();
-        setUser(currentUser);
-      }
+      const currentUser = await base44.auth.me();
+      setUser(currentUser);
     } catch (err) {
-      console.error("Auth check failed:", err);
+      // User not logged in - show landing page
+      setLoading(false);
+      return;
     }
     setLoading(false);
   };
@@ -38,11 +37,12 @@ export default function Home() {
     );
   }
 
-  // Show landing page for non-logged-in users
+  // Show landing page for non-authenticated users
   if (!user) {
     return <LandingPage />;
   }
 
+  // Show app dashboard for authenticated users
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="px-4 py-8 max-w-7xl mx-auto">
