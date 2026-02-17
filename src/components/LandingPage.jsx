@@ -91,7 +91,7 @@ export default function LandingPage() {
               <CardTitle>Community Powered</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600">Discover places shared by professionals in your city or exhibition. Never eat alone.</p>
+              <p className="text-gray-600">Discover places shared by professionals in your city or exhibition. Local insights, global network.</p>
             </CardContent>
           </Card>
         </div>
