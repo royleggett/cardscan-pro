@@ -21,7 +21,8 @@ export default function LandingPage() {
       title: "Instant Scanning",
       brief: "Scan single or double-sided cards, QR codes, or upload images. AI extracts every detail instantly.",
       details: "Our advanced AI-powered scanner captures every detail from business cards in seconds. Scan both sides of a card, read QR codes instantly, or upload photos taken earlier. Works offline and online, perfect for busy trade shows where internet might be spotty. The AI automatically categorizes phone numbers (mobile, landline, fax) and detects the contact's country from their address.",
-      screenshot: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop"
+      screenshot: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop",
+      videoUrl: "https://e.pcloud.link/publink/show?code=XZdwm3ZN5DlGnEPai5vWMj81sR04SMqhOzX"
     },
     {
       id: "crm",
