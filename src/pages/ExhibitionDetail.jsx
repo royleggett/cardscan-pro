@@ -47,8 +47,8 @@ export default function ExhibitionDetail() {
     try {
       const currentUser = await base44.auth.me();
       
-      const allExhibitions = await Exhibition.filter({ created_by: currentUser.email });
-      const ex = allExhibitions.find(e => e.id === exhibitionId);
+      const allExhibitions = await Exhibition.list();
+      const ex = allExhibitions.find(e => e.id === exhibitionId && e.created_by === currentUser.email);
       
       if (!ex) {
         navigate(createPageUrl("Exhibitions"));
@@ -69,17 +69,33 @@ export default function ExhibitionDetail() {
         created_by: currentUser.email
       }, "-created_date");
       
-      // Get public places from other users for this exhibition
-      const publicPlaces = await base44.entities.Place.filter({ 
-        exhibition_id: exhibitionId,
+      // Get all public places
+      const allPublicPlaces = await base44.entities.Place.filter({ 
         is_public: true
       }, "-created_date");
       
-      // Filter out any public places that the current user created (to avoid duplicates)
-      const otherUsersPublicPlaces = publicPlaces.filter(p => p.created_by !== currentUser.email);
+      // Filter public places by matching exhibition_id OR location (if location exists)
+      const relevantPublicPlaces = allPublicPlaces.filter(p => {
+        // Don't include user's own places
+        if (p.created_by === currentUser.email) return false;
+        
+        // Match by exhibition ID
+        if (p.exhibition_id === exhibitionId) return true;
+        
+        // Match by location if both have location set
+        if (ex.location && p.exhibition_id) {
+          // Find the exhibition that this place belongs to
+          const placeExhibition = allExhibitions.find(e => e.id === p.exhibition_id);
+          if (placeExhibition?.location && placeExhibition.location.toLowerCase() === ex.location.toLowerCase()) {
+            return true;
+          }
+        }
+        
+        return false;
+      });
       
       // Combine both lists
-      setPlaces([...myPlaces, ...otherUsersPublicPlaces]);
+      setPlaces([...myPlaces, ...relevantPublicPlaces]);
       
       setLoading(false);
     } catch (err) {
