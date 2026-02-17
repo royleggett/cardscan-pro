@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Plus, FolderOpen, Users, Upload } from "lucide-react";
+import LandingPage from "../components/LandingPage";
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -15,11 +16,13 @@ export default function Home() {
 
   const loadUser = async () => {
     try {
-      const currentUser = await base44.auth.me();
-      setUser(currentUser);
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth) {
+        const currentUser = await base44.auth.me();
+        setUser(currentUser);
+      }
     } catch (err) {
-      base44.auth.redirectToLogin();
-      return;
+      console.error("Auth check failed:", err);
     }
     setLoading(false);
   };
@@ -33,6 +36,11 @@ export default function Home() {
         </div>
       </div>
     );
+  }
+
+  // Show landing page for non-logged-in users
+  if (!user) {
+    return <LandingPage />;
   }
 
   return (
