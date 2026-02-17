@@ -1,13 +1,59 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Camera, Users, MapPin, Globe, Award, Zap, Shield, Smartphone } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
 export default function LandingPage() {
+  const [selectedFeature, setSelectedFeature] = useState(null);
+
   const handleGetStarted = () => {
     base44.auth.redirectToLogin(window.location.href);
   };
+
+  const features = [
+    {
+      id: "scanning",
+      icon: Camera,
+      iconColor: "text-blue-600",
+      bgColor: "bg-blue-100",
+      title: "Instant Scanning",
+      brief: "Scan single or double-sided cards, QR codes, or upload images. AI extracts every detail instantly.",
+      details: "Our advanced AI-powered scanner captures every detail from business cards in seconds. Scan both sides of a card, read QR codes instantly, or upload photos taken earlier. Works offline and online, perfect for busy trade shows where internet might be spotty. The AI automatically categorizes phone numbers (mobile, landline, fax) and detects the contact's country from their address.",
+      screenshot: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop"
+    },
+    {
+      id: "crm",
+      icon: Shield,
+      iconColor: "text-purple-600",
+      bgColor: "bg-purple-100",
+      title: "Export to CRM",
+      brief: "Export your contacts to Excel for CRM import, reporting, or backup. Your data, your control.",
+      details: "Export your entire contact database or specific exhibitions to Excel format with one click. The exported file is perfectly formatted for import into Salesforce, HubSpot, Zoho, or any CRM system. Includes all contact details, company information, and custom notes. You can also import contacts via CSV, making it easy to migrate from other systems or collaborate with your team.",
+      screenshot: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop"
+    },
+    {
+      id: "places",
+      icon: MapPin,
+      iconColor: "text-orange-600",
+      bgColor: "bg-orange-100",
+      title: "Places That Matter",
+      brief: "Save hotels, restaurants, venues. Share with the community or keep them private.",
+      details: "Never forget that amazing restaurant near the convention center. Save hotels, restaurants, bars, cafes, taxi ranks, and tourist attractions for each city you visit. Add ratings, notes, and photos. Keep places private for your personal reference, or share them with the community to help fellow travelers. When you return to a city, all your saved places are instantly available.",
+      screenshot: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=600&fit=crop"
+    },
+    {
+      id: "community",
+      icon: Users,
+      iconColor: "text-green-600",
+      bgColor: "bg-green-100",
+      title: "Community Powered",
+      brief: "Discover places shared by professionals in your city or exhibition. Local insights, global network.",
+      details: "Benefit from the collective knowledge of thousands of business travelers and exhibition attendees. When you visit a city or attend an exhibition, automatically see places shared by other professionals who've been there before. Filter by category, ratings, and proximity. Share your own discoveries to help the community. It's like having a local guide in every city you visit.",
+      screenshot: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&h=600&fit=crop"
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -52,54 +98,65 @@ export default function LandingPage() {
 
         {/* Feature Grid */}
         <div id="features" className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          <Card className="bg-white/80 backdrop-blur-sm border-2 hover:shadow-xl transition-all">
-            <CardHeader>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-3">
-                <Camera className="w-6 h-6 text-blue-600" />
-              </div>
-              <CardTitle>Instant Scanning</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Scan single or double-sided cards, QR codes, or upload images. AI extracts every detail instantly.</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/80 backdrop-blur-sm border-2 hover:shadow-xl transition-all">
-            <CardHeader>
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-3">
-                <Shield className="w-6 h-6 text-purple-600" />
-              </div>
-              <CardTitle>Export to CRM</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Export your contacts to Excel for CRM import, reporting, or backup. Your data, your control.</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/80 backdrop-blur-sm border-2 hover:shadow-xl transition-all">
-            <CardHeader>
-              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-3">
-                <MapPin className="w-6 h-6 text-orange-600" />
-              </div>
-              <CardTitle>Places That Matter</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Save hotels, restaurants, venues. Share with the community or keep them private.</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/80 backdrop-blur-sm border-2 hover:shadow-xl transition-all">
-            <CardHeader>
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-3">
-                <Users className="w-6 h-6 text-green-600" />
-              </div>
-              <CardTitle>Community Powered</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Discover places shared by professionals in your city or exhibition. Local insights, global network.</p>
-            </CardContent>
-          </Card>
+          {features.map((feature) => {
+            const Icon = feature.icon;
+            return (
+              <Card 
+                key={feature.id}
+                className="bg-white/80 backdrop-blur-sm border-2 hover:shadow-xl transition-all cursor-pointer hover:scale-105"
+                onClick={() => setSelectedFeature(feature)}
+              >
+                <CardHeader>
+                  <div className={`w-12 h-12 ${feature.bgColor} rounded-lg flex items-center justify-center mb-3`}>
+                    <Icon className={`w-6 h-6 ${feature.iconColor}`} />
+                  </div>
+                  <CardTitle>{feature.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">{feature.brief}</p>
+                  <p className="text-blue-600 text-sm mt-3 font-medium">Click to learn more →</p>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
+
+        {/* Feature Detail Dialog */}
+        <Dialog open={!!selectedFeature} onOpenChange={() => setSelectedFeature(null)}>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            {selectedFeature && (
+              <>
+                <DialogHeader>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`w-12 h-12 ${selectedFeature.bgColor} rounded-lg flex items-center justify-center`}>
+                      {React.createElement(selectedFeature.icon, { className: `w-6 h-6 ${selectedFeature.iconColor}` })}
+                    </div>
+                    <DialogTitle className="text-2xl">{selectedFeature.title}</DialogTitle>
+                  </div>
+                </DialogHeader>
+                <div className="space-y-6">
+                  <div className="rounded-lg overflow-hidden">
+                    <img 
+                      src={selectedFeature.screenshot} 
+                      alt={selectedFeature.title}
+                      className="w-full h-64 object-cover"
+                    />
+                  </div>
+                  <p className="text-gray-700 leading-relaxed text-lg">
+                    {selectedFeature.details}
+                  </p>
+                  <Button 
+                    onClick={handleGetStarted}
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                    size="lg"
+                  >
+                    Get Started Free
+                  </Button>
+                </div>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
 
         {/* How It Works */}
         <div className="text-center mb-16">
