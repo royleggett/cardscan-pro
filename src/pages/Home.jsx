@@ -65,28 +65,28 @@ export default function Home() {
         
         <div className="max-w-md mx-auto space-y-4">
           <Link to={createPageUrl("Exhibitions")}>
-            <Button className="w-full h-20 text-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all">
+            <Button className="w-full h-20 text-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:from-blue-800 active:to-blue-900 shadow-lg hover:shadow-xl transition-all">
               <FolderOpen className="w-6 h-6 mr-3" />
               My Exhibitions
             </Button>
           </Link>
           
           <Link to={createPageUrl("NewExhibition")}>
-            <Button className="w-full h-20 text-lg bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
+            <Button className="w-full h-20 text-lg bg-white hover:bg-gray-50 active:bg-blue-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
               <Plus className="w-6 h-6 mr-3" />
               Create New Exhibition
             </Button>
           </Link>
 
           <Link to={createPageUrl("AllContacts")}>
-            <Button className="w-full h-20 text-lg bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
+            <Button className="w-full h-20 text-lg bg-white hover:bg-gray-50 active:bg-blue-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
               <Users className="w-6 h-6 mr-3" />
               View All Contacts
             </Button>
           </Link>
 
           <Link to={createPageUrl("ImportExport")}>
-            <Button className="w-full h-20 text-lg bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
+            <Button className="w-full h-20 text-lg bg-white hover:bg-gray-50 active:bg-blue-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
               <Upload className="w-6 h-6 mr-3" />
               Import / Export
             </Button>
