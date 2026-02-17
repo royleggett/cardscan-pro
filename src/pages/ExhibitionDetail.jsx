@@ -273,11 +273,11 @@ export default function ExhibitionDetail() {
 
             {contacts.length === 0 && (
               <div className="text-center py-20 bg-white/50 backdrop-blur-sm rounded-2xl">
-                <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Plus className="w-12 h-12 text-blue-600" />
+                <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Search className="w-12 h-12 text-blue-600" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">No contacts yet</h3>
-                <p className="text-gray-500">Scan your first business card to get started</p>
+                <p className="text-gray-500 mb-4">Click "Add Contact" above to scan your first business card</p>
               </div>
             )}
 
@@ -301,11 +301,11 @@ export default function ExhibitionDetail() {
 
             {places.length === 0 && (
               <div className="text-center py-20 bg-white/50 backdrop-blur-sm rounded-2xl">
-                <div className="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="w-24 h-24 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center mx-auto mb-6">
                   <MapPin className="w-12 h-12 text-orange-600" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">No places yet</h3>
-                <p className="text-gray-500">Add your first restaurant or place</p>
+                <p className="text-gray-500 mb-4">Click "Add Place" above to save your first location</p>
               </div>
             )}
           </TabsContent>
