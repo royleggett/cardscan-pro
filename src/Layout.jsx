@@ -46,46 +46,46 @@ export default function Layout({ children }) {
 
       <main>{children}</main>
 
-      {isAuthenticated && (
+{isAuthenticated && (
         <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 shadow-lg">
-        <div className="flex h-20 max-w-md mx-auto">
-          <Link 
-            to={createPageUrl("Home")} 
-            className={`flex-1 flex flex-col items-center justify-center transition-all ${
-              isActive("Home") 
-                ? "text-blue-600 bg-blue-50" 
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            }`}
-          >
-            <Home className="w-6 h-6 mb-1" />
-            <span className="text-xs font-medium">Home</span>
-          </Link>
-          
-          <Link 
-            to={createPageUrl("Exhibitions")} 
-            className={`flex-1 flex flex-col items-center justify-center transition-all ${
-              isActive("Exhibition") 
-                ? "text-blue-600 bg-blue-50" 
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            }`}
-          >
-            <FolderOpen className="w-6 h-6 mb-1" />
-            <span className="text-xs font-medium">Exhibitions</span>
-          </Link>
-          
-          <Link 
-            to={createPageUrl("AllContacts")} 
-            className={`flex-1 flex flex-col items-center justify-center transition-all ${
-              isActive("AllContacts") 
-                ? "text-blue-600 bg-blue-50" 
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            }`}
-          >
-            <Users className="w-6 h-6 mb-1" />
-            <span className="text-xs font-medium">Contacts</span>
-          </Link>
-        </div>
-      </nav>
+          <div className="flex h-20 max-w-md mx-auto">
+            <Link 
+              to={createPageUrl("Home")} 
+              className={`flex-1 flex flex-col items-center justify-center transition-all ${
+                isActive("Home") 
+                  ? "text-blue-600 bg-blue-50" 
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              <Home className="w-6 h-6 mb-1" />
+              <span className="text-xs font-medium">Home</span>
+            </Link>
+            
+            <Link 
+              to={createPageUrl("Exhibitions")} 
+              className={`flex-1 flex flex-col items-center justify-center transition-all ${
+                isActive("Exhibition") 
+                  ? "text-blue-600 bg-blue-50" 
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              <FolderOpen className="w-6 h-6 mb-1" />
+              <span className="text-xs font-medium">Exhibitions</span>
+            </Link>
+            
+            <Link 
+              to={createPageUrl("AllContacts")} 
+              className={`flex-1 flex flex-col items-center justify-center transition-all ${
+                isActive("AllContacts") 
+                  ? "text-blue-600 bg-blue-50" 
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              <Users className="w-6 h-6 mb-1" />
+              <span className="text-xs font-medium">Contacts</span>
+            </Link>
+          </div>
+        </nav>
       )}
     </div>
   );
