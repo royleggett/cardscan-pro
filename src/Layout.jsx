@@ -18,9 +18,11 @@ export default function Layout({ children }) {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 pb-20">
       <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10 shadow-sm">
         <div className="px-4 py-4 flex justify-between items-center">
-          <h1 className="font-bold text-2xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            CardScanner Pro
-          </h1>
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68e3b1d0b387a294f20142e9/bcdfcf951_CardScanPro_Icon.png" 
+            alt="CardScanner Pro" 
+            className="h-10 w-10"
+          />
           <Button 
             variant="ghost" 
             size="sm"

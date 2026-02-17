@@ -47,6 +47,11 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       <div className="px-4 py-8 max-w-7xl mx-auto">
         <div className="text-center mb-12">
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68e3b1d0b387a294f20142e9/bcdfcf951_CardScanPro_Icon.png" 
+            alt="CardScanner Pro" 
+            className="h-24 w-24 mx-auto mb-4"
+          />
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
             CardScanner Pro
           </h1>
