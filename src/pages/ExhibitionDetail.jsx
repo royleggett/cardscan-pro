@@ -77,19 +77,8 @@ export default function ExhibitionDetail() {
       const otherUsersPublicPlaces = allPublicPlaces.filter(p => {
         // Strictly exclude current user's places (they're already in myPlaces)
         if (p.created_by === currentUser.email) return false;
-        
-        // Match by exhibition ID
-        if (p.exhibition_id === exhibitionId) return true;
-        
-        // Match by location
-        if (ex.location && p.exhibition_id) {
-          const placeExhibition = allExhibitions.find(e => e.id === p.exhibition_id);
-          if (placeExhibition?.location && placeExhibition.location.toLowerCase() === ex.location.toLowerCase()) {
-            return true;
-          }
-        }
-        
-        return false;
+        // Only match by exact exhibition ID
+        return p.exhibition_id === exhibitionId;
       });
       
       setPlaces([...myPlaces, ...otherUsersPublicPlaces]);
