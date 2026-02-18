@@ -9,6 +9,9 @@ export default function Layout({ children }) {
   const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [logoTaps, setLogoTaps] = useState(0);
+  const [showAdminFlash, setShowAdminFlash] = useState(false);
+  const tapTimerRef = React.useRef(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -21,6 +24,21 @@ export default function Layout({ children }) {
     };
     checkAuth();
   }, [location]);
+
+  const handleLogoTap = () => {
+    if (!isAdmin) return;
+    const newCount = logoTaps + 1;
+    setLogoTaps(newCount);
+    clearTimeout(tapTimerRef.current);
+    if (newCount >= 5) {
+      setLogoTaps(0);
+      setShowAdminFlash(true);
+      setTimeout(() => setShowAdminFlash(false), 200);
+      window.location.href = createPageUrl("AdminUsers");
+    } else {
+      tapTimerRef.current = setTimeout(() => setLogoTaps(0), 2000);
+    }
+  };
   
   const isActive = (path) => location.pathname.includes(path);
 
