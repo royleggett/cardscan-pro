@@ -69,22 +69,20 @@ export default function ExhibitionDetail() {
         created_by: currentUser.email
       }, "-created_date");
       
-      // Get all public places
+      // Get public places from OTHER users only
       const allPublicPlaces = await base44.entities.Place.filter({ 
         is_public: true
       }, "-created_date");
       
-      // Filter public places by matching exhibition_id OR location (if location exists)
-      const relevantPublicPlaces = allPublicPlaces.filter(p => {
-        // Don't include user's own places
+      const otherUsersPublicPlaces = allPublicPlaces.filter(p => {
+        // Strictly exclude current user's places (they're already in myPlaces)
         if (p.created_by === currentUser.email) return false;
         
         // Match by exhibition ID
         if (p.exhibition_id === exhibitionId) return true;
         
-        // Match by location if both have location set
+        // Match by location
         if (ex.location && p.exhibition_id) {
-          // Find the exhibition that this place belongs to
           const placeExhibition = allExhibitions.find(e => e.id === p.exhibition_id);
           if (placeExhibition?.location && placeExhibition.location.toLowerCase() === ex.location.toLowerCase()) {
             return true;
@@ -94,14 +92,7 @@ export default function ExhibitionDetail() {
         return false;
       });
       
-      // Combine, deduplicating by ID (my shared places appear in both lists)
-      const allPlaces = [...myPlaces];
-      for (const p of relevantPublicPlaces) {
-        if (!allPlaces.find(mp => mp.id === p.id)) {
-          allPlaces.push(p);
-        }
-      }
-      setPlaces(allPlaces);
+      setPlaces([...myPlaces, ...otherUsersPublicPlaces]);
       
       setLoading(false);
     } catch (err) {
