@@ -53,7 +53,8 @@ export default function Layout({ children }) {
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68e3b1d0b387a294f20142e9/bcdfcf951_CardScanPro_Icon.png" 
             alt="CardScanner Pro" 
-            className="h-10 w-10"
+            className={`h-10 w-10 cursor-pointer select-none transition-opacity ${showAdminFlash ? "opacity-30" : "opacity-100"}`}
+            onClick={handleLogoTap}
           />
           <Button 
             variant="ghost" 
