@@ -94,8 +94,14 @@ export default function ExhibitionDetail() {
         return false;
       });
       
-      // Combine both lists
-      setPlaces([...myPlaces, ...relevantPublicPlaces]);
+      // Combine, deduplicating by ID (my shared places appear in both lists)
+      const allPlaces = [...myPlaces];
+      for (const p of relevantPublicPlaces) {
+        if (!allPlaces.find(mp => mp.id === p.id)) {
+          allPlaces.push(p);
+        }
+      }
+      setPlaces(allPlaces);
       
       setLoading(false);
     } catch (err) {
