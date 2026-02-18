@@ -49,7 +49,7 @@ export default function PlaceCard({ place, onUpdate }) {
 
   return (
     <>
-      <Card className="bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all">
+      <Card className={`bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all ${isMyPlace && place.is_public ? 'border-l-4 border-l-green-400' : ''}`}>
         <CardHeader className="pb-3">
           <div className="flex justify-between items-start">
             <div className="flex-1">
