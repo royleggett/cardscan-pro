@@ -89,6 +89,20 @@ export default function Layout({ children }) {
               <Users className="w-6 h-6 mb-1" />
               <span className="text-xs font-medium">Contacts</span>
             </Link>
+
+            {isAdmin && (
+              <Link 
+                to={createPageUrl("AdminUsers")} 
+                className={`flex-1 flex flex-col items-center justify-center transition-all ${
+                  isActive("AdminUsers") 
+                    ? "text-blue-600 bg-blue-50" 
+                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                <Settings className="w-6 h-6 mb-1" />
+                <span className="text-xs font-medium">Admin</span>
+              </Link>
+            )}
           </div>
         </nav>
       )}
