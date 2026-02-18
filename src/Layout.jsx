@@ -8,11 +8,16 @@ import { Button } from "@/components/ui/button";
 export default function Layout({ children }) {
   const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
       const authenticated = await base44.auth.isAuthenticated();
       setIsAuthenticated(authenticated);
+      if (authenticated) {
+        const user = await base44.auth.me();
+        setIsAdmin(user?.role === "admin");
+      }
     };
     checkAuth();
   }, [location]);
