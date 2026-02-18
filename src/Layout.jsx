@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
-import { Home, FolderOpen, Users, LogOut } from "lucide-react";
+import { Home, FolderOpen, Users, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Layout({ children }) {
