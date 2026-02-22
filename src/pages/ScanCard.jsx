@@ -484,13 +484,22 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
 
   if (extractedData) {
     return (
-      <ContactPreview
-        data={extractedData}
-        imageUrl={cardImageUrl}
-        imageBackUrl={cardImageBackUrl}
-        onSave={handleSave}
-        onCancel={handleCancel}
-      />
+      <>
+        <ContactPreview
+          data={extractedData}
+          imageUrl={cardImageUrl}
+          imageBackUrl={cardImageBackUrl}
+          onSave={handleSave}
+          onCancel={handleCancel}
+        />
+        <FollowUpDialog
+          open={showFollowUp}
+          contactName={pendingContact?.full_name}
+          contactEmail={pendingContact?.email}
+          exhibitionName={exhibitionName}
+          onComplete={handleFollowUpComplete}
+        />
+      </>
     );
   }
 
