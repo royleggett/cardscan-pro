@@ -36,7 +36,7 @@ export default function ScanCard() {
 
   React.useEffect(() => {
     if (exhibitionId) {
-      Exhibition.get(exhibitionId).then(ex => setExhibitionName(ex?.name || "")).catch(() => {});
+      Exhibition.filter({ id: exhibitionId }).then(list => setExhibitionName(list[0]?.name || "")).catch(() => {});
     }
   }, [exhibitionId]);
 
