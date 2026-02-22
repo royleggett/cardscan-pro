@@ -29,7 +29,16 @@ export default function ScanCard() {
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState(null);
   const [statusMessage, setStatusMessage] = useState("");
+  const [showFollowUp, setShowFollowUp] = useState(false);
+  const [pendingContact, setPendingContact] = useState(null);
+  const [exhibitionName, setExhibitionName] = useState("");
   const fileInputRef = useRef(null);
+
+  React.useEffect(() => {
+    if (exhibitionId) {
+      Exhibition.get(exhibitionId).then(ex => setExhibitionName(ex?.name || "")).catch(() => {});
+    }
+  }, [exhibitionId]);
 
   const compressImage = async (file) => {
     return new Promise((resolve) => {
