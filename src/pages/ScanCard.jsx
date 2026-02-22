@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 import { Contact } from "@/entities/Contact";
+import { Exhibition } from "@/entities/Exhibition";
 import { base44 } from "@/api/base44Client";
+import { sendThankYouEmail } from "@/functions/sendThankYouEmail";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Camera, Upload, Loader2, Edit, AlertCircle, QrCode, FlipHorizontal } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +12,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import CameraCapture from "../components/scan/CameraCapture";
 import ContactPreview from "../components/scan/ContactPreview";
 import QRScanner from "../components/scan/QRScanner";
+import FollowUpDialog from "../components/scan/FollowUpDialog";
 
 export default function ScanCard() {
   const navigate = useNavigate();
