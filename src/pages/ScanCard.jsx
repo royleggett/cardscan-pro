@@ -428,11 +428,32 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
   };
 
   const handleSave = async (contactData) => {
-    await Contact.create({
+    setPendingContact(contactData);
+    setShowFollowUp(true);
+  };
+
+  const handleFollowUpComplete = async ({ follow_up_type, follow_up_date, sendThankYou }) => {
+    setShowFollowUp(false);
+    const user = await base44.auth.me();
+    const contactToSave = {
       exhibition_id: exhibitionId,
-      ...contactData
-    });
-    
+      ...pendingContact,
+      follow_up_type,
+      follow_up_date: follow_up_date || undefined,
+      thank_you_sent: sendThankYou
+    };
+
+    await Contact.create(contactToSave);
+
+    if (sendThankYou && pendingContact.email) {
+      await sendThankYouEmail({
+        contactEmail: pendingContact.email,
+        contactName: pendingContact.full_name,
+        exhibitionName,
+        senderName: user?.full_name || ""
+      });
+    }
+
     navigate(createPageUrl(`ExhibitionDetail?id=${exhibitionId}`));
   };
 
