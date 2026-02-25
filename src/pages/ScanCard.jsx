@@ -13,6 +13,7 @@ import CameraCapture from "../components/scan/CameraCapture";
 import ContactPreview from "../components/scan/ContactPreview";
 import QRScanner from "../components/scan/QRScanner";
 import FollowUpDialog from "../components/scan/FollowUpDialog";
+import DuplicateWarningDialog from "../components/scan/DuplicateWarningDialog";
 
 export default function ScanCard() {
   const navigate = useNavigate();
