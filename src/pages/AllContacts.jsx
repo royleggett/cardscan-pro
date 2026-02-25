@@ -182,6 +182,7 @@ export default function AllContacts() {
             <ContactCard
               contact={contact}
               onUpdate={loadData}
+              defaultTags={defaultTags}
             />
           </div>
         ))}
