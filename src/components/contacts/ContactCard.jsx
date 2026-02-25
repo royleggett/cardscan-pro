@@ -48,6 +48,15 @@ export default function ContactCard({ contact, onUpdate }) {
     onUpdate();
   };
 
+  const handleTagToggle = async (tag) => {
+    setSavingTag(true);
+    const current = contact.tags || [];
+    const updated = current.includes(tag) ? current.filter(t => t !== tag) : [...current, tag];
+    await Contact.update(contact.id, { tags: updated });
+    setSavingTag(false);
+    onUpdate();
+  };
+
   return (
     <>
       <Card className="bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-200">
