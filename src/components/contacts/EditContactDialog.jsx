@@ -11,6 +11,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Save } from "lucide-react";
+import VoiceNoteButton from "@/components/contacts/VoiceNoteButton";
 
 export default function EditContactDialog({ open, onOpenChange, contact, onSave }) {
   const [formData, setFormData] = useState(contact);
