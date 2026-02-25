@@ -29,7 +29,9 @@ Deno.serve(async (req) => {
 
     // Use the user's own Resend credentials
     const resendApiKey = user.resend_api_key;
-    const fromEmail = user.resend_from_email || "onboarding@resend.dev";
+    // Only use the saved from email if it looks valid (not a placeholder or unverified domain)
+    const savedFrom = user.resend_from_email;
+    const fromEmail = (savedFrom && savedFrom.trim()) ? savedFrom.trim() : "onboarding@resend.dev";
 
     if (!resendApiKey) {
       return Response.json({ error: 'Email not configured. Please add your Resend API key in Email Settings.' }, { status: 400 });

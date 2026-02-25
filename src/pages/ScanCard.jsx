@@ -446,12 +446,16 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
     await Contact.create(contactToSave);
 
     if (sendThankYou && pendingContact.email) {
-      await sendThankYouEmail({
-        contactEmail: pendingContact.email,
-        contactName: pendingContact.full_name,
-        exhibitionName,
-        senderName: user?.full_name || ""
-      });
+      try {
+        await sendThankYouEmail({
+          contactEmail: pendingContact.email,
+          contactName: pendingContact.full_name,
+          exhibitionName,
+          senderName: user?.full_name || ""
+        });
+      } catch (e) {
+        console.error("Email failed:", e);
+      }
     }
 
     navigate(createPageUrl(`ExhibitionDetail?id=${exhibitionId}`));
