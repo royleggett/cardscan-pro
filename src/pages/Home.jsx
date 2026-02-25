@@ -102,6 +102,42 @@ export default function Home() {
           )}
         </div>
         
+        {followUpAlerts.length > 0 && (
+          <div className="max-w-md mx-auto mb-6">
+            <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <p className="font-semibold text-amber-800 mb-2">
+                    {followUpAlerts.length} lead{followUpAlerts.length !== 1 ? "s" : ""} need following up
+                  </p>
+                  <div className="space-y-1">
+                    {followUpAlerts.slice(0, 3).map((alert, i) => {
+                      const Icon = alert.type === "hot" ? Flame : alert.type === "warm" ? Thermometer : Snowflake;
+                      const color = alert.type === "hot" ? "text-red-500" : alert.type === "warm" ? "text-amber-500" : "text-blue-400";
+                      return (
+                        <div key={i} className="flex items-center gap-2 text-sm text-amber-700">
+                          <Icon className={`w-3.5 h-3.5 ${color}`} />
+                          <span className="font-medium">{alert.contact.full_name}</span>
+                          {alert.contact.company && <span className="text-amber-600">· {alert.contact.company}</span>}
+                        </div>
+                      );
+                    })}
+                    {followUpAlerts.length > 3 && (
+                      <p className="text-xs text-amber-600 mt-1">+{followUpAlerts.length - 3} more</p>
+                    )}
+                  </div>
+                  <Link to={createPageUrl("AllContacts")} className="inline-block mt-3">
+                    <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white">
+                      View All Contacts
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="max-w-md mx-auto space-y-4">
           <Link to={createPageUrl("Exhibitions")}>
             <Button className="w-full h-20 text-lg bg-white hover:bg-gray-50 active:bg-blue-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
