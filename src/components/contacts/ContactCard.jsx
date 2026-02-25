@@ -217,11 +217,20 @@ export default function ContactCard({ contact, onUpdate }) {
                         key={tag}
                         onClick={() => handleTagToggle(tag)}
                         disabled={savingTag}
-                        className={`px-3 py-1.5 rounded-full text-xs font-semibold border-2 transition-all ${
+                        className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold border-2 transition-all ${
                           isActive ? "bg-purple-100 text-purple-800 border-purple-300" : "bg-white text-gray-400 border-gray-200 hover:border-purple-200"
                         }`}
                       >
                         {tag}
+                        {isActive && (
+                          <span
+                            role="button"
+                            onClick={(e) => { e.stopPropagation(); handleRemoveTag(tag); }}
+                            className="ml-0.5 hover:text-red-500"
+                          >
+                            <X className="w-3 h-3" />
+                          </span>
+                        )}
                       </button>
                     );
                   })}
