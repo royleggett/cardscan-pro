@@ -77,6 +77,11 @@ export default function ContactCard({ contact, onUpdate }) {
                     {contact.country}
                   </Badge>
                 )}
+                {(contact.tags || []).map(tag => (
+                  <Badge key={tag} variant="secondary" className="bg-purple-100 text-purple-800 px-3 py-1">
+                    {tag}
+                  </Badge>
+                ))}
                 {contact.follow_up_type && contact.follow_up_type !== "none" && (() => {
                   const cfg = LEAD_CONFIG[contact.follow_up_type];
                   const Icon = cfg?.icon;
