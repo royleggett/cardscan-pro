@@ -532,6 +532,13 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
           exhibitionName={exhibitionName}
           onComplete={handleFollowUpComplete}
         />
+        <DuplicateWarningDialog
+          open={showDuplicateWarning}
+          duplicate={duplicateContact}
+          exhibitionName={duplicateExhibitionName}
+          onContinue={() => { setShowDuplicateWarning(false); setShowFollowUp(true); }}
+          onCancel={() => { setShowDuplicateWarning(false); }}
+        />
       </>
     );
   }
