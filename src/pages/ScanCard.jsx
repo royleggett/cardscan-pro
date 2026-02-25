@@ -31,6 +31,9 @@ export default function ScanCard() {
   const [error, setError] = useState(null);
   const [statusMessage, setStatusMessage] = useState("");
   const [showFollowUp, setShowFollowUp] = useState(false);
+  const [showDuplicateWarning, setShowDuplicateWarning] = useState(false);
+  const [duplicateContact, setDuplicateContact] = useState(null);
+  const [duplicateExhibitionName, setDuplicateExhibitionName] = useState("");
   const [pendingContact, setPendingContact] = useState(null);
   const [exhibitionName, setExhibitionName] = useState("");
   const fileInputRef = useRef(null);
