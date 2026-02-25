@@ -30,6 +30,7 @@ export default function ContactCard({ contact, onUpdate }) {
   const [expanded, setExpanded] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [savingTag, setSavingTag] = useState(false);
 
   const handleDelete = async () => {
     await Contact.delete(contact.id);
