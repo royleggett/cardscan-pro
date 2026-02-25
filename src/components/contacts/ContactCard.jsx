@@ -3,7 +3,8 @@ import { Contact } from "@/entities/Contact";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Building2, Mail, Phone, Globe, MapPin, Trash2, ChevronDown, ChevronUp, Flag, Pencil, Flame, Thermometer, Snowflake } from "lucide-react";
+import { Building2, Mail, Phone, Globe, MapPin, Trash2, ChevronDown, ChevronUp, Flag, Pencil, Flame, Thermometer, Snowflake, X, Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 const INDUSTRY_TAGS = ["Buyer", "Owner", "Decision Maker", "Technician", "Installer", "Sales", "Marketing"];
 
