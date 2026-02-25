@@ -36,6 +36,7 @@ export default function ExhibitionDetail() {
   const [showAddPlace, setShowAddPlace] = useState(false);
   const [fileName, setFileName] = useState("");
   const [loading, setLoading] = useState(true);
+  const [defaultTags, setDefaultTags] = useState([]);
 
   useEffect(() => {
     if (exhibitionId) {
