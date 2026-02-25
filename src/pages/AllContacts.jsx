@@ -46,6 +46,8 @@ export default function AllContacts() {
         exhibitionsMap[ex.id] = ex.name;
       });
       
+      const user = contactsList ? await base44.auth.me() : null;
+      setDefaultTags(user?.default_tags || []);
       setContacts(contactsList);
       setExhibitions(exhibitionsMap);
     } catch (err) {
