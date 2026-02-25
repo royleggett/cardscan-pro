@@ -93,6 +93,21 @@ export default function Settings() {
     setBody(DEFAULT_BODY);
   };
 
+  const handleAddDefaultTag = async () => {
+    const t = newDefaultTag.trim();
+    if (!t || defaultTags.includes(t)) { setNewDefaultTag(""); return; }
+    const updated = [...defaultTags, t];
+    setDefaultTags(updated);
+    setNewDefaultTag("");
+    await base44.auth.updateMe({ default_tags: updated });
+  };
+
+  const handleRemoveDefaultTag = async (tag) => {
+    const updated = defaultTags.filter(t => t !== tag);
+    setDefaultTags(updated);
+    await base44.auth.updateMe({ default_tags: updated });
+  };
+
   const LeadRow = ({ icon: Icon, iconColor, label, enabled, onToggle, days, onDaysChange }) => (
     <div className={`rounded-xl border-2 p-4 transition-all ${enabled ? "border-current opacity-100" : "border-gray-200 opacity-60"}`} style={{ borderColor: enabled ? undefined : undefined }}>
       <div className="flex items-center justify-between mb-3">
