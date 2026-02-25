@@ -3,8 +3,9 @@ import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
-import { Plus, FolderOpen, Users, Upload, Mail } from "lucide-react";
+import { Plus, FolderOpen, Users, Upload, Settings, Flame, Thermometer, Snowflake, AlertCircle } from "lucide-react";
 import LandingPage from "@/components/LandingPage";
+import { base44 } from "@/api/base44Client";
 
 export default function Home() {
   const [user, setUser] = useState(null);
