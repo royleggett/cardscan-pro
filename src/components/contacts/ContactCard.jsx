@@ -209,6 +209,7 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [] }) {
               )}
               <div>
                 <p className="text-xs text-gray-500 font-semibold mb-2">Tags</p>
+                {/* Active tags */}
                 <div className="flex gap-2 flex-wrap mb-2">
                   {(contact.tags || []).map(tag => (
                     <span key={tag} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-800 border-2 border-purple-300">
@@ -219,6 +220,21 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [] }) {
                     </span>
                   ))}
                 </div>
+                {/* Default tags quick-add */}
+                {defaultTags.filter(t => !(contact.tags || []).includes(t)).length > 0 && (
+                  <div className="flex gap-2 flex-wrap mb-2">
+                    {defaultTags.filter(t => !(contact.tags || []).includes(t)).map(tag => (
+                      <button
+                        key={tag}
+                        onClick={() => handleTagToggle(tag)}
+                        disabled={savingTag}
+                        className="px-3 py-1.5 rounded-full text-xs font-semibold border-2 bg-white text-gray-400 border-gray-200 hover:border-purple-300 hover:text-purple-700 transition-all"
+                      >
+                        + {tag}
+                      </button>
+                    ))}
+                  </div>
+                )}
                 <div className="flex gap-2 mt-1">
                   <Input
                     value={newTag}
