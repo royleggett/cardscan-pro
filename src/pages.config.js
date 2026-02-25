@@ -58,6 +58,7 @@ import ImportExport from './pages/ImportExport';
 import MyCard from './pages/MyCard';
 import NewExhibition from './pages/NewExhibition';
 import ScanCard from './pages/ScanCard';
+import EmailSettings from './pages/EmailSettings';
 import __Layout from './Layout.jsx';
 
 
@@ -73,6 +74,7 @@ export const PAGES = {
     "MyCard": MyCard,
     "NewExhibition": NewExhibition,
     "ScanCard": ScanCard,
+    "EmailSettings": EmailSettings,
 }
 
 export const pagesConfig = {
