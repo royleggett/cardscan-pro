@@ -35,6 +35,7 @@ export default function ExhibitionDetail() {
   const [showEdit, setShowEdit] = useState(false);
   const [showExport, setShowExport] = useState(false);
   const [showAddPlace, setShowAddPlace] = useState(false);
+  const [showBookTaxi, setShowBookTaxi] = useState(false);
   const [fileName, setFileName] = useState("");
   const [loading, setLoading] = useState(true);
   const [defaultTags, setDefaultTags] = useState([]);
