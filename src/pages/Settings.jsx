@@ -167,6 +167,61 @@ export default function Settings() {
           </CardContent>
         </Card>
 
+        {/* Default Tags */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Default Tags</CardTitle>
+            <CardDescription>
+              Add tags here to quickly apply them to any contact. These also export in the CSV.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-2 flex-wrap mb-3">
+              {defaultTags.map(tag => (
+                <span key={tag} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-800 border-2 border-purple-300">
+                  {tag}
+                  <button
+                    onClick={() => setDefaultTags(defaultTags.filter(t => t !== tag))}
+                    className="ml-0.5 hover:text-red-500"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+              {defaultTags.length === 0 && (
+                <p className="text-sm text-gray-400">No default tags yet.</p>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <Input
+                value={newDefaultTag}
+                onChange={e => setNewDefaultTag(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === "Enter") {
+                    const t = newDefaultTag.trim();
+                    if (t && !defaultTags.includes(t)) setDefaultTags([...defaultTags, t]);
+                    setNewDefaultTag("");
+                  }
+                }}
+                placeholder="New tag name..."
+                className="h-9 text-sm"
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const t = newDefaultTag.trim();
+                  if (t && !defaultTags.includes(t)) setDefaultTags([...defaultTags, t]);
+                  setNewDefaultTag("");
+                }}
+                disabled={!newDefaultTag.trim()}
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Email Setup */}
         <Card className="mb-6">
           <CardHeader>
