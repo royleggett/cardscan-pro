@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Plus, ArrowLeft, Search, Download, Settings, MapPin, Car } from "lucide-react";
+import { ArrowLeft, Search, Download, Settings, MapPin, Car, ScanLine, Building2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
