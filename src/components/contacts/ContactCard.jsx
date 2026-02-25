@@ -186,6 +186,27 @@ export default function ContactCard({ contact, onUpdate }) {
                 </div>
               )}
               <div>
+                <p className="text-xs text-gray-500 font-semibold mb-2">Tags</p>
+                <div className="flex gap-2 flex-wrap">
+                  {INDUSTRY_TAGS.map(tag => {
+                    const isActive = (contact.tags || []).includes(tag);
+                    return (
+                      <button
+                        key={tag}
+                        onClick={() => handleTagToggle(tag)}
+                        disabled={savingTag}
+                        className={`px-3 py-1.5 rounded-full text-xs font-semibold border-2 transition-all ${
+                          isActive ? "bg-purple-100 text-purple-800 border-purple-300" : "bg-white text-gray-400 border-gray-200 hover:border-purple-200"
+                        }`}
+                      >
+                        {tag}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
                 <p className="text-xs text-gray-500 font-semibold mb-2">Lead Temperature</p>
                 <div className="flex gap-2 flex-wrap">
                   {["hot","warm","cool","none"].map(type => {
