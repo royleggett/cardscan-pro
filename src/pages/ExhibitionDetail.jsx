@@ -217,7 +217,7 @@ export default function ExhibitionDetail() {
           <div className="grid grid-cols-3 gap-3">
             <Link to={createPageUrl(`ScanCard?exhibition_id=${exhibitionId}`)}>
               <Button className="w-full h-16 flex flex-col items-center justify-center gap-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg">
-                <Plus className="w-5 h-5" />
+                <ScanLine className="w-5 h-5" />
                 <span className="text-xs font-medium">Add Contact</span>
               </Button>
             </Link>
