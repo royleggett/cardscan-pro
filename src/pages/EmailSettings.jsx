@@ -101,14 +101,14 @@ export default function EmailSettings() {
                   <p className="text-xs text-gray-500 mt-1">Get from resend.com/api-keys</p>
                 </div>
                 <div>
-                  <Label className="mb-1 block">From Email Address</Label>
+                  <Label className="mb-1 block">From Email Address (Optional)</Label>
                   <Input 
                     type="email"
-                    placeholder="hello@yourdomain.com"
+                    placeholder="onboarding@resend.dev (default)"
                     value={fromEmail} 
                     onChange={e => setFromEmail(e.target.value)} 
                   />
-                  <p className="text-xs text-gray-500 mt-1">Must be verified at resend.com/domains</p>
+                  <p className="text-xs text-gray-500 mt-1">Leave blank to use onboarding@resend.dev (testing only). For production, verify your domain at resend.com/domains</p>
                 </div>
               </>
             )}

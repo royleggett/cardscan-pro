@@ -29,10 +29,10 @@ Deno.serve(async (req) => {
 
     // Use the user's own Resend credentials
     const resendApiKey = user.resend_api_key;
-    const fromEmail = user.resend_from_email;
+    const fromEmail = user.resend_from_email || "onboarding@resend.dev";
 
-    if (!resendApiKey || !fromEmail) {
-      return Response.json({ error: 'Email not configured. Please add your Resend API key and from address in Email Settings.' }, { status: 400 });
+    if (!resendApiKey) {
+      return Response.json({ error: 'Email not configured. Please add your Resend API key in Email Settings.' }, { status: 400 });
     }
 
     // Load custom template if one exists (scoped to this user)
