@@ -36,7 +36,27 @@ Deno.serve(async (req) => {
     const subject = applyPlaceholders(subjectTemplate, vars);
     const body = applyPlaceholders(bodyTemplate, vars);
 
-    await base44.integrations.Core.SendEmail({ to: contactEmail, subject, body });
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${resendApiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        from: "CardScan Pro <onboarding@resend.dev>",
+        to: [contactEmail],
+        subject,
+        text: body
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      return Response.json({ error: data.message || "Failed to send email" }, { status: 500 });
+    }
 
     return Response.json({ success: true });
   } catch (error) {
