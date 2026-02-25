@@ -14,6 +14,7 @@ export default function ContactPreview({ data, imageUrl, imageBackUrl, onSave, o
     e.preventDefault();
     setSaving(true);
     await onSave(formData);
+    setSaving(false);
   };
 
   return (
