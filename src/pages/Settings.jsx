@@ -80,6 +80,7 @@ export default function Settings() {
       followup_days_hot: Number(daysHot),
       followup_days_warm: Number(daysWarm),
       followup_days_cool: Number(daysCool),
+      default_tags: defaultTags,
     });
 
     setSaving(false);
