@@ -167,10 +167,10 @@ export default function Home() {
             </Button>
           </Link>
 
-          <Link to={createPageUrl("EmailSettings")}>
+          <Link to={createPageUrl("Settings")}>
             <Button className="w-full h-20 text-lg bg-white hover:bg-gray-50 active:bg-blue-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
-              <Mail className="w-6 h-6 mr-3" />
-              Email Template
+              <Settings className="w-6 h-6 mr-3" />
+              Settings
             </Button>
           </Link>
         </div>
