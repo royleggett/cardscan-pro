@@ -83,7 +83,7 @@ export default function ExhibitionDetail() {
       });
       
       setPlaces([...myPlaces, ...otherUsersPublicPlaces]);
-      
+      setDefaultTags(currentUser?.default_tags || []);
       setLoading(false);
     } catch (err) {
       base44.auth.redirectToLogin();
