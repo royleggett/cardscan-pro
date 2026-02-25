@@ -66,7 +66,9 @@ export default function AllContacts() {
       'Country/Area': contact.country || '',
       'Website': contact.website || '',
       'Address': contact.address || '',
-      'Notes': contact.notes || ''
+      'Notes': contact.notes || '',
+      'Tags': (contact.tags || []).join(', '),
+      'Lead Temperature': contact.follow_up_type || ''
     }));
 
     const headers = Object.keys(exportData[0] || {});
