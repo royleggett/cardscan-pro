@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Building2, Mail, Phone, Globe, MapPin, Trash2, ChevronDown, ChevronUp, Flag, Pencil, Flame, Thermometer, Snowflake, X, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-const INDUSTRY_TAGS = ["Buyer", "Owner", "Decision Maker", "Technician", "Installer", "Sales", "Marketing"];
+
 
 const LEAD_CONFIG = {
   hot:  { label: "Hot",  icon: Flame,       bg: "bg-red-100",    text: "text-red-700"    },
