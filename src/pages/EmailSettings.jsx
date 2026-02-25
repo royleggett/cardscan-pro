@@ -22,6 +22,8 @@ Warm regards,
 export default function EmailSettings() {
   const [subject, setSubject] = useState(DEFAULT_SUBJECT);
   const [body, setBody] = useState(DEFAULT_BODY);
+  const [resendApiKey, setResendApiKey] = useState("");
+  const [fromEmail, setFromEmail] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -31,11 +33,14 @@ export default function EmailSettings() {
   }, []);
 
   const loadTemplate = async () => {
+    const user = await base44.auth.me();
     const templates = await base44.entities.EmailTemplate.filter({ template_key: "thank_you" });
     if (templates.length > 0) {
       setSubject(templates[0].subject);
       setBody(templates[0].body);
     }
+    setResendApiKey(user?.resend_api_key || "");
+    setFromEmail(user?.resend_from_email || "");
     setLoading(false);
   };
 
@@ -47,6 +52,12 @@ export default function EmailSettings() {
     } else {
       await base44.entities.EmailTemplate.create({ template_key: "thank_you", subject, body });
     }
+    
+    await base44.auth.updateMe({
+      resend_api_key: resendApiKey,
+      resend_from_email: fromEmail
+    });
+    
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
@@ -67,9 +78,46 @@ export default function EmailSettings() {
           </Button>
         </Link>
 
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Email Setup</CardTitle>
+            <CardDescription>
+              Configure your Resend account to send thank you emails to contacts. Get your free API key at <a href="https://resend.com" target="_blank" className="text-blue-600 hover:underline">resend.com</a>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {loading ? (
+              <div className="text-center py-8 text-gray-400">Loading...</div>
+            ) : (
+              <>
+                <div>
+                  <Label className="mb-1 block">Resend API Key</Label>
+                  <Input 
+                    type="password"
+                    placeholder="re_..."
+                    value={resendApiKey} 
+                    onChange={e => setResendApiKey(e.target.value)} 
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Get from resend.com/api-keys</p>
+                </div>
+                <div>
+                  <Label className="mb-1 block">From Email Address</Label>
+                  <Input 
+                    type="email"
+                    placeholder="hello@yourdomain.com"
+                    value={fromEmail} 
+                    onChange={e => setFromEmail(e.target.value)} 
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Must be verified at resend.com/domains</p>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
-            <CardTitle>Thank You Email Template</CardTitle>
+            <CardTitle>Email Template</CardTitle>
             <CardDescription>
               Customise the email sent to contacts after scanning their card.
               Use these placeholders and they'll be replaced automatically:
@@ -107,7 +155,7 @@ export default function EmailSettings() {
                   </Button>
                   <Button onClick={handleSave} disabled={saving} className="flex-1 bg-blue-600 hover:bg-blue-700 gap-2">
                     <Save className="w-4 h-4" />
-                    {saved ? "Saved!" : saving ? "Saving..." : "Save Template"}
+                    {saved ? "Saved!" : saving ? "Saving..." : "Save Settings"}
                   </Button>
                 </div>
               </>

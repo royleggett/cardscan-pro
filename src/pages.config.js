@@ -50,6 +50,7 @@
 import AddContact from './pages/AddContact';
 import AdminUsers from './pages/AdminUsers';
 import AllContacts from './pages/AllContacts';
+import EmailSettings from './pages/EmailSettings';
 import ExhibitionDetail from './pages/ExhibitionDetail';
 import Exhibitions from './pages/Exhibitions';
 import Home from './pages/Home';
@@ -58,7 +59,6 @@ import ImportExport from './pages/ImportExport';
 import MyCard from './pages/MyCard';
 import NewExhibition from './pages/NewExhibition';
 import ScanCard from './pages/ScanCard';
-import EmailSettings from './pages/EmailSettings';
 import __Layout from './Layout.jsx';
 
 
@@ -66,6 +66,7 @@ export const PAGES = {
     "AddContact": AddContact,
     "AdminUsers": AdminUsers,
     "AllContacts": AllContacts,
+    "EmailSettings": EmailSettings,
     "ExhibitionDetail": ExhibitionDetail,
     "Exhibitions": Exhibitions,
     "Home": Home,
@@ -74,7 +75,6 @@ export const PAGES = {
     "MyCard": MyCard,
     "NewExhibition": NewExhibition,
     "ScanCard": ScanCard,
-    "EmailSettings": EmailSettings,
 }
 
 export const pagesConfig = {
