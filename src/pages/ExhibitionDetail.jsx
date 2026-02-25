@@ -256,6 +256,7 @@ export default function ExhibitionDetail() {
                   key={contact.id}
                   contact={contact}
                   onUpdate={loadData}
+                  defaultTags={defaultTags}
                 />
               ))}
             </div>
