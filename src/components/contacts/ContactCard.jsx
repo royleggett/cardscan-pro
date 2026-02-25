@@ -209,7 +209,7 @@ export default function ContactCard({ contact, onUpdate }) {
               )}
               <div>
                 <p className="text-xs text-gray-500 font-semibold mb-2">Tags</p>
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-2 flex-wrap mb-2">
                   {INDUSTRY_TAGS.map(tag => {
                     const isActive = (contact.tags || []).includes(tag);
                     return (
@@ -225,6 +225,36 @@ export default function ContactCard({ contact, onUpdate }) {
                       </button>
                     );
                   })}
+                </div>
+                {/* Custom tags */}
+                {(contact.tags || []).filter(t => !INDUSTRY_TAGS.includes(t)).length > 0 && (
+                  <div className="flex gap-2 flex-wrap mb-2">
+                    {(contact.tags || []).filter(t => !INDUSTRY_TAGS.includes(t)).map(tag => (
+                      <span key={tag} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-800 border-2 border-purple-300">
+                        {tag}
+                        <button onClick={() => handleRemoveTag(tag)} disabled={savingTag} className="ml-1 hover:text-red-500">
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {/* Add custom tag */}
+                <div className="flex gap-2 mt-1">
+                  <Input
+                    value={newTag}
+                    onChange={e => setNewTag(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && handleAddCustomTag()}
+                    placeholder="Add custom tag..."
+                    className="h-8 text-xs"
+                  />
+                  <button
+                    onClick={handleAddCustomTag}
+                    disabled={savingTag || !newTag.trim()}
+                    className="px-3 py-1.5 rounded-md bg-purple-100 text-purple-800 text-xs font-semibold hover:bg-purple-200 disabled:opacity-40"
+                  >
+                    <Plus className="w-3 h-3" />
+                  </button>
                 </div>
               </div>
 
