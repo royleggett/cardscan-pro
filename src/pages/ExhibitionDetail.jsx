@@ -214,7 +214,7 @@ export default function ExhibitionDetail() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <Link to={createPageUrl(`ScanCard?exhibition_id=${exhibitionId}`)} className="flex-1">
               <Button className="w-full h-16 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg">
                 <Plus className="w-5 h-5 mr-2" />
@@ -227,6 +227,13 @@ export default function ExhibitionDetail() {
             >
               <Plus className="w-5 h-5 mr-2" />
               Add Place
+            </Button>
+            <Button
+              onClick={() => setShowBookTaxi(true)}
+              className="w-full h-16 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 shadow-lg"
+            >
+              <Car className="w-5 h-5 mr-2" />
+              Book Taxi
             </Button>
           </div>
         </div>
