@@ -52,6 +52,7 @@ export default function Settings() {
     }
     setResendApiKey(user?.resend_api_key || "");
     setFromEmail(user?.resend_from_email || "");
+    setDefaultTags(user?.default_tags || []);
     setRemindHot(user?.followup_remind_hot ?? true);
     setRemindWarm(user?.followup_remind_warm ?? true);
     setRemindCool(user?.followup_remind_cool ?? false);
