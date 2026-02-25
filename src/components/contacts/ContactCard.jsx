@@ -27,7 +27,7 @@ import {
 
 import EditContactDialog from "./EditContactDialog";
 
-export default function ContactCard({ contact, onUpdate }) {
+export default function ContactCard({ contact, onUpdate, defaultTags = [] }) {
   const [expanded, setExpanded] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
