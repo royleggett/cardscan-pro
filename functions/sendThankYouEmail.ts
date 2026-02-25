@@ -1,5 +1,22 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
+const DEFAULT_SUBJECT = `Thank you for visiting us at {exhibition_name}`;
+const DEFAULT_BODY = `Dear {contact_name},
+
+Thank you for visiting us at {exhibition_name}. It was a pleasure meeting you!
+
+We hope you enjoyed the event and found our time together valuable. We will be in touch soon.
+
+Warm regards,
+{sender_name}`;
+
+function applyPlaceholders(text, vars) {
+  return text
+    .replace(/{contact_name}/g, vars.contactName || "Visitor")
+    .replace(/{exhibition_name}/g, vars.exhibitionName || "our exhibition")
+    .replace(/{sender_name}/g, vars.senderName || "The Team");
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -10,20 +27,16 @@ Deno.serve(async (req) => {
 
     if (!contactEmail) return Response.json({ error: 'No email provided' }, { status: 400 });
 
-    const body = `Dear ${contactName || "Visitor"},
+    // Load custom template if one exists
+    const templates = await base44.entities.EmailTemplate.filter({ template_key: "thank_you" });
+    const subjectTemplate = templates.length > 0 ? templates[0].subject : DEFAULT_SUBJECT;
+    const bodyTemplate = templates.length > 0 ? templates[0].body : DEFAULT_BODY;
 
-Thank you for visiting us at ${exhibitionName || "our exhibition"}. It was a pleasure meeting you!
+    const vars = { contactName, exhibitionName, senderName };
+    const subject = applyPlaceholders(subjectTemplate, vars);
+    const body = applyPlaceholders(bodyTemplate, vars);
 
-We hope you enjoyed the event and found our time together valuable. We will be in touch soon.
-
-Warm regards,
-${senderName || "The Team"}`;
-
-    await base44.integrations.Core.SendEmail({
-      to: contactEmail,
-      subject: `Thank you for visiting us at ${exhibitionName || "our exhibition"}`,
-      body
-    });
+    await base44.integrations.Core.SendEmail({ to: contactEmail, subject, body });
 
     return Response.json({ success: true });
   } catch (error) {
