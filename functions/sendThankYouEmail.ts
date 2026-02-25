@@ -27,16 +27,22 @@ Deno.serve(async (req) => {
 
     if (!contactEmail) return Response.json({ error: 'No email provided' }, { status: 400 });
 
-    // Load custom template if one exists
-    const templates = await base44.entities.EmailTemplate.filter({ template_key: "thank_you" });
+    // Use the user's own Resend credentials
+    const resendApiKey = user.resend_api_key;
+    const fromEmail = user.resend_from_email;
+
+    if (!resendApiKey || !fromEmail) {
+      return Response.json({ error: 'Email not configured. Please add your Resend API key and from address in Email Settings.' }, { status: 400 });
+    }
+
+    // Load custom template if one exists (scoped to this user)
+    const templates = await base44.entities.EmailTemplate.filter({ template_key: "thank_you", created_by: user.email });
     const subjectTemplate = templates.length > 0 ? templates[0].subject : DEFAULT_SUBJECT;
     const bodyTemplate = templates.length > 0 ? templates[0].body : DEFAULT_BODY;
 
     const vars = { contactName, exhibitionName, senderName };
     const subject = applyPlaceholders(subjectTemplate, vars);
     const body = applyPlaceholders(bodyTemplate, vars);
-
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
 
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -45,7 +51,7 @@ Deno.serve(async (req) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        from: "CardScan Pro <onboarding@resend.dev>",
+        from: fromEmail,
         to: [contactEmail],
         subject,
         text: body
