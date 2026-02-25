@@ -326,6 +326,12 @@ export default function ExhibitionDetail() {
         onPlaceAdded={loadData}
       />
 
+      <BookTaxiDialog
+        open={showBookTaxi}
+        onOpenChange={setShowBookTaxi}
+        defaultDestination={exhibition?.location || ""}
+      />
+
       <Dialog open={showExport} onOpenChange={setShowExport}>
         <DialogContent>
           <DialogHeader>
