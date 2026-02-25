@@ -196,7 +196,7 @@ export default function Settings() {
                 <span key={tag} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-800 border-2 border-purple-300">
                   {tag}
                   <button
-                    onClick={() => setDefaultTags(defaultTags.filter(t => t !== tag))}
+                    onClick={() => handleRemoveDefaultTag(tag)}
                     className="ml-0.5 hover:text-red-500"
                   >
                     <X className="w-3 h-3" />
@@ -211,24 +211,14 @@ export default function Settings() {
               <Input
                 value={newDefaultTag}
                 onChange={e => setNewDefaultTag(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === "Enter") {
-                    const t = newDefaultTag.trim();
-                    if (t && !defaultTags.includes(t)) setDefaultTags([...defaultTags, t]);
-                    setNewDefaultTag("");
-                  }
-                }}
+                onKeyDown={e => { if (e.key === "Enter") handleAddDefaultTag(); }}
                 placeholder="New tag name..."
                 className="h-9 text-sm"
               />
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  const t = newDefaultTag.trim();
-                  if (t && !defaultTags.includes(t)) setDefaultTags([...defaultTags, t]);
-                  setNewDefaultTag("");
-                }}
+                onClick={handleAddDefaultTag}
                 disabled={!newDefaultTag.trim()}
               >
                 <Plus className="w-4 h-4" />
