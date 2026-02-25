@@ -28,6 +28,8 @@ export default function Settings() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [defaultTags, setDefaultTags] = useState([]);
+  const [newDefaultTag, setNewDefaultTag] = useState("");
 
   // Follow-up reminder settings
   const [remindHot, setRemindHot] = useState(true);
