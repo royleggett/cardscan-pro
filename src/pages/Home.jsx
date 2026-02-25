@@ -10,6 +10,7 @@ import { base44 } from "@/api/base44Client";
 export default function Home() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [followUpAlerts, setFollowUpAlerts] = useState([]);
 
   useEffect(() => {
     loadUser();
@@ -19,12 +20,49 @@ export default function Home() {
     try {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
+      await loadFollowUpAlerts(currentUser);
     } catch (err) {
-      // User not logged in - show landing page
       setLoading(false);
       return;
     }
     setLoading(false);
+  };
+
+  const loadFollowUpAlerts = async (currentUser) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const leadRules = [];
+    if (currentUser?.followup_remind_hot ?? true) leadRules.push({ type: "hot", days: currentUser?.followup_days_hot ?? 1 });
+    if (currentUser?.followup_remind_warm ?? true) leadRules.push({ type: "warm", days: currentUser?.followup_days_warm ?? 3 });
+    if (currentUser?.followup_remind_cool ?? false) leadRules.push({ type: "cool", days: currentUser?.followup_days_cool ?? 7 });
+
+    if (leadRules.length === 0) return;
+
+    const [contacts, exhibitions] = await Promise.all([
+      base44.entities.Contact.filter({ created_by: currentUser.email }),
+      base44.entities.Exhibition.filter({ created_by: currentUser.email })
+    ]);
+
+    const exhibitionMap = {};
+    exhibitions.forEach(ex => { exhibitionMap[ex.id] = ex; });
+
+    const alerts = [];
+    for (const contact of contacts) {
+      if (!contact.follow_up_type || contact.follow_up_type === "none") continue;
+      const rule = leadRules.find(r => r.type === contact.follow_up_type);
+      if (!rule) continue;
+      const exhibition = exhibitionMap[contact.exhibition_id];
+      if (!exhibition?.to_date) continue;
+      const exhibitionEnd = new Date(exhibition.to_date);
+      exhibitionEnd.setHours(0, 0, 0, 0);
+      const reminderDate = new Date(exhibitionEnd);
+      reminderDate.setDate(reminderDate.getDate() + rule.days);
+      if (reminderDate <= today) {
+        alerts.push({ contact, exhibition, type: contact.follow_up_type });
+      }
+    }
+    setFollowUpAlerts(alerts);
   };
 
   if (loading) {
