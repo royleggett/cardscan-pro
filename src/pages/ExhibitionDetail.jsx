@@ -21,6 +21,7 @@ import ContactCard from "../components/contacts/ContactCard";
 import EditExhibitionDialog from "../components/exhibitions/EditExhibitionDialog";
 import AddPlaceDialog from "../components/places/AddPlaceDialog";
 import PlaceCard from "../components/places/PlaceCard";
+import BookTaxiDialog from "../components/taxi/BookTaxiDialog";
 
 export default function ExhibitionDetail() {
   const navigate = useNavigate();
