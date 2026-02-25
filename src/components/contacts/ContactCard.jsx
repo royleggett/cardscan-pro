@@ -59,6 +59,26 @@ export default function ContactCard({ contact, onUpdate }) {
     onUpdate();
   };
 
+  const handleAddCustomTag = async () => {
+    const trimmed = newTag.trim();
+    if (!trimmed) return;
+    const current = contact.tags || [];
+    if (current.includes(trimmed)) { setNewTag(""); return; }
+    setSavingTag(true);
+    await Contact.update(contact.id, { tags: [...current, trimmed] });
+    setNewTag("");
+    setSavingTag(false);
+    onUpdate();
+  };
+
+  const handleRemoveTag = async (tag) => {
+    setSavingTag(true);
+    const updated = (contact.tags || []).filter(t => t !== tag);
+    await Contact.update(contact.id, { tags: updated });
+    setSavingTag(false);
+    onUpdate();
+  };
+
   return (
     <>
       <Card className="bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-200">
