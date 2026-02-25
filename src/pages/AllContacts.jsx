@@ -4,7 +4,7 @@ import { Contact } from "@/entities/Contact";
 import { Exhibition } from "@/entities/Exhibition";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Search, Download } from "lucide-react";
+import { ArrowLeft, Search, Download, Flame, Thermometer, Snowflake, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
@@ -23,6 +23,7 @@ export default function AllContacts() {
   const [contacts, setContacts] = useState([]);
   const [exhibitions, setExhibitions] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
+  const [leadFilter, setLeadFilter] = useState("all");
   const [showExport, setShowExport] = useState(false);
   const [fileName, setFileName] = useState("all_contacts");
 
@@ -91,13 +92,15 @@ export default function AllContacts() {
 
   const filteredContacts = contacts.filter(contact => {
     const query = searchQuery.toLowerCase();
-    return (
+    const matchesSearch = (
       (contact.full_name?.toLowerCase().includes(query)) ||
       (contact.company?.toLowerCase().includes(query)) ||
       (contact.email?.toLowerCase().includes(query)) ||
       (contact.country?.toLowerCase().includes(query)) ||
       (exhibitions[contact.exhibition_id]?.toLowerCase().includes(query))
     );
+    const matchesLead = leadFilter === "all" || (contact.follow_up_type || "none") === leadFilter;
+    return matchesSearch && matchesLead;
   });
 
   return (
@@ -130,7 +133,7 @@ export default function AllContacts() {
       </div>
 
       {contacts.length > 0 && (
-        <div className="mb-6">
+        <div className="mb-6 space-y-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
@@ -139,6 +142,27 @@ export default function AllContacts() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
             />
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            {[
+              { key: "all",  label: "All",  icon: Users,       color: "bg-gray-800 text-white",    inactive: "bg-white text-gray-500 border border-gray-200" },
+              { key: "hot",  label: "Hot",  icon: Flame,       color: "bg-red-500 text-white",     inactive: "bg-white text-red-400 border border-red-200" },
+              { key: "warm", label: "Warm", icon: Thermometer, color: "bg-amber-500 text-white",   inactive: "bg-white text-amber-500 border border-amber-200" },
+              { key: "cool", label: "Cool", icon: Snowflake,   color: "bg-blue-500 text-white",    inactive: "bg-white text-blue-400 border border-blue-200" },
+              { key: "none", label: "Unset",icon: null,        color: "bg-gray-400 text-white",    inactive: "bg-white text-gray-400 border border-gray-200" },
+            ].map(({ key, label, icon: Icon, color, inactive }) => (
+              <button
+                key={key}
+                onClick={() => setLeadFilter(key)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold transition-all ${leadFilter === key ? color : inactive}`}
+              >
+                {Icon && <Icon className="w-3.5 h-3.5" />}
+                {label}
+                <span className="ml-0.5 opacity-70 text-xs">
+                  ({contacts.filter(c => key === "all" ? true : (c.follow_up_type || "none") === key).length})
+                </span>
+              </button>
+            ))}
           </div>
         </div>
       )}
