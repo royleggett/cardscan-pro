@@ -26,6 +26,7 @@ export default function AllContacts() {
   const [leadFilter, setLeadFilter] = useState("all");
   const [showExport, setShowExport] = useState(false);
   const [fileName, setFileName] = useState("all_contacts");
+  const [defaultTags, setDefaultTags] = useState([]);
 
   useEffect(() => {
     loadData();
