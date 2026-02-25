@@ -225,7 +225,7 @@ export default function ExhibitionDetail() {
               onClick={() => setShowAddPlace(true)}
               className="w-full h-16 flex flex-col items-center justify-center gap-1 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 shadow-lg"
             >
-              <Plus className="w-5 h-5" />
+              <Building2 className="w-5 h-5" />
               <span className="text-xs font-medium">Add Place</span>
             </Button>
             <Button
