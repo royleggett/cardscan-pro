@@ -433,7 +433,32 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
 
   const handleSave = async (contactData) => {
     setPendingContact(contactData);
-    setShowFollowUp(true);
+
+    // Check for duplicates by name or email
+    const user = await base44.auth.me();
+    const allContacts = await Contact.filter({ created_by: user.email });
+    const nameNorm = (contactData.full_name || "").toLowerCase().trim();
+    const emailNorm = (contactData.email || "").toLowerCase().trim();
+
+    const dup = allContacts.find(c => {
+      if (nameNorm && c.full_name?.toLowerCase().trim() === nameNorm) return true;
+      if (emailNorm && c.email?.toLowerCase().trim() === emailNorm) return true;
+      return false;
+    });
+
+    if (dup) {
+      setDuplicateContact(dup);
+      // Fetch the exhibition name for the duplicate's original scan
+      try {
+        const exList = await Exhibition.filter({ id: dup.exhibition_id });
+        setDuplicateExhibitionName(exList[0]?.name || "");
+      } catch {
+        setDuplicateExhibitionName("");
+      }
+      setShowDuplicateWarning(true);
+    } else {
+      setShowFollowUp(true);
+    }
   };
 
   const handleFollowUpComplete = async ({ follow_up_type, follow_up_date, sendThankYou }) => {
