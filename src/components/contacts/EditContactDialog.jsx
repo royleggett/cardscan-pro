@@ -136,12 +136,23 @@ export default function EditContactDialog({ open, onOpenChange, contact, onSave 
 
             <div className="col-span-2">
               <Label htmlFor="notes">Notes</Label>
-              <Textarea
-                id="notes"
-                value={formData.notes || ""}
-                onChange={(e) => setFormData({...formData, notes: e.target.value})}
-                rows={3}
-              />
+              <div className="flex gap-2 items-start">
+                <Textarea
+                  id="notes"
+                  value={formData.notes || ""}
+                  onChange={(e) => setFormData({...formData, notes: e.target.value})}
+                  rows={3}
+                  className="flex-1"
+                />
+                <VoiceNoteButton
+                  onTranscript={(text) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      notes: prev.notes ? prev.notes + " " + text : text,
+                    }))
+                  }
+                />
+              </div>
             </div>
           </div>
 

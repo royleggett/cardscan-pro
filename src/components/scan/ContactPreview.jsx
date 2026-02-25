@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Save } from "lucide-react";
+import VoiceNoteButton from "@/components/contacts/VoiceNoteButton";
 
 export default function ContactPreview({ data, imageUrl, imageBackUrl, onSave, onCancel }) {
   const [formData, setFormData] = useState(data);
