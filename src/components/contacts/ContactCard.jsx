@@ -3,7 +3,14 @@ import { Contact } from "@/entities/Contact";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Building2, Mail, Phone, Globe, MapPin, Trash2, ChevronDown, ChevronUp, Flag, Pencil } from "lucide-react";
+import { Building2, Mail, Phone, Globe, MapPin, Trash2, ChevronDown, ChevronUp, Flag, Pencil, Flame, Thermometer, Snowflake } from "lucide-react";
+
+const LEAD_CONFIG = {
+  hot:  { label: "Hot",  icon: Flame,       bg: "bg-red-100",    text: "text-red-700"    },
+  warm: { label: "Warm", icon: Thermometer, bg: "bg-amber-100",  text: "text-amber-700"  },
+  cool: { label: "Cool", icon: Snowflake,   bg: "bg-blue-100",   text: "text-blue-700"   },
+  none: { label: "None", icon: null,        bg: "bg-gray-100",   text: "text-gray-500"   },
+};
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,6 +40,11 @@ export default function ContactCard({ contact, onUpdate }) {
     onUpdate();
   };
 
+  const handleLeadChange = async (type) => {
+    await Contact.update(contact.id, { follow_up_type: type });
+    onUpdate();
+  };
+
   return (
     <>
       <Card className="bg-white/90 backdrop-blur-sm hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-200">
@@ -53,6 +65,16 @@ export default function ContactCard({ contact, onUpdate }) {
                     {contact.country}
                   </Badge>
                 )}
+                {contact.follow_up_type && contact.follow_up_type !== "none" && (() => {
+                  const cfg = LEAD_CONFIG[contact.follow_up_type];
+                  const Icon = cfg?.icon;
+                  return (
+                    <Badge variant="secondary" className={`${cfg?.bg} ${cfg?.text} px-3 py-1`}>
+                      {Icon && <Icon className="w-3 h-3 mr-1" />}
+                      {cfg?.label} Lead
+                    </Badge>
+                  );
+                })()}
               </div>
             </div>
             <div className="flex gap-2">
@@ -146,6 +168,29 @@ export default function ContactCard({ contact, onUpdate }) {
                   )}
                 </div>
               )}
+              <div>
+                <p className="text-xs text-gray-500 font-semibold mb-2">Lead Temperature</p>
+                <div className="flex gap-2 flex-wrap">
+                  {["hot","warm","cool","none"].map(type => {
+                    const cfg = LEAD_CONFIG[type];
+                    const Icon = cfg.icon;
+                    const isActive = (contact.follow_up_type || "none") === type;
+                    return (
+                      <button
+                        key={type}
+                        onClick={() => handleLeadChange(type)}
+                        className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold border-2 transition-all ${
+                          isActive ? `${cfg.bg} ${cfg.text} border-current` : "bg-white text-gray-400 border-gray-200 hover:border-gray-300"
+                        }`}
+                      >
+                        {Icon && <Icon className="w-3 h-3" />}
+                        {cfg.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               <Button 
                 variant="outline" 
                 className="w-full text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-200" 
