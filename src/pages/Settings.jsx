@@ -23,8 +23,7 @@ Warm regards,
 export default function Settings() {
   const [subject, setSubject] = useState(DEFAULT_SUBJECT);
   const [body, setBody] = useState(DEFAULT_BODY);
-  const [resendApiKey, setResendApiKey] = useState("");
-  const [fromEmail, setFromEmail] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
