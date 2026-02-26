@@ -121,17 +121,27 @@ export default function PlaceCard({ place, onUpdate }) {
           )}
           
           {place.address && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                navigator.clipboard.writeText(place.address);
-              }}
-              className="flex items-center gap-2"
-            >
-              <MapPin className="w-4 h-4" />
-              Copy Address
-            </Button>
+            <div className="flex gap-2 flex-wrap">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigator.clipboard.writeText(place.address)}
+                className="flex items-center gap-2"
+              >
+                <MapPin className="w-4 h-4" />
+                Copy Address
+              </Button>
+              <a
+                href={`https://www.rome2rio.com/s/${encodeURIComponent(place.address)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button variant="outline" size="sm" className="flex items-center gap-2 text-blue-600 border-blue-200 hover:bg-blue-50">
+                  <Navigation className="w-4 h-4" />
+                  Get Directions
+                </Button>
+              </a>
+            </div>
           )}
 
           {place.notes && (
