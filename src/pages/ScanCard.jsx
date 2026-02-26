@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
-import { Contact } from "@/entities/Contact";
-import { Exhibition } from "@/entities/Exhibition";
 import { base44 } from "@/api/base44Client";
+const Contact = base44.entities.Contact;
+const Exhibition = base44.entities.Exhibition;
 import { sendThankYouEmail } from "@/functions/sendThankYouEmail";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Camera, Upload, Loader2, Edit, AlertCircle, QrCode, FlipHorizontal } from "lucide-react";

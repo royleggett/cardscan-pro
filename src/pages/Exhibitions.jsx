@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Exhibition } from "@/entities/Exhibition";
-import { Contact } from "@/entities/Contact";
+const Exhibition = base44.entities.Exhibition;
+const Contact = base44.entities.Contact;
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -22,17 +22,16 @@ export default function Exhibitions() {
     try {
       const currentUser = await base44.auth.me();
       
-      const list = await Exhibition.filter({ created_by: currentUser.email }, "-created_date");
+      const [list, allContacts] = await Promise.all([
+        Exhibition.filter({ created_by: currentUser.email }, "-created_date"),
+        Contact.filter({ created_by: currentUser.email })
+      ]);
       setExhibitions(list);
       
       const counts = {};
-      for (const exhibition of list) {
-        const contacts = await Contact.filter({ 
-          exhibition_id: exhibition.id,
-          created_by: currentUser.email
-        });
-        counts[exhibition.id] = contacts.length;
-      }
+      allContacts.forEach(c => {
+        counts[c.exhibition_id] = (counts[c.exhibition_id] || 0) + 1;
+      });
       setContactCounts(counts);
       setLoading(false);
     } catch (err) {
