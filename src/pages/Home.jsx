@@ -144,6 +144,50 @@ export default function Home() {
           </div>
         )}
 
+        {/* Community Picks */}
+        {topPlaces.length > 0 && (
+          <div className="max-w-md mx-auto mb-6">
+            <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+              <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">🌍</span>
+                  <span className="text-white font-bold">Community Picks</span>
+                </div>
+                <Link to={createPageUrl("Discover")} className="flex items-center gap-1 text-blue-100 text-xs font-medium hover:text-white">
+                  See all <ChevronRight className="w-3 h-3" />
+                </Link>
+              </div>
+              <div className="divide-y divide-gray-50">
+                {topPlaces.map(place => (
+                  <div key={place.id} className="px-4 py-3 flex items-center gap-3">
+                    <div className="text-2xl">
+                      {{"Restaurant":"🍽️","Bar":"🍺","Cafe":"☕","Hotel":"🏨","Tourist Attraction":"🏛️","Bakery":"🥐","Shopping":"🛍️","Supermarket":"🛒","Taxi Rank":"🚕"}[place.category] || "📍"}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-gray-800 text-sm truncate">{place.name}</p>
+                      {place.address && <p className="text-xs text-gray-400 truncate">{place.address}</p>}
+                    </div>
+                    {place.rating > 0 && (
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                        <span className="text-sm font-bold text-gray-700">{place.rating}</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className="px-4 py-3 bg-gray-50 border-t border-gray-100">
+                <Link to={createPageUrl("Discover")}>
+                  <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white gap-2">
+                    <Compass className="w-4 h-4" />
+                    Discover All Places
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="max-w-md mx-auto space-y-4">
           <Link to={createPageUrl("Exhibitions")}>
             <Button className="w-full h-20 text-lg bg-white hover:bg-gray-50 active:bg-blue-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
