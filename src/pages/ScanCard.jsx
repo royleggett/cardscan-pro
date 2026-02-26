@@ -476,12 +476,16 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
 
     if (sendThankYou && pendingContact.email) {
       try {
-        await sendThankYouEmail({
+        const emailRes = await sendThankYouEmail({
           contactEmail: pendingContact.email,
           contactName: pendingContact.full_name,
           exhibitionName,
           senderName: user?.display_name || user?.full_name || ""
         });
+        console.log("Email result:", JSON.stringify(emailRes?.data));
+        if (emailRes?.data?.error) {
+          console.error("Email error from server:", emailRes.data.error);
+        }
       } catch (e) {
         console.error("Email failed:", e);
       }
