@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-const Contact = base44.entities.Contact;
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,18 +35,18 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [] }) {
   const [newTag, setNewTag] = useState("");
 
   const handleDelete = async () => {
-    await Contact.delete(contact.id);
+    await base44.entities.Contact.delete(contact.id);
     onUpdate();
   };
 
   const handleSaveEdit = async (updatedData) => {
-    await Contact.update(contact.id, updatedData);
+    await base44.entities.Contact.update(contact.id, updatedData);
     setShowEdit(false);
     onUpdate();
   };
 
   const handleLeadChange = async (type) => {
-    await Contact.update(contact.id, { follow_up_type: type });
+    await base44.entities.Contact.update(contact.id, { follow_up_type: type });
     onUpdate();
   };
 
@@ -55,7 +54,7 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [] }) {
     setSavingTag(true);
     const current = contact.tags || [];
     const updated = current.includes(tag) ? current.filter(t => t !== tag) : [...current, tag];
-    await Contact.update(contact.id, { tags: updated });
+    await base44.entities.Contact.update(contact.id, { tags: updated });
     setSavingTag(false);
     onUpdate();
   };
@@ -66,7 +65,7 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [] }) {
     const current = contact.tags || [];
     if (current.includes(trimmed)) { setNewTag(""); return; }
     setSavingTag(true);
-    await Contact.update(contact.id, { tags: [...current, trimmed] });
+    await base44.entities.Contact.update(contact.id, { tags: [...current, trimmed] });
     setNewTag("");
     setSavingTag(false);
     onUpdate();
@@ -75,7 +74,7 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [] }) {
   const handleRemoveTag = async (tag) => {
     setSavingTag(true);
     const updated = (contact.tags || []).filter(t => t !== tag);
-    await Contact.update(contact.id, { tags: updated });
+    await base44.entities.Contact.update(contact.id, { tags: updated });
     setSavingTag(false);
     onUpdate();
   };
