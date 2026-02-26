@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Contact } from "@/entities/Contact";
-import { Exhibition } from "@/entities/Exhibition";
+const Contact = base44.entities.Contact;
+const Exhibition = base44.entities.Exhibition;
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Search, Download, Flame, Thermometer, Snowflake, Users } from "lucide-react";

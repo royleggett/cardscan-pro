@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Exhibition } from "@/entities/Exhibition";
-import { Contact } from "@/entities/Contact";
+const Exhibition = base44.entities.Exhibition;
+const Contact = base44.entities.Contact;
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
