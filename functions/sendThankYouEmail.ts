@@ -27,14 +27,10 @@ Deno.serve(async (req) => {
 
     if (!contactEmail) return Response.json({ error: 'No email provided' }, { status: 400 });
 
-    // Use the user's own Resend credentials
-    const resendApiKey = user.resend_api_key;
-    // Only use the saved from email if it looks valid (not a placeholder or unverified domain)
-    const savedFrom = user.resend_from_email;
-    const fromEmail = (savedFrom && savedFrom.trim()) ? savedFrom.trim() : "onboarding@resend.dev";
-
+    // Use shared Resend API key
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
     if (!resendApiKey) {
-      return Response.json({ error: 'Email not configured. Please add your Resend API key in Email Settings.' }, { status: 400 });
+      return Response.json({ error: 'Email service not configured' }, { status: 500 });
     }
 
     // Load custom template if one exists (scoped to this user)
@@ -53,7 +49,7 @@ Deno.serve(async (req) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        from: fromEmail,
+        from: `${senderName || user.full_name} <hello@cardscan-pro.com>`,
         to: [contactEmail],
         subject,
         text: body

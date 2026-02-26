@@ -11,11 +11,13 @@ Deno.serve(async (req) => {
 
     let totalSent = 0;
 
-    for (const user of allUsers) {
-      const resendApiKey = user.resend_api_key;
-      const fromEmail = user.resend_from_email;
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    if (!resendApiKey) {
+      return Response.json({ error: 'Email service not configured' }, { status: 500 });
+    }
 
-      if (!resendApiKey || !fromEmail || !user.email) continue;
+    for (const user of allUsers) {
+      if (!user.email) continue;
 
       // Build list of lead types this user wants reminders for
       const leadTypes = [];
@@ -91,7 +93,7 @@ Deno.serve(async (req) => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          from: fromEmail,
+          from: `CardScan Pro <hello@cardscan-pro.com>`,
           to: [user.email],
           subject: `📋 Follow-up reminder: ${dueContacts.length} lead${dueContacts.length !== 1 ? "s" : ""} due today`,
           text: emailBody
