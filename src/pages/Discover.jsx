@@ -178,17 +178,30 @@ export default function Discover() {
                       </div>
                     </div>
 
-                    {place.website && (
-                      <a
-                        href={place.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-3 flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium"
-                      >
-                        <ExternalLink className="w-3.5 h-3.5" />
-                        Visit Website
-                      </a>
-                    )}
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {place.website && (
+                        <a
+                          href={place.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                          Visit Website
+                        </a>
+                      )}
+                      {place.address && (
+                        <a
+                          href={`https://www.rome2rio.com/s/${encodeURIComponent(place.address)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 text-sm text-green-600 hover:text-green-800 font-medium"
+                        >
+                          <Navigation className="w-3.5 h-3.5" />
+                          Get Directions
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
