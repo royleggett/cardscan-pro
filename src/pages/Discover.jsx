@@ -192,7 +192,7 @@ export default function Discover() {
                       )}
                       {place.address && (
                         <a
-                          href={`https://www.rome2rio.com/s/${encodeURIComponent(place.address)}`}
+                          href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place.address)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1.5 text-sm text-green-600 hover:text-green-800 font-medium"

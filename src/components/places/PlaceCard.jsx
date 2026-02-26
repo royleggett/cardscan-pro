@@ -132,7 +132,7 @@ export default function PlaceCard({ place, onUpdate }) {
                 Copy Address
               </Button>
               <a
-                href={`https://www.rome2rio.com/s/${encodeURIComponent(place.address)}`}
+                href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place.address)}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
