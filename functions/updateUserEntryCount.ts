@@ -1,10 +1,14 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 const MILESTONES = [
-  { entries: 10, badge: "Starter" },
-  { entries: 25, badge: "Contributor" },
-  { entries: 50, badge: "Gold Member", discount: 10 },
-  { entries: 75, badge: "Platinum", discount: 20 }
+  { entries: 25, badge: "Starter" },
+  { entries: 50, badge: "Contributor" },
+  { entries: 75, badge: "Bronze Member", discount: 5 },
+  { entries: 100, badge: "Silver Member", discount: 5 },
+  { entries: 150, badge: "Gold Member", discount: 10 },
+  { entries: 200, badge: "Platinum", discount: 20 },
+  { entries: 500, badge: "Elite", discount: 50 },
+  { entries: 1000, badge: "VIP", subscription: "free_year" }
 ];
 
 Deno.serve(async (req) => {
@@ -34,6 +38,7 @@ Deno.serve(async (req) => {
     const userRecord = users[0];
     const newBadges = userData?.badges_earned || [];
     let newDiscount = 0;
+    let subscriptionStatus = null;
 
     for (const milestone of MILESTONES) {
       if (totalEntries >= milestone.entries && !newBadges.includes(milestone.badge)) {
@@ -42,13 +47,22 @@ Deno.serve(async (req) => {
       if (totalEntries >= milestone.entries && milestone.discount) {
         newDiscount = Math.max(newDiscount, milestone.discount);
       }
+      if (totalEntries >= milestone.entries && milestone.subscription) {
+        subscriptionStatus = milestone.subscription;
+      }
     }
 
-    await base44.asServiceRole.entities.User.update(userRecord.id, {
+    const updateData = {
       total_entries: totalEntries,
       badges_earned: newBadges,
       discount_tier: newDiscount
-    });
+    };
+
+    if (subscriptionStatus) {
+      updateData.subscription_status = subscriptionStatus;
+    }
+
+    await base44.asServiceRole.entities.User.update(userRecord.id, updateData);
 
     return Response.json({ 
       success: true, 

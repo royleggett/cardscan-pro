@@ -58,12 +58,12 @@ import Exhibitions from './pages/Exhibitions';
 import Home from './pages/Home';
 import ImportContacts from './pages/ImportContacts';
 import ImportExport from './pages/ImportExport';
+import Leaderboard from './pages/Leaderboard';
 import MyCard from './pages/MyCard';
 import NewExhibition from './pages/NewExhibition';
+import Rewards from './pages/Rewards';
 import ScanCard from './pages/ScanCard';
 import Settings from './pages/Settings';
-import Rewards from './pages/Rewards';
-import Leaderboard from './pages/Leaderboard';
 import __Layout from './Layout.jsx';
 
 
@@ -79,12 +79,12 @@ export const PAGES = {
     "Home": Home,
     "ImportContacts": ImportContacts,
     "ImportExport": ImportExport,
+    "Leaderboard": Leaderboard,
     "MyCard": MyCard,
     "NewExhibition": NewExhibition,
+    "Rewards": Rewards,
     "ScanCard": ScanCard,
     "Settings": Settings,
-    "Rewards": Rewards,
-    "Leaderboard": Leaderboard,
 }
 
 export const pagesConfig = {

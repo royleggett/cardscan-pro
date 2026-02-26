@@ -6,10 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Award, Copy, ChevronLeft, Zap, Target, Trophy } from "lucide-react";
 
 const MILESTONES = [
-  { entries: 10, badge: "Starter", icon: "🌱" },
-  { entries: 25, badge: "Contributor", icon: "⭐" },
-  { entries: 50, badge: "Gold Member", icon: "🥇", discount: 10 },
-  { entries: 75, badge: "Platinum", icon: "💎", discount: 20 }
+  { entries: 25, badge: "Starter", icon: "🌱" },
+  { entries: 50, badge: "Contributor", icon: "⭐" },
+  { entries: 75, badge: "Bronze Member", icon: "🥉", discount: 5 },
+  { entries: 100, badge: "Silver Member", icon: "🥈", discount: 5 },
+  { entries: 150, badge: "Gold Member", icon: "🥇", discount: 10 },
+  { entries: 200, badge: "Platinum", icon: "💎", discount: 20 },
+  { entries: 500, badge: "Elite", icon: "👑", discount: 50 },
+  { entries: 1000, badge: "VIP", icon: "🏆", subscription: "free_year" }
 ];
 
 export default function Rewards() {
@@ -93,30 +97,38 @@ export default function Rewards() {
           )}
         </div>
 
-        {/* Discount Code */}
-        {user?.discount_tier > 0 && (
+        {/* Reward Code */}
+        {(user?.discount_tier > 0 || user?.subscription_status === "free_year") && (
           <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-2xl border-2 border-yellow-200 p-6 mb-6">
             <div className="flex items-center gap-2 mb-3">
               <Zap className="w-5 h-5 text-yellow-600" />
-              <h2 className="font-bold text-yellow-900">Active Discount</h2>
+              <h2 className="font-bold text-yellow-900">Active Reward</h2>
             </div>
-            <p className="text-yellow-700 text-sm mb-4">
-              {user.discount_tier}% off your yearly subscription
-            </p>
-            <div className="bg-white rounded-lg p-3 border border-yellow-200 flex justify-between items-center">
-              <code className="font-mono font-bold text-gray-800">
-                REWARD{user.discount_tier}
-              </code>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => copyCode(`REWARD${user.discount_tier}`)}
-                className="border-yellow-200 text-yellow-700 hover:bg-yellow-100"
-              >
-                <Copy className="w-4 h-4" />
-                {copied ? "Copied!" : "Copy"}
-              </Button>
-            </div>
+            {user?.subscription_status === "free_year" ? (
+              <p className="text-yellow-700 text-sm">
+                🎉 You've unlocked a free year subscription!
+              </p>
+            ) : (
+              <>
+                <p className="text-yellow-700 text-sm mb-4">
+                  {user.discount_tier}% off your yearly subscription
+                </p>
+                <div className="bg-white rounded-lg p-3 border border-yellow-200 flex justify-between items-center">
+                  <code className="font-mono font-bold text-gray-800">
+                    REWARD{user.discount_tier}
+                  </code>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => copyCode(`REWARD${user.discount_tier}`)}
+                    className="border-yellow-200 text-yellow-700 hover:bg-yellow-100"
+                  >
+                    <Copy className="w-4 h-4" />
+                    {copied ? "Copied!" : "Copy"}
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         )}
 
