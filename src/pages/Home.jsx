@@ -28,6 +28,12 @@ export default function Home() {
     setLoading(false);
   };
 
+  const loadTopPlaces = async () => {
+    const places = await base44.entities.Place.filter({ is_public: true });
+    const sorted = places.sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 3);
+    setTopPlaces(sorted);
+  };
+
   const loadFollowUpAlerts = async (currentUser) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
