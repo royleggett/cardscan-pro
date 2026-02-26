@@ -48,6 +48,7 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import AddContact from './pages/AddContact';
+import AdminPlaces from './pages/AdminPlaces';
 import AdminUsers from './pages/AdminUsers';
 import AllContacts from './pages/AllContacts';
 import Discover from './pages/Discover';
@@ -61,12 +62,12 @@ import MyCard from './pages/MyCard';
 import NewExhibition from './pages/NewExhibition';
 import ScanCard from './pages/ScanCard';
 import Settings from './pages/Settings';
-import AdminPlaces from './pages/AdminPlaces';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "AddContact": AddContact,
+    "AdminPlaces": AdminPlaces,
     "AdminUsers": AdminUsers,
     "AllContacts": AllContacts,
     "Discover": Discover,
@@ -80,7 +81,6 @@ export const PAGES = {
     "NewExhibition": NewExhibition,
     "ScanCard": ScanCard,
     "Settings": Settings,
-    "AdminPlaces": AdminPlaces,
 }
 
 export const pagesConfig = {

@@ -42,6 +42,7 @@ export default function Discover() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [userNumbers, setUserNumbers] = useState({});
 
   useEffect(() => {
     loadPlaces();
@@ -55,6 +56,17 @@ export default function Discover() {
     const exMap = {};
     allExhibitions.forEach(ex => { exMap[ex.id] = ex; });
     setExhibitions(exMap);
+    
+    const userMap = {};
+    const uniqueEmails = [...new Set(allPlaces.map(p => p.created_by))];
+    for (const email of uniqueEmails) {
+      const users = await base44.entities.User.filter({ email });
+      if (users.length > 0) {
+        userMap[email] = users[0].user_number || email;
+      }
+    }
+    setUserNumbers(userMap);
+    
     // Sort by rating descending
     const sorted = allPlaces.sort((a, b) => (b.rating || 0) - (a.rating || 0));
     setPlaces(sorted);
@@ -170,11 +182,15 @@ export default function Discover() {
                         )}
 
                         {exhibition && (
-                          <div className="flex items-center gap-1.5 text-xs text-blue-600 font-medium">
-                            <span>📅</span>
-                            <span>{exhibition.name}{exhibition.location ? ` · ${exhibition.location}` : ""}</span>
-                          </div>
-                        )}
+                           <div className="flex items-center gap-1.5 text-xs text-blue-600 font-medium">
+                             <span>📅</span>
+                             <span>{exhibition.name}{exhibition.location ? ` · ${exhibition.location}` : ""}</span>
+                           </div>
+                         )}
+
+                        <div className="text-xs text-gray-400 mt-2">
+                           Posted by {userNumbers[place.created_by] || place.created_by}
+                        </div>
                       </div>
                     </div>
 
