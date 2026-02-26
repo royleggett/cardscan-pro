@@ -43,7 +43,8 @@ export default function Layout({ children }) {
   const isActive = (path) => location.pathname.includes(path);
 
   const handleLogout = () => {
-    base44.auth.logout(createPageUrl("Home"));
+    base44.auth.logout();
+    base44.auth.redirectToLogin();
   };
 
   return (
