@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
-import { Award, Copy, ChevronLeft, Zap, Target } from "lucide-react";
+import { Award, Copy, ChevronLeft, Zap, Target, Trophy } from "lucide-react";
 
 const MILESTONES = [
   { entries: 10, badge: "Starter", icon: "🌱" },
@@ -154,7 +154,7 @@ export default function Rewards() {
         </div>
 
         {/* How to Earn */}
-        <div className="bg-blue-50 rounded-2xl border border-blue-200 p-6">
+        <div className="bg-blue-50 rounded-2xl border border-blue-200 p-6 mb-6">
           <div className="flex items-center gap-2 mb-3">
             <Target className="w-5 h-5 text-blue-600" />
             <h3 className="font-bold text-blue-900">How to Earn</h3>
@@ -170,6 +170,14 @@ export default function Rewards() {
             </li>
           </ul>
         </div>
+
+        {/* View Leaderboard */}
+        <Link to={createPageUrl("Leaderboard")} className="w-full">
+          <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white gap-2 h-12">
+            <Trophy className="w-5 h-5" />
+            View Global Leaderboard
+          </Button>
+        </Link>
       </div>
     </div>
   );
