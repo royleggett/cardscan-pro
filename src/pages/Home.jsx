@@ -20,7 +20,7 @@ export default function Home() {
     try {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
-      await loadFollowUpAlerts(currentUser);
+      await Promise.all([loadFollowUpAlerts(currentUser), loadTopPlaces()]);
     } catch (err) {
       setLoading(false);
       return;
