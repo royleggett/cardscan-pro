@@ -222,6 +222,28 @@ export default function Settings() {
           </CardContent>
         </Card>
 
+        {/* Your Name */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Your Name</CardTitle>
+            <CardDescription>
+              This is used as the sender name in emails (the {"{sender_name}"} placeholder).
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="text-center py-4 text-gray-400">Loading...</div>
+            ) : (
+              <Input
+                type="text"
+                placeholder="e.g. Jane Smith"
+                value={fromEmail}
+                onChange={e => setFromEmail(e.target.value)}
+              />
+            )}
+          </CardContent>
+        </Card>
+
         {/* Email Template */}
         <Card className="mb-6">
           <CardHeader>
