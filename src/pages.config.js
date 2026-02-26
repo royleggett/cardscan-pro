@@ -61,6 +61,7 @@ import MyCard from './pages/MyCard';
 import NewExhibition from './pages/NewExhibition';
 import ScanCard from './pages/ScanCard';
 import Settings from './pages/Settings';
+import AdminPlaces from './pages/AdminPlaces';
 import __Layout from './Layout.jsx';
 
 
@@ -79,6 +80,7 @@ export const PAGES = {
     "NewExhibition": NewExhibition,
     "ScanCard": ScanCard,
     "Settings": Settings,
+    "AdminPlaces": AdminPlaces,
 }
 
 export const pagesConfig = {
