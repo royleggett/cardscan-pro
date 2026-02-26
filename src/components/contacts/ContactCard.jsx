@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Contact } from "@/entities/Contact";
+import { base44 } from "@/api/base44Client";
+const Contact = base44.entities.Contact;
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
