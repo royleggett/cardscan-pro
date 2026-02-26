@@ -50,40 +50,23 @@ export default function ExhibitionDetail() {
     try {
       const currentUser = await base44.auth.me();
       
-      const allExhibitions = await Exhibition.list();
-      const ex = allExhibitions.find(e => e.id === exhibitionId && e.created_by === currentUser.email);
-      
+      const [exList, contactsList, myPlaces, publicPlaces] = await Promise.all([
+        Exhibition.filter({ id: exhibitionId, created_by: currentUser.email }),
+        Contact.filter({ exhibition_id: exhibitionId, created_by: currentUser.email }, "-created_date"),
+        base44.entities.Place.filter({ exhibition_id: exhibitionId, created_by: currentUser.email }, "-created_date"),
+        base44.entities.Place.filter({ exhibition_id: exhibitionId, is_public: true }, "-created_date")
+      ]);
+
+      const ex = exList[0];
       if (!ex) {
         navigate(createPageUrl("Exhibitions"));
         return;
       }
       
       setExhibition(ex);
-      
-      const contactsList = await Contact.filter({ 
-        exhibition_id: exhibitionId,
-        created_by: currentUser.email
-      }, "-created_date");
       setContacts(contactsList);
       
-      // Get user's own places
-      const myPlaces = await base44.entities.Place.filter({ 
-        exhibition_id: exhibitionId,
-        created_by: currentUser.email
-      }, "-created_date");
-      
-      // Get public places from OTHER users only
-      const allPublicPlaces = await base44.entities.Place.filter({ 
-        is_public: true
-      }, "-created_date");
-      
-      const otherUsersPublicPlaces = allPublicPlaces.filter(p => {
-        // Strictly exclude current user's places (they're already in myPlaces)
-        if (p.created_by === currentUser.email) return false;
-        // Only match by exact exhibition ID
-        return p.exhibition_id === exhibitionId;
-      });
-      
+      const otherUsersPublicPlaces = publicPlaces.filter(p => p.created_by !== currentUser.email);
       setPlaces([...myPlaces, ...otherUsersPublicPlaces]);
       setDefaultTags(currentUser?.default_tags || []);
       setLoading(false);
