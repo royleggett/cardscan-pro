@@ -30,13 +30,15 @@ export default function Layout({ children }) {
     const newCount = logoTaps + 1;
     setLogoTaps(newCount);
     clearTimeout(tapTimerRef.current);
-    if (newCount >= 5) {
+    if (newCount >= 3) {
       setLogoTaps(0);
       setShowAdminFlash(true);
-      setTimeout(() => setShowAdminFlash(false), 200);
-      window.location.href = createPageUrl("AdminRewards");
+      setTimeout(() => setShowAdminFlash(false), 300);
+      setTimeout(() => {
+        window.location.href = createPageUrl("AdminRewards");
+      }, 150);
     } else {
-      tapTimerRef.current = setTimeout(() => setLogoTaps(0), 2000);
+      tapTimerRef.current = setTimeout(() => setLogoTaps(0), 3000);
     }
   };
   
@@ -54,7 +56,7 @@ export default function Layout({ children }) {
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68e3b1d0b387a294f20142e9/bcdfcf951_CardScanPro_Icon.png" 
             alt="CardScanner Pro" 
-            className={`h-10 w-10 cursor-pointer select-none transition-opacity ${showAdminFlash ? "opacity-30" : "opacity-100"}`}
+            className={`h-10 w-10 cursor-pointer select-none transition-all ${showAdminFlash ? "opacity-30 scale-95" : "opacity-100 hover:scale-105"}`}
             onClick={handleLogoTap}
           />
           <Button 
