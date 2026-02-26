@@ -63,6 +63,7 @@ import NewExhibition from './pages/NewExhibition';
 import ScanCard from './pages/ScanCard';
 import Settings from './pages/Settings';
 import Rewards from './pages/Rewards';
+import Leaderboard from './pages/Leaderboard';
 import __Layout from './Layout.jsx';
 
 
@@ -83,6 +84,7 @@ export const PAGES = {
     "ScanCard": ScanCard,
     "Settings": Settings,
     "Rewards": Rewards,
+    "Leaderboard": Leaderboard,
 }
 
 export const pagesConfig = {
