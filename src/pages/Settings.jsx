@@ -49,8 +49,7 @@ export default function Settings() {
       setSubject(templates[0].subject);
       setBody(templates[0].body);
     }
-    setResendApiKey(user?.resend_api_key || "");
-    setFromEmail(user?.resend_from_email || "");
+    setDisplayName(user?.display_name || "");
     setDefaultTags(user?.default_tags || []);
     setRemindHot(user?.followup_remind_hot ?? true);
     setRemindWarm(user?.followup_remind_warm ?? true);
@@ -71,8 +70,7 @@ export default function Settings() {
     }
 
     await base44.auth.updateMe({
-      resend_api_key: resendApiKey,
-      resend_from_email: fromEmail,
+      display_name: displayName,
       followup_remind_hot: remindHot,
       followup_remind_warm: remindWarm,
       followup_remind_cool: remindCool,
@@ -236,8 +234,8 @@ export default function Settings() {
               <Input
                 type="text"
                 placeholder="e.g. Jane Smith"
-                value={fromEmail}
-                onChange={e => setFromEmail(e.target.value)}
+                value={displayName}
+                onChange={e => setDisplayName(e.target.value)}
               />
             )}
           </CardContent>
