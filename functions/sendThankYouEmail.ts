@@ -52,7 +52,8 @@ Deno.serve(async (req) => {
         from: `${senderName || user.full_name} <hello@cardscan-pro.com>`,
         to: [contactEmail],
         subject,
-        text: body
+        text: body,
+        html: `<pre style="font-family:sans-serif;white-space:pre-wrap;">${body}</pre>`
       })
     });
 
