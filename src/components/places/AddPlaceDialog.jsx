@@ -135,12 +135,17 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
 
           <div>
             <Label>Website</Label>
-            <Input
-              value={placeData.website}
-              onChange={(e) => setPlaceData({ ...placeData, website: e.target.value })}
-              placeholder="https://example.com"
-              className="mt-1"
-            />
+            <div className="flex mt-1">
+              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-muted-foreground text-sm">
+                https://
+              </span>
+              <Input
+                value={(placeData.website || "").replace(/^https?:\/\//, "")}
+                onChange={(e) => setPlaceData({ ...placeData, website: e.target.value ? `https://${e.target.value}` : "" })}
+                placeholder="www.example.com"
+                className="rounded-l-none"
+              />
+            </div>
           </div>
 
           <div>
