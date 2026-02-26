@@ -96,7 +96,8 @@ Deno.serve(async (req) => {
           from: `CardScan Pro <hello@cardscan-pro.com>`,
           to: [user.email],
           subject: `📋 Follow-up reminder: ${dueContacts.length} lead${dueContacts.length !== 1 ? "s" : ""} due today`,
-          text: emailBody
+          text: emailBody,
+          html: `<pre style="font-family:sans-serif;white-space:pre-wrap;">${emailBody}</pre>`
         })
       });
 
