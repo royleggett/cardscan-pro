@@ -59,10 +59,12 @@ Deno.serve(async (req) => {
     const data = await res.json();
 
     if (!res.ok) {
-      return Response.json({ error: data.message || "Failed to send email" }, { status: 500 });
+      console.error("Resend error:", JSON.stringify(data));
+      return Response.json({ error: data.message || data.name || "Failed to send email", details: data }, { status: 500 });
     }
 
-    return Response.json({ success: true });
+    console.log("Email sent successfully:", JSON.stringify(data));
+    return Response.json({ success: true, id: data.id });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
