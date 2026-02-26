@@ -169,11 +169,6 @@ export default function Settings() {
                   enabled={remindWarm} onToggle={setRemindWarm}
                   days={daysWarm} onDaysChange={setDaysWarm}
                 />
-                <LeadRow
-                  icon={Snowflake} iconColor="text-blue-400" label="Cool"
-                  enabled={remindCool} onToggle={setRemindCool}
-                  days={daysCool} onDaysChange={setDaysCool}
-                />
                 <p className="text-xs text-gray-400 pt-1">
                   Reminders are sent to your registered email address each morning.
                 </p>
@@ -224,45 +219,6 @@ export default function Settings() {
                 <Plus className="w-4 h-4" />
               </Button>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Email Setup */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Email Setup</CardTitle>
-            <CardDescription>
-              Configure your Resend account to send thank you emails and reminders. Get your free API key at{" "}
-              <a href="https://resend.com" target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">resend.com</a>
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {loading ? (
-              <div className="text-center py-8 text-gray-400">Loading...</div>
-            ) : (
-              <>
-                <div>
-                  <Label className="mb-1 block">Resend API Key</Label>
-                  <Input
-                    type="password"
-                    placeholder="re_..."
-                    value={resendApiKey}
-                    onChange={e => setResendApiKey(e.target.value)}
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Get from resend.com/api-keys</p>
-                </div>
-                <div>
-                  <Label className="mb-1 block">From Email Address</Label>
-                  <Input
-                    type="email"
-                    placeholder="hello@yourdomain.com"
-                    value={fromEmail}
-                    onChange={e => setFromEmail(e.target.value)}
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Must be a verified domain in Resend. Used for both thank you emails and reminders.</p>
-                </div>
-              </>
-            )}
           </CardContent>
         </Card>
 
