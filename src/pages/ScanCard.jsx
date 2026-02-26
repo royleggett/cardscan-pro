@@ -480,7 +480,7 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
           contactEmail: pendingContact.email,
           contactName: pendingContact.full_name,
           exhibitionName,
-          senderName: user?.full_name || ""
+          senderName: user?.display_name || user?.full_name || ""
         });
       } catch (e) {
         console.error("Email failed:", e);
