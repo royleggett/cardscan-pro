@@ -131,12 +131,16 @@ export default function EditPlaceDialog({ open, onOpenChange, place, onPlaceUpda
                 https://
               </span>
               <Input
-                value={(placeData.website || "").replace(/^https?:\/\//, "")}
-                onChange={(e) => setPlaceData({ ...placeData, website: e.target.value ? `https://${e.target.value}` : "" })}
-                placeholder="www.example.com"
+                value={(placeData.website || "").replace(/^https?:\/\//, "").replace(/^www\./, "")}
+                onChange={(e) => {
+                  const cleaned = e.target.value.replace(/^https?:\/\//, "").replace(/^www\./, "");
+                  setPlaceData({ ...placeData, website: cleaned ? `https://${cleaned}` : "" });
+                }}
+                placeholder="example.com"
                 className="rounded-l-none"
               />
             </div>
+            <p className="text-xs text-muted-foreground mt-1">Just type the address — no need for www. or https://</p>
           </div>
 
           <div>
