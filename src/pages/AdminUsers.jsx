@@ -57,6 +57,10 @@ export default function AdminUsers() {
           </div>
         </div>
 
+        <Link to={createPageUrl("AdminPlaces")} className="mb-6 block">
+          <Button variant="outline" className="w-full">Moderate Community Places</Button>
+        </Link>
+
         <div className="space-y-3">
           {users.map(u => (
             <Card key={u.id} className="bg-white/80 backdrop-blur-sm">
