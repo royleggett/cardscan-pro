@@ -14,7 +14,8 @@ Deno.serve(async (req) => {
 
         // Send notification email to admin
         await base44.asServiceRole.integrations.Core.SendEmail({
-            to: "royleggett@sky.com",
+            to: "admin@cardscan-pro.com",
+            from_name: "CardScan Pro",
             subject: `New User Registration - ${newUser.full_name}`,
             body: `
                 <h2>New User Registered in CardScan Pro</h2>
