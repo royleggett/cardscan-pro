@@ -34,7 +34,7 @@ export default function Layout({ children }) {
       setLogoTaps(0);
       setShowAdminFlash(true);
       setTimeout(() => setShowAdminFlash(false), 200);
-      window.location.href = createPageUrl("AdminUsers");
+      window.location.href = createPageUrl("AdminRewards");
     } else {
       tapTimerRef.current = setTimeout(() => setLogoTaps(0), 2000);
     }
