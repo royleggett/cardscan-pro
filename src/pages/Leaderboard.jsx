@@ -18,7 +18,7 @@ export default function Leaderboard() {
     const user = await base44.auth.me();
     setCurrentUser(user);
 
-    const allUsers = await base44.asServiceRole.entities.User.list();
+    const allUsers = await base44.entities.User.list();
     const sorted = allUsers
       .filter(u => (u.total_entries || 0) > 0)
       .sort((a, b) => (b.total_entries || 0) - (a.total_entries || 0))
