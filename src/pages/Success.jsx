@@ -39,7 +39,7 @@ export default function Success() {
         </div>
 
         <Button
-          onClick={() => navigate(createPageUrl("Home"))}
+          onClick={() => window.location.href = createPageUrl("Home")}
           className="w-full bg-green-600 hover:bg-green-700 text-white"
         >
           Go to Home Now
