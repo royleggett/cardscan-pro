@@ -223,6 +223,33 @@ export default function LandingPage() {
           </div>
         </div>
 
+        {/* Awards Section */}
+        <div className="mb-16 text-center">
+          <div className="inline-flex items-center gap-2 bg-yellow-100 text-yellow-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+            <Award className="w-4 h-4" />
+            Earn Rewards While You Network
+          </div>
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">Network More. <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">Win More.</span></h2>
+          <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">CardScan Pro isn't just about organising contacts — it rewards you for doing it. Every card you scan, every exhibition you attend, every connection you make earns you points towards exclusive achievements.</p>
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            <div className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-2xl p-6 text-center hover:shadow-lg transition-all">
+              <div className="text-4xl mb-3">🏆</div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Claim Trophies</h3>
+              <p className="text-gray-600 text-sm">Unlock achievements for scanning your first card, reaching 50 contacts, attending multiple exhibitions, and more. Each trophy is a badge of your networking hustle.</p>
+            </div>
+            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-2xl p-6 text-center hover:shadow-lg transition-all">
+              <div className="text-4xl mb-3">⚡</div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Climb the Leaderboard</h3>
+              <p className="text-gray-600 text-sm">See how you stack up against other networkers. Rise through the ranks as you scan more cards and grow your contact base. Can you reach the top?</p>
+            </div>
+            <div className="bg-gradient-to-br from-green-50 to-teal-50 border-2 border-green-200 rounded-2xl p-6 text-center hover:shadow-lg transition-all">
+              <div className="text-4xl mb-3">🎯</div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Hit Milestones</h3>
+              <p className="text-gray-600 text-sm">Every exhibition attended, every follow-up completed, every place shared — it all counts. Turn everyday networking tasks into satisfying wins.</p>
+            </div>
+          </div>
+        </div>
+
         {/* Benefits Section */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 text-white mb-16">
           <div className="max-w-4xl mx-auto">
