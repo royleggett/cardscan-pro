@@ -1,11 +1,20 @@
 import React, { useState } from "react";
-import { Exhibition } from "@/entities/Exhibition";
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+
+function generateTeamCode() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "EXPO-";
+  for (let i = 0; i < 4; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
 
 export default function NewExhibition() {
   const navigate = useNavigate();
@@ -14,8 +23,9 @@ export default function NewExhibition() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await Exhibition.create({ name, location });
-    navigate(createPageUrl("Exhibitions"));
+    const teamCode = generateTeamCode();
+    const ex = await base44.entities.Exhibition.create({ name, location, team_code: teamCode, team_members: [] });
+    navigate(createPageUrl(`ExhibitionDetail?id=${ex.id}`));
   };
 
   return (
