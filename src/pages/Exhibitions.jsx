@@ -189,6 +189,13 @@ export default function Exhibitions() {
           })}
         </div>
       )}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileChange}
+      />
     </div>
   );
 }
