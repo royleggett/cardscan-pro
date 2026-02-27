@@ -4,7 +4,7 @@ const Contact = base44.entities.Contact;
 const Exhibition = base44.entities.Exhibition;
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Search, Download, Flame, Thermometer, Snowflake, Users } from "lucide-react";
+import { ArrowLeft, Search, Download, Flame, Thermometer, Snowflake, Users, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
@@ -27,6 +27,8 @@ export default function AllContacts() {
   const [showExport, setShowExport] = useState(false);
   const [fileName, setFileName] = useState("all_contacts");
   const [defaultTags, setDefaultTags] = useState([]);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadData();
@@ -35,6 +37,7 @@ export default function AllContacts() {
   const loadData = async () => {
     try {
       const currentUser = await base44.auth.me();
+      setUser(currentUser);
       
       const [contactsList, exhibitionsList] = await Promise.all([
         Contact.filter({ created_by: currentUser.email }, "-created_date"),
@@ -51,6 +54,8 @@ export default function AllContacts() {
       setExhibitions(exhibitionsMap);
     } catch (err) {
       base44.auth.redirectToLogin();
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -106,6 +111,16 @@ export default function AllContacts() {
     const matchesLead = leadFilter === "all" || (contact.follow_up_type || "none") === leadFilter;
     return matchesSearch && matchesLead;
   });
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    );
+  }
+
+  const isFreeUser = !user?.subscription_tier || user.subscription_tier === 'free';
 
   return (
     <div className="px-4 py-6 max-w-7xl mx-auto">
@@ -187,6 +202,26 @@ export default function AllContacts() {
           </div>
         ))}
       </div>
+
+      {isFreeUser && contacts.length > 0 && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+          <div className="flex items-start gap-4">
+            <Lock className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-grow">
+              <h3 className="font-semibold text-blue-900 mb-2">Upgrade to view all features</h3>
+              <p className="text-blue-700 text-sm mb-4">
+                You can view your {contacts.length} scanned contacts, but for unlimited scanning and full access to team features, consider upgrading to Premium.
+              </p>
+              <Button
+                onClick={() => navigate(createPageUrl("Pricing"))}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                View Pricing
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {contacts.length === 0 && (
         <div className="text-center py-16">
