@@ -84,6 +84,10 @@ export default function Home() {
     );
   }
 
+  const handleJoined = () => {
+    window.location.href = createPageUrl("Exhibitions");
+  };
+
   // Show landing page for non-authenticated users
   if (!user) {
     return <LandingPage />;
