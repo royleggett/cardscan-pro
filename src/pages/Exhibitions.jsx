@@ -11,6 +11,7 @@ import { format } from "date-fns";
 export default function Exhibitions() {
   const navigate = useNavigate();
   const [exhibitions, setExhibitions] = useState([]);
+  const [contactCounts, setContactCounts] = useState({});
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
 
