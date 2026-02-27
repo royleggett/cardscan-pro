@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
+import { createPageUrl } from "@/utils";
 
 export default function Success() {
-  const navigate = useNavigate();
   const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
-          navigate(createPageUrl("Home"));
+          window.location.href = createPageUrl("Home");
           return 0;
         }
         return prev - 1;
@@ -20,7 +18,7 @@ export default function Success() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [navigate]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 flex items-center justify-center px-4">
