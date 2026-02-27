@@ -278,14 +278,16 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [], isOwn
                 </div>
               </div>
 
-              <Button 
-                variant="outline" 
-                className="w-full text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-200" 
-                onClick={() => setShowDelete(true)}
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete Contact
-              </Button>
+              {(isOwner || isOwnContact) && (
+                <Button 
+                  variant="outline" 
+                  className="w-full text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-200" 
+                  onClick={() => setShowDelete(true)}
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Delete Contact
+                </Button>
+              )}
             </div>
           )}
         </CardContent>
