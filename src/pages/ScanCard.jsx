@@ -1,10 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 const Contact = base44.entities.Contact;
 const Exhibition = base44.entities.Exhibition;
 import { sendThankYouEmail } from "@/functions/sendThankYouEmail";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Camera, Upload, Loader2, Edit, AlertCircle, QrCode, FlipHorizontal } from "lucide-react";
+import { ArrowLeft, Camera, Upload, Loader2, Edit, AlertCircle, QrCode, FlipHorizontal, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -36,7 +36,30 @@ export default function ScanCard() {
   const [duplicateExhibitionName, setDuplicateExhibitionName] = useState("");
   const [pendingContact, setPendingContact] = useState(null);
   const [exhibitionName, setExhibitionName] = useState("");
+  const [user, setUser] = useState(null);
+  const [cardCount, setCardCount] = useState(0);
+  const [loadingData, setLoadingData] = useState(true);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const currentUser = await base44.auth.me();
+        setUser(currentUser);
+
+        // Check subscription and card count
+        const userContacts = await Contact.filter({ created_by: currentUser.email });
+        setCardCount(userContacts.length);
+      } catch (err) {
+        console.error("Failed to load user data:", err);
+        base44.auth.redirectToLogin();
+      } finally {
+        setLoadingData(false);
+      }
+    };
+
+    loadData();
+  }, []);
 
   React.useEffect(() => {
     if (exhibitionId) {
@@ -506,6 +529,68 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
     }
   };
 
+  if (loadingData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    );
+  }
+
+  const isFreeTier = user?.subscription_tier === 'free' || !user?.subscription_tier;
+  const hasReachedCardLimit = isFreeTier && cardCount >= 10;
+
+  if (hasReachedCardLimit) {
+    return (
+      <div className="min-h-screen px-4 py-6">
+        <Button
+          variant="ghost"
+          onClick={() => navigate(createPageUrl(`ExhibitionDetail?id=${exhibitionId}`))}
+          className="mb-6"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back
+        </Button>
+
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 text-center">
+            <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Lock className="w-10 h-10 text-white" />
+            </div>
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">You've unlocked the power of networking!</h2>
+            <p className="text-gray-600 mb-6 text-lg">
+              You've scanned your 10 free business cards. Upgrade to Premium to scan unlimited cards and unlock all features.
+            </p>
+            <div className="bg-white rounded-xl p-6 mb-6 text-left">
+              <h3 className="font-semibold text-gray-900 mb-4">Premium Plan includes:</h3>
+              <ul className="space-y-2">
+                <li className="flex items-center gap-2 text-gray-700">
+                  <span className="text-green-600 font-bold">✓</span> Unlimited card scanning
+                </li>
+                <li className="flex items-center gap-2 text-gray-700">
+                  <span className="text-green-600 font-bold">✓</span> Team collaborations
+                </li>
+                <li className="flex items-center gap-2 text-gray-700">
+                  <span className="text-green-600 font-bold">✓</span> Advanced lead tracking
+                </li>
+                <li className="flex items-center gap-2 text-gray-700">
+                  <span className="text-green-600 font-bold">✓</span> All features unlocked
+                </li>
+              </ul>
+            </div>
+            <Button
+              onClick={() => navigate(createPageUrl("Pricing"))}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg"
+            >
+              Upgrade to Premium — £59/year
+            </Button>
+            <p className="text-gray-500 text-sm mt-4">Or upgrade to Places (£20/year) for place recommendations only</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (processing) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
@@ -593,7 +678,14 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
       </Button>
 
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-2xl font-bold mb-8">Scan Business Card</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-bold">Scan Business Card</h1>
+          {isFreeTier && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-sm">
+              <p className="text-amber-900 font-semibold">{cardCount}/10 cards used</p>
+            </div>
+          )}
+        </div>
 
         {error && (
           <Alert variant="destructive" className="mb-6">
