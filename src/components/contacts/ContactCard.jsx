@@ -5,15 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Building2, Mail, Phone, Globe, MapPin, Trash2, ChevronDown, ChevronUp, Flag, Pencil, Flame, Thermometer, Snowflake, X, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
-
-
-
-const LEAD_CONFIG = {
-  hot:  { label: "Hot",  icon: Flame,       bg: "bg-red-100",    text: "text-red-700"    },
-  warm: { label: "Warm", icon: Thermometer, bg: "bg-amber-100",  text: "text-amber-700"  },
-  cool: { label: "Cool", icon: Snowflake,   bg: "bg-blue-100",   text: "text-blue-700"   },
-  none: { label: "None", icon: null,        bg: "bg-gray-100",   text: "text-gray-500"   },
-};
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,10 +15,21 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-
 import EditContactDialog from "./EditContactDialog";
 
+const LEAD_CONFIG = {
+  hot:  { label: "Hot",  icon: Flame,       bg: "bg-red-100",    text: "text-red-700"    },
+  warm: { label: "Warm", icon: Thermometer, bg: "bg-amber-100",  text: "text-amber-700"  },
+  cool: { label: "Cool", icon: Snowflake,   bg: "bg-blue-100",   text: "text-blue-700"   },
+  none: { label: "None", icon: null,        bg: "bg-gray-100",   text: "text-gray-500"   },
+};
+
 export default function ContactCard({ contact, onUpdate, defaultTags = [], isOwner = true, isOwnContact = true }) {
+  // canEdit: exhibition owner can edit anything; team member can only edit their own contacts
+  const canEdit = isOwner || isOwnContact;
+  // canDelete: only exhibition owner can delete
+  const canDelete = isOwner;
+
   const [expanded, setExpanded] = useState(false);
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
@@ -46,11 +48,13 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [], isOwn
   };
 
   const handleLeadChange = async (type) => {
+    if (!canEdit) return;
     await base44.entities.Contact.update(contact.id, { follow_up_type: type });
     onUpdate();
   };
 
   const handleTagToggle = async (tag) => {
+    if (!canEdit) return;
     setSavingTag(true);
     const current = contact.tags || [];
     const updated = current.includes(tag) ? current.filter(t => t !== tag) : [...current, tag];
@@ -60,6 +64,7 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [], isOwn
   };
 
   const handleAddCustomTag = async () => {
+    if (!canEdit) return;
     const trimmed = newTag.trim();
     if (!trimmed) return;
     const current = contact.tags || [];
@@ -72,6 +77,7 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [], isOwn
   };
 
   const handleRemoveTag = async (tag) => {
+    if (!canEdit) return;
     setSavingTag(true);
     const updated = (contact.tags || []).filter(t => t !== tag);
     await base44.entities.Contact.update(contact.id, { tags: updated });
@@ -117,19 +123,19 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [], isOwn
               </div>
             </div>
             <div className="flex gap-2">
-              {(isOwner || isOwnContact) && (
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+              {canEdit && (
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setShowEdit(true)}
                   className="hover:bg-blue-50 hover:text-blue-600"
                 >
                   <Pencil className="w-4 h-4" />
                 </Button>
               )}
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setExpanded(!expanded)}
                 className="hover:bg-gray-100"
               >
@@ -209,79 +215,99 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [], isOwn
                   )}
                 </div>
               )}
-              <div>
-                <p className="text-xs text-gray-500 font-semibold mb-2">Tags</p>
-                {/* Active tags */}
-                <div className="flex gap-2 flex-wrap mb-2">
-                  {(contact.tags || []).map(tag => (
-                    <span key={tag} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-800 border-2 border-purple-300">
-                      {tag}
-                      <button onClick={() => handleRemoveTag(tag)} disabled={savingTag} className="ml-0.5 hover:text-red-500">
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
-                </div>
-                {/* Default tags quick-add */}
-                {defaultTags.filter(t => !(contact.tags || []).includes(t)).length > 0 && (
-                  <div className="flex gap-2 flex-wrap mb-2">
-                    {defaultTags.filter(t => !(contact.tags || []).includes(t)).map(tag => (
+
+              {canEdit && (
+                <>
+                  <div>
+                    <p className="text-xs text-gray-500 font-semibold mb-2">Tags</p>
+                    <div className="flex gap-2 flex-wrap mb-2">
+                      {(contact.tags || []).map(tag => (
+                        <span key={tag} className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold bg-purple-100 text-purple-800 border-2 border-purple-300">
+                          {tag}
+                          <button onClick={() => handleRemoveTag(tag)} disabled={savingTag} className="ml-0.5 hover:text-red-500">
+                            <X className="w-3 h-3" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                    {defaultTags.filter(t => !(contact.tags || []).includes(t)).length > 0 && (
+                      <div className="flex gap-2 flex-wrap mb-2">
+                        {defaultTags.filter(t => !(contact.tags || []).includes(t)).map(tag => (
+                          <button
+                            key={tag}
+                            onClick={() => handleTagToggle(tag)}
+                            disabled={savingTag}
+                            className="px-3 py-1.5 rounded-full text-xs font-semibold border-2 bg-white text-gray-400 border-gray-200 hover:border-purple-300 hover:text-purple-700 transition-all"
+                          >
+                            + {tag}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    <div className="flex gap-2 mt-1">
+                      <Input
+                        value={newTag}
+                        onChange={e => setNewTag(e.target.value)}
+                        onKeyDown={e => e.key === "Enter" && handleAddCustomTag()}
+                        placeholder="Add tag..."
+                        className="h-8 text-xs"
+                      />
                       <button
-                        key={tag}
-                        onClick={() => handleTagToggle(tag)}
-                        disabled={savingTag}
-                        className="px-3 py-1.5 rounded-full text-xs font-semibold border-2 bg-white text-gray-400 border-gray-200 hover:border-purple-300 hover:text-purple-700 transition-all"
+                        onClick={handleAddCustomTag}
+                        disabled={savingTag || !newTag.trim()}
+                        className="px-3 py-1.5 rounded-md bg-purple-100 text-purple-800 text-xs font-semibold hover:bg-purple-200 disabled:opacity-40"
                       >
-                        + {tag}
+                        <Plus className="w-3 h-3" />
                       </button>
-                    ))}
+                    </div>
                   </div>
-                )}
-                <div className="flex gap-2 mt-1">
-                  <Input
-                    value={newTag}
-                    onChange={e => setNewTag(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && handleAddCustomTag()}
-                    placeholder="Add tag..."
-                    className="h-8 text-xs"
-                  />
-                  <button
-                    onClick={handleAddCustomTag}
-                    disabled={savingTag || !newTag.trim()}
-                    className="px-3 py-1.5 rounded-md bg-purple-100 text-purple-800 text-xs font-semibold hover:bg-purple-200 disabled:opacity-40"
-                  >
-                    <Plus className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
 
-              <div>
-                <p className="text-xs text-gray-500 font-semibold mb-2">Lead Temperature</p>
-                <div className="flex gap-2 flex-wrap">
-                  {["hot","warm","cool","none"].map(type => {
-                    const cfg = LEAD_CONFIG[type];
-                    const Icon = cfg.icon;
-                    const isActive = (contact.follow_up_type || "none") === type;
+                  <div>
+                    <p className="text-xs text-gray-500 font-semibold mb-2">Lead Temperature</p>
+                    <div className="flex gap-2 flex-wrap">
+                      {["hot","warm","cool","none"].map(type => {
+                        const cfg = LEAD_CONFIG[type];
+                        const Icon = cfg.icon;
+                        const isActive = (contact.follow_up_type || "none") === type;
+                        return (
+                          <button
+                            key={type}
+                            onClick={() => handleLeadChange(type)}
+                            className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold border-2 transition-all ${
+                              isActive ? `${cfg.bg} ${cfg.text} border-current` : "bg-white text-gray-400 border-gray-200 hover:border-gray-300"
+                            }`}
+                          >
+                            {Icon && <Icon className="w-3 h-3" />}
+                            {cfg.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Read-only lead temperature display for non-editors */}
+              {!canEdit && contact.follow_up_type && contact.follow_up_type !== "none" && (
+                <div>
+                  <p className="text-xs text-gray-500 font-semibold mb-2">Lead Temperature</p>
+                  {(() => {
+                    const cfg = LEAD_CONFIG[contact.follow_up_type];
+                    const Icon = cfg?.icon;
                     return (
-                      <button
-                        key={type}
-                        onClick={() => handleLeadChange(type)}
-                        className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold border-2 transition-all ${
-                          isActive ? `${cfg.bg} ${cfg.text} border-current` : "bg-white text-gray-400 border-gray-200 hover:border-gray-300"
-                        }`}
-                      >
+                      <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold ${cfg?.bg} ${cfg?.text}`}>
                         {Icon && <Icon className="w-3 h-3" />}
-                        {cfg.label}
-                      </button>
+                        {cfg?.label}
+                      </span>
                     );
-                  })}
+                  })()}
                 </div>
-              </div>
+              )}
 
-              {(isOwner || isOwnContact) && (
-                <Button 
-                  variant="outline" 
-                  className="w-full text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-200" 
+              {canDelete && (
+                <Button
+                  variant="outline"
+                  className="w-full text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-200"
                   onClick={() => setShowDelete(true)}
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
@@ -293,12 +319,14 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [], isOwn
         </CardContent>
       </Card>
 
-      <EditContactDialog
-        open={showEdit}
-        onOpenChange={setShowEdit}
-        contact={contact}
-        onSave={handleSaveEdit}
-      />
+      {canEdit && (
+        <EditContactDialog
+          open={showEdit}
+          onOpenChange={setShowEdit}
+          contact={contact}
+          onSave={handleSaveEdit}
+        />
+      )}
 
       <AlertDialog open={showDelete} onOpenChange={setShowDelete}>
         <AlertDialogContent>
