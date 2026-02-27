@@ -103,8 +103,8 @@ export default function Exhibitions() {
                   {/* Coloured top strip */}
                   <div className="h-2 bg-gradient-to-r from-blue-500 to-purple-500" />
                   <div className="p-5">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1">
                           <h3 className="font-bold text-lg text-gray-900">{ex.name}</h3>
                           {!isOwner && (
@@ -131,7 +131,7 @@ export default function Exhibitions() {
                           )}
                         </div>
 
-                        <div className="flex items-center gap-2 mt-3">
+                        <div className="flex items-center gap-2 mt-3 flex-wrap">
                           <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-100 px-2.5 py-1 rounded-full">
                             <Users className="w-3 h-3" />
                             {contactCounts[ex.id] ?? "…"} contact{contactCounts[ex.id] !== 1 ? "s" : ""}
@@ -143,7 +143,7 @@ export default function Exhibitions() {
                           )}
                         </div>
                       </div>
-                      <div className="text-blue-400 ml-4 text-xl">›</div>
+                      <div className="text-blue-400 text-xl flex-shrink-0">›</div>
                     </div>
                   </div>
                 </CardContent>
