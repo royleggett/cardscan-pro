@@ -90,14 +90,25 @@ export default function AdminUsers() {
                     {u.role}
                   </Badge>
                   {u.email !== currentUser?.email && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-red-400 hover:text-red-600 hover:bg-red-50"
-                      onClick={() => setUserToDelete(u)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-blue-400 hover:text-blue-600 hover:bg-blue-50"
+                        title={u.role === "admin" ? "Remove admin" : "Make admin"}
+                        onClick={() => setUserToPromote(u)}
+                      >
+                        <Shield className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-400 hover:text-red-600 hover:bg-red-50"
+                        onClick={() => setUserToDelete(u)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </>
                   )}
                 </div>
               </CardContent>
