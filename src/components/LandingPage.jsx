@@ -217,8 +217,8 @@ export default function LandingPage() {
               <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">
                 3
               </div>
-              <h3 className="text-xl font-semibold mb-3">Export & Share</h3>
-              <p className="text-gray-600">Export to Excel for CRM integration. Share places with your team or the community.</p>
+              <h3 className="text-xl font-semibold mb-3">Collaborate & Export</h3>
+              <p className="text-gray-600">Share exhibitions with your team in real time. Export to Excel for CRM integration.</p>
             </div>
           </div>
         </div>
