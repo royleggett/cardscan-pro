@@ -42,6 +42,42 @@ Deno.serve(async (req) => {
     const subject = applyPlaceholders(subjectTemplate, vars);
     const body = applyPlaceholders(bodyTemplate, vars);
 
+    const htmlBody = `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f5f7fa;font-family:Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f7fa;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+        
+        <!-- Header -->
+        <tr>
+          <td style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);padding:36px 32px;text-align:center;">
+            <div style="font-size:40px;margin-bottom:12px;">🤝</div>
+            <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:700;">Great meeting you!</h1>
+          </td>
+        </tr>
+
+        <!-- Body -->
+        <tr>
+          <td style="padding:32px;">
+            ${body.split('\n').filter(l => l.trim()).map(line => `<p style="margin:0 0 16px;color:#444;font-size:15px;line-height:1.7;">${line}</p>`).join('')}
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="background:#f9fafb;padding:20px 32px;text-align:center;border-top:1px solid #eee;">
+            <p style="margin:0;color:#999;font-size:13px;">Sent via CardScan Pro</p>
+          </td>
+        </tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -53,7 +89,7 @@ Deno.serve(async (req) => {
         to: [contactEmail],
         subject,
         text: body,
-        html: `<pre style="font-family:sans-serif;white-space:pre-wrap;">${body}</pre>`
+        html: htmlBody
       })
     });
 
