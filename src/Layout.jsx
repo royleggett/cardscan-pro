@@ -49,9 +49,11 @@ export default function Layout({ children }) {
     base44.auth.redirectToLogin();
   };
 
+  const isSuccessPage = location.pathname.includes("Success");
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 pb-20">
-      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10 shadow-sm">
+      {!isSuccessPage && <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10 shadow-sm">
         <div className="px-4 py-4 flex justify-between items-center">
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68e3b1d0b387a294f20142e9/bcdfcf951_CardScanPro_Icon.png" 

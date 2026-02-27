@@ -62,10 +62,10 @@ import ImportExport from './pages/ImportExport';
 import Leaderboard from './pages/Leaderboard';
 import MyCard from './pages/MyCard';
 import NewExhibition from './pages/NewExhibition';
+import Pricing from './pages/Pricing';
 import Rewards from './pages/Rewards';
 import ScanCard from './pages/ScanCard';
 import Settings from './pages/Settings';
-import Pricing from './pages/Pricing';
 import Success from './pages/Success';
 import __Layout from './Layout.jsx';
 
@@ -86,10 +86,10 @@ export const PAGES = {
     "Leaderboard": Leaderboard,
     "MyCard": MyCard,
     "NewExhibition": NewExhibition,
+    "Pricing": Pricing,
     "Rewards": Rewards,
     "ScanCard": ScanCard,
     "Settings": Settings,
-    "Pricing": Pricing,
     "Success": Success,
 }
 
