@@ -117,14 +117,16 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [], isOwn
               </div>
             </div>
             <div className="flex gap-2">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => setShowEdit(true)}
-                className="hover:bg-blue-50 hover:text-blue-600"
-              >
-                <Pencil className="w-4 h-4" />
-              </Button>
+              {(isOwner || isOwnContact) && (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => setShowEdit(true)}
+                  className="hover:bg-blue-50 hover:text-blue-600"
+                >
+                  <Pencil className="w-4 h-4" />
+                </Button>
+              )}
               <Button 
                 variant="ghost" 
                 size="icon" 
