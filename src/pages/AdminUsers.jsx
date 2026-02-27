@@ -117,6 +117,25 @@ export default function AdminUsers() {
         </div>
       </div>
 
+      <AlertDialog open={!!userToPromote} onOpenChange={() => setUserToPromote(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{userToPromote?.role === "admin" ? "Remove Admin?" : "Make Admin?"}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {userToPromote?.role === "admin"
+                ? `This will remove admin privileges from ${userToPromote?.full_name} (${userToPromote?.email}).`
+                : `This will give ${userToPromote?.full_name} (${userToPromote?.email}) full admin access to the app.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleToggleAdmin} className="bg-blue-600 hover:bg-blue-700">
+              {userToPromote?.role === "admin" ? "Remove Admin" : "Make Admin"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <AlertDialog open={!!userToDelete} onOpenChange={() => setUserToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
