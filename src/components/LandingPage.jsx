@@ -55,6 +55,26 @@ export default function LandingPage() {
       brief: "Discover places shared by professionals in your city or exhibition. Local insights, global network.",
       details: "Benefit from the collective knowledge of thousands of business travelers and exhibition attendees. When you visit a city or attend an exhibition, automatically see places shared by other professionals who've been there before. Filter by category, ratings, and proximity. Share your own discoveries to help the community. It's like having a local guide in every city you visit.",
       screenshot: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&h=600&fit=crop"
+    },
+    {
+      id: "team",
+      icon: Globe,
+      iconColor: "text-indigo-600",
+      bgColor: "bg-indigo-100",
+      title: "Team Exhibitions",
+      brief: "Invite your whole team to collaborate on an exhibition. Share contacts, leads, and insights in real time.",
+      details: "Running an exhibition with a team? Create a shared exhibition and invite colleagues with a simple join code. Every team member can scan cards and add contacts — all visible to the whole team instantly. The exhibition owner controls the event details, while team members focus on networking. Perfect for sales teams, trade shows, and conferences where multiple people are working the floor at once.",
+      screenshot: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop"
+    },
+    {
+      id: "personalise",
+      icon: Image,
+      iconColor: "text-pink-600",
+      bgColor: "bg-pink-100",
+      title: "Personalise Your Exhibitions",
+      brief: "Add a custom cover photo to each exhibition card so your events are instantly recognisable at a glance.",
+      details: "Give each of your exhibitions its own identity by adding a cover photo — a shot of the venue, your stand, the city skyline, or anything that captures the moment. Photos are uploaded in seconds and appear right on the exhibition card, making it easy to find the right event at a glance. It's a small touch that makes your event history feel personal and organised.",
+      screenshot: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop"
     }
   ];
 
