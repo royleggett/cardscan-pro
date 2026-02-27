@@ -82,13 +82,25 @@ export default function AdminRewards() {
       <div className="px-4 py-6 max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-3 mb-8">
-          <Link to={createPageUrl("AdminPlaces")}>
+          <Link to={createPageUrl("Home")}>
             <Button variant="ghost" size="icon">
               <ChevronLeft className="w-5 h-5" />
             </Button>
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">User Rewards Monitor</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Admin Panel</h1>
         </div>
+
+        {/* Admin Nav Links */}
+        <div className="flex flex-wrap gap-3 mb-8">
+          <Link to={createPageUrl("AdminUsers")}>
+            <Button variant="outline">👥 Manage Users</Button>
+          </Link>
+          <Link to={createPageUrl("AdminPlaces")}>
+            <Button variant="outline">📍 Moderate Places</Button>
+          </Link>
+        </div>
+
+        <h2 className="text-xl font-bold text-gray-900 mb-4">User Rewards Monitor</h2>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
