@@ -55,6 +55,24 @@ export default function Exhibitions() {
     setLoading(false);
   };
 
+  const handlePhotoClick = (e, exId) => {
+    e.stopPropagation();
+    pendingExIdRef.current = exId;
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const exId = pendingExIdRef.current;
+    setUploadingPhotoFor(exId);
+    const { file_url } = await base44.integrations.Core.UploadFile({ file });
+    await base44.entities.Exhibition.update(exId, { photo_url: file_url });
+    setExhibitions(prev => prev.map(ex => ex.id === exId ? { ...ex, photo_url: file_url } : ex));
+    setUploadingPhotoFor(null);
+    e.target.value = "";
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
