@@ -147,7 +147,7 @@ export default function Rewards() {
                   key={milestone.badge}
                   className={`rounded-xl p-4 text-center border-2 transition-all ${
                     earned
-                      ? "bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-300"
+                      ? "bg-gradient-to-br from-violet-500 to-purple-600 border-purple-400 shadow-lg shadow-purple-200"
                       : "bg-gray-50 border-gray-200 opacity-50"
                   }`}
                 >
