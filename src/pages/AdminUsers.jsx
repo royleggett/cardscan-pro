@@ -13,6 +13,7 @@ export default function AdminUsers() {
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [userToPromote, setUserToPromote] = useState(null);
 
   useEffect(() => {
     loadData();

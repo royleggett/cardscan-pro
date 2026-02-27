@@ -49,6 +49,7 @@
  */
 import AddContact from './pages/AddContact';
 import AdminPlaces from './pages/AdminPlaces';
+import AdminRewards from './pages/AdminRewards';
 import AdminUsers from './pages/AdminUsers';
 import AllContacts from './pages/AllContacts';
 import Discover from './pages/Discover';
@@ -64,13 +65,13 @@ import NewExhibition from './pages/NewExhibition';
 import Rewards from './pages/Rewards';
 import ScanCard from './pages/ScanCard';
 import Settings from './pages/Settings';
-import AdminRewards from './pages/AdminRewards';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "AddContact": AddContact,
     "AdminPlaces": AdminPlaces,
+    "AdminRewards": AdminRewards,
     "AdminUsers": AdminUsers,
     "AllContacts": AllContacts,
     "Discover": Discover,
@@ -86,7 +87,6 @@ export const PAGES = {
     "Rewards": Rewards,
     "ScanCard": ScanCard,
     "Settings": Settings,
-    "AdminRewards": AdminRewards,
 }
 
 export const pagesConfig = {
