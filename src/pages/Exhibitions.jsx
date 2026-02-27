@@ -104,8 +104,8 @@ export default function Exhibitions() {
                   <div className="h-2 bg-gradient-to-r from-blue-500 to-purple-500" />
                   <div className="p-5">
                     <div className="flex items-center justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <div className="flex-1 min-w-0 text-center">
+                        <div className="flex items-center justify-center gap-2 flex-wrap mb-1">
                           <h3 className="font-bold text-lg text-gray-900">{ex.name}</h3>
                           {!isOwner && (
                             <Badge variant="secondary" className="bg-purple-100 text-purple-700 text-xs">
