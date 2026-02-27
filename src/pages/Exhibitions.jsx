@@ -14,6 +14,9 @@ export default function Exhibitions() {
   const [contactCounts, setContactCounts] = useState({});
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [uploadingPhotoFor, setUploadingPhotoFor] = useState(null);
+  const fileInputRef = useRef(null);
+  const pendingExIdRef = useRef(null);
 
   useEffect(() => {
     loadExhibitions();
