@@ -53,25 +53,26 @@ export default function Layout({ children }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 pb-20">
-      {!isSuccessPage && <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10 shadow-sm">
-        <div className="px-4 py-4 flex justify-between items-center">
-          <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68e3b1d0b387a294f20142e9/bcdfcf951_CardScanPro_Icon.png" 
-            alt="CardScanner Pro" 
-            className={`h-10 w-10 cursor-pointer select-none transition-all ${showAdminFlash ? "opacity-30 scale-95" : "opacity-100 hover:scale-105"}`}
-            onClick={handleLogoTap}
-          />
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={handleLogout}
-            className="text-gray-600 hover:text-gray-900"
-          >
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
-          </Button>
-        </div>
-      </header>
+      {!isSuccessPage && (
+        <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10 shadow-sm">
+          <div className="px-4 py-4 flex justify-between items-center">
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68e3b1d0b387a294f20142e9/bcdfcf951_CardScanPro_Icon.png" 
+              alt="CardScanner Pro" 
+              className={`h-10 w-10 cursor-pointer select-none transition-all ${showAdminFlash ? "opacity-30 scale-95" : "opacity-100 hover:scale-105"}`}
+              onClick={handleLogoTap}
+            />
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={handleLogout}
+              className="text-gray-600 hover:text-gray-900"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
+            </Button>
+          </div>
+        </header>
       )}
 
       <main className={isSuccessPage ? "min-h-screen" : ""}>{children}</main>
