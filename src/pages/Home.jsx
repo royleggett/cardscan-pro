@@ -195,28 +195,28 @@ export default function Home() {
         )}
 
         <div className="max-w-md mx-auto space-y-4">
-          <Link to={createPageUrl("Exhibitions")}>
+          <Link to={createPageUrl("Exhibitions")} className="block w-full">
             <Button className="w-full h-20 text-lg justify-center bg-white hover:bg-gray-50 active:bg-blue-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
               <FolderOpen className="w-6 h-6 mr-3" />
               My Exhibitions
             </Button>
           </Link>
           
-          <Link to={createPageUrl("NewExhibition")}>
+          <Link to={createPageUrl("NewExhibition")} className="block w-full">
             <Button className="w-full h-20 text-lg justify-center bg-white hover:bg-gray-50 active:bg-blue-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
               <Plus className="w-6 h-6 mr-3" />
               Create New Exhibition
             </Button>
           </Link>
 
-          <Link to={createPageUrl("AllContacts")}>
+          <Link to={createPageUrl("AllContacts")} className="block w-full">
             <Button className="w-full h-20 text-lg justify-center bg-white hover:bg-gray-50 active:bg-blue-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
               <Users className="w-6 h-6 mr-3" />
               View All Contacts
             </Button>
           </Link>
 
-          <Link to={createPageUrl("ImportExport")}>
+          <Link to={createPageUrl("ImportExport")} className="block w-full">
             <Button className="w-full h-20 text-lg justify-center bg-white hover:bg-gray-50 active:bg-blue-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
               <Upload className="w-6 h-6 mr-3" />
               Import / Export
@@ -231,7 +231,7 @@ export default function Home() {
             Join Team Exhibition
           </Button>
 
-          <Link to={createPageUrl("Settings")}>
+          <Link to={createPageUrl("Settings")} className="block w-full">
             <Button className="w-full h-20 text-lg justify-center bg-white hover:bg-gray-50 active:bg-blue-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
               <Settings className="w-6 h-6 mr-3" />
               Settings
