@@ -166,7 +166,7 @@ export default function Exhibitions() {
 
                      {/* Middle: photo */}
                      <div
-                       className="flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 border-dashed border-gray-200 flex items-center justify-center bg-gray-50 relative cursor-pointer hover:border-blue-400 transition-all"
+                       className="flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 border-dashed border-gray-200 flex items-center justify-center bg-gray-50 relative cursor-pointer hover:border-blue-400 transition-all mr-4"
                        onClick={(e) => handlePhotoClick(e, ex.id)}
                        title="Tap to add/change photo"
                      >
