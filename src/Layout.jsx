@@ -72,10 +72,11 @@ export default function Layout({ children }) {
           </Button>
         </div>
       </header>
+      )}
 
-      <main>{children}</main>
+      <main className={isSuccessPage ? "min-h-screen" : ""}>{children}</main>
 
-{isAuthenticated && (
+{!isSuccessPage && isAuthenticated && (
         <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 shadow-lg">
           <div className="flex h-20 max-w-md mx-auto">
             <Link 
