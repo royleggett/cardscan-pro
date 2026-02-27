@@ -84,18 +84,22 @@ export default function Pricing() {
     try {
       // Call backend to create Stripe checkout session
       const response = await base44.functions.invoke("createCheckoutSession", {
-        tier,
-        userEmail: user.email,
-        userName: user.full_name
+        tier
       });
       
-      if (response.data?.url) {
+      console.log("Checkout response:", response);
+      
+      if (response?.data?.url) {
         window.location.href = response.data.url;
+      } else if (response?.url) {
+        window.location.href = response.url;
       } else {
-        console.error("No checkout URL returned");
+        console.error("No checkout URL in response:", response);
+        alert("Failed to create checkout session. Check browser console.");
       }
     } catch (err) {
       console.error("Failed to create checkout session:", err);
+      alert(`Error: ${err.message}`);
     } finally {
       setLoading(false);
     }
