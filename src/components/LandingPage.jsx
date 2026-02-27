@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Camera, Users, MapPin, Globe, Award, Zap, Shield, Smartphone } from "lucide-react";
+import { Camera, Users, MapPin, Globe, Award, Zap, Shield, Smartphone, Image } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
 export default function LandingPage() {
