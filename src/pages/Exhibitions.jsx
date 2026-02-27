@@ -131,7 +131,7 @@ export default function Exhibitions() {
                           )}
                         </div>
 
-                        <div className="flex items-center gap-2 mt-3 flex-wrap">
+                        <div className="flex items-center justify-center gap-2 mt-3 flex-wrap">
                           <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-100 px-2.5 py-1 rounded-full">
                             <Users className="w-3 h-3" />
                             {contactCounts[ex.id] ?? "…"} contact{contactCounts[ex.id] !== 1 ? "s" : ""}
