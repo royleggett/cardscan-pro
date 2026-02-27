@@ -38,6 +38,14 @@ export default function Exhibitions() {
 
       const all = [...owned, ...joinedAsTeam];
       setExhibitions(all);
+
+      // Load contact counts for all exhibitions
+      const counts = {};
+      await Promise.all(all.map(async (ex) => {
+        const c = await base44.entities.Contact.filter({ exhibition_id: ex.id });
+        counts[ex.id] = c.length;
+      }));
+      setContactCounts(counts);
     } catch {
       base44.auth.redirectToLogin();
     }
