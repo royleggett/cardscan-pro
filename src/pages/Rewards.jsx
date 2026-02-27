@@ -9,8 +9,8 @@ const MILESTONES = [
   { entries: 25, badge: "Starter", icon: "🌱" },
   { entries: 50, badge: "Contributor", icon: "⭐" },
   { entries: 75, badge: "Bronze Member", icon: "🥉", discount: 5 },
-  { entries: 100, badge: "Silver Member", icon: "🥈", discount: 5 },
-  { entries: 150, badge: "Gold Member", icon: "🥇", discount: 10 },
+  { entries: 100, badge: "Silver Member", icon: "🥈", discount: 10 },
+  { entries: 150, badge: "Gold Member", icon: "🥇", discount: 15 },
   { entries: 200, badge: "Platinum", icon: "💎", discount: 20 },
   { entries: 500, badge: "Elite", icon: "👑", discount: 50 },
   { entries: 1000, badge: "VIP", icon: "🏆", subscription: "free_year" }
