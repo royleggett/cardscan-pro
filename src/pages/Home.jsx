@@ -3,7 +3,8 @@ import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
-import { Plus, FolderOpen, Users, Upload, Settings, Flame, Thermometer, Snowflake, AlertCircle, Compass, Star, MapPin, ChevronRight } from "lucide-react";
+import { Plus, FolderOpen, Users, Upload, Settings, Flame, Thermometer, Snowflake, AlertCircle, Compass, Star, MapPin, ChevronRight, UserPlus } from "lucide-react";
+import JoinExhibitionDialog from "@/components/exhibitions/JoinExhibitionDialog";
 import LandingPage from "@/components/LandingPage";
 
 export default function Home() {
