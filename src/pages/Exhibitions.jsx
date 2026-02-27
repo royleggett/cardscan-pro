@@ -96,41 +96,55 @@ export default function Exhibitions() {
             return (
               <Card
                 key={ex.id}
-                className="cursor-pointer hover:shadow-lg hover:border-blue-200 border-2 transition-all"
+                className="cursor-pointer hover:shadow-lg hover:border-blue-200 border-2 transition-all overflow-hidden"
                 onClick={() => navigate(createPageUrl(`ExhibitionDetail?id=${ex.id}`))}
               >
-                <CardContent className="p-5">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-bold text-lg text-gray-900">{ex.name}</h3>
-                        {!isOwner && (
-                          <Badge variant="secondary" className="bg-purple-100 text-purple-700 text-xs">
-                            <Users className="w-3 h-3 mr-1" />
-                            Team
-                          </Badge>
-                        )}
+                <CardContent className="p-0">
+                  {/* Coloured top strip */}
+                  <div className="h-2 bg-gradient-to-r from-blue-500 to-purple-500" />
+                  <div className="p-5">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <h3 className="font-bold text-lg text-gray-900">{ex.name}</h3>
+                          {!isOwner && (
+                            <Badge variant="secondary" className="bg-purple-100 text-purple-700 text-xs">
+                              <Users className="w-3 h-3 mr-1" />
+                              Team
+                            </Badge>
+                          )}
+                        </div>
+
+                        <div className="space-y-0.5">
+                          {ex.location && (
+                            <p className="text-sm text-gray-500">📍 {ex.location}</p>
+                          )}
+                          {(ex.from_date || ex.to_date) && (
+                            <p className="text-sm text-gray-500">
+                              📅 {ex.from_date ? format(new Date(ex.from_date), "MMM d, yyyy") : ""}
+                              {ex.from_date && ex.to_date ? " – " : ""}
+                              {ex.to_date ? format(new Date(ex.to_date), "MMM d, yyyy") : ""}
+                            </p>
+                          )}
+                          {ex.hotel && (
+                            <p className="text-sm text-gray-500">🏨 {ex.hotel}</p>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-2 mt-3">
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-100 px-2.5 py-1 rounded-full">
+                            <Users className="w-3 h-3" />
+                            {contactCounts[ex.id] ?? "…"} contact{contactCounts[ex.id] !== 1 ? "s" : ""}
+                          </span>
+                          {(ex.team_members || []).length > 0 && (
+                            <span className="inline-flex items-center gap-1 text-xs font-semibold text-purple-700 bg-purple-50 border border-purple-100 px-2.5 py-1 rounded-full">
+                              👥 {(ex.team_members || []).length} team member{(ex.team_members || []).length !== 1 ? "s" : ""}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      {ex.location && (
-                        <p className="text-sm text-gray-500 mt-1">📍 {ex.location}</p>
-                      )}
-                      {(ex.from_date || ex.to_date) && (
-                        <p className="text-sm text-gray-500 mt-0.5">
-                          📅 {ex.from_date ? format(new Date(ex.from_date), "MMM d, yyyy") : ""}
-                          {ex.from_date && ex.to_date ? " – " : ""}
-                          {ex.to_date ? format(new Date(ex.to_date), "MMM d, yyyy") : ""}
-                        </p>
-                      )}
-                        {ex.hotel && (
-                        <p className="text-sm text-gray-500 mt-0.5">🏨 {ex.hotel}</p>
-                      )}
-                      <div className="flex items-center gap-3 mt-2">
-                        <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
-                          👥 {contactCounts[ex.id] ?? "..."} contact{contactCounts[ex.id] !== 1 ? "s" : ""}
-                        </span>
-                      </div>
+                      <div className="text-blue-400 ml-4 text-xl">›</div>
                     </div>
-                    <div className="text-blue-400 ml-4">›</div>
                   </div>
                 </CardContent>
               </Card>
