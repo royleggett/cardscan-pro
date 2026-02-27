@@ -37,6 +37,13 @@ export default function AdminUsers() {
     setUserToDelete(null);
   };
 
+  const handleToggleAdmin = async () => {
+    const newRole = userToPromote.role === "admin" ? "user" : "admin";
+    await base44.entities.User.update(userToPromote.id, { role: newRole });
+    setUsers(users.map(u => u.id === userToPromote.id ? { ...u, role: newRole } : u));
+    setUserToPromote(null);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
