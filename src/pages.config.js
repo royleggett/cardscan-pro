@@ -66,6 +66,7 @@ import Rewards from './pages/Rewards';
 import ScanCard from './pages/ScanCard';
 import Settings from './pages/Settings';
 import Pricing from './pages/Pricing';
+import Success from './pages/Success';
 import __Layout from './Layout.jsx';
 
 
@@ -89,6 +90,7 @@ export const PAGES = {
     "ScanCard": ScanCard,
     "Settings": Settings,
     "Pricing": Pricing,
+    "Success": Success,
 }
 
 export const pagesConfig = {
