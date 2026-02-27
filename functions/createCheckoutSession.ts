@@ -50,8 +50,8 @@ Deno.serve(async (req) => {
         }
       ],
       mode: 'subscription',
-      success_url: `${Deno.env.get('BASE44_APP_URL')}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${Deno.env.get('BASE44_APP_URL')}/pricing`,
+      success_url: `${Deno.env.get('BASE44_APP_URL')}/Success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${Deno.env.get('BASE44_APP_URL')}/Pricing`,
       metadata: {
         user_email: user.email,
         tier: tier
