@@ -240,5 +240,11 @@ export default function Home() {
         </div>
       </div>
     </div>
+
+      <JoinExhibitionDialog
+        open={showJoin}
+        onOpenChange={setShowJoin}
+        onJoined={handleJoined}
+      />
   );
 }
