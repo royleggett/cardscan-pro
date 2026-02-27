@@ -22,6 +22,7 @@ import EditExhibitionDialog from "../components/exhibitions/EditExhibitionDialog
 import AddPlaceDialog from "../components/places/AddPlaceDialog";
 import PlaceCard from "../components/places/PlaceCard";
 import BookTaxiDialog from "../components/taxi/BookTaxiDialog";
+import TeamCodeDisplay from "../components/exhibitions/TeamCodeDisplay";
 
 export default function ExhibitionDetail() {
   const navigate = useNavigate();
@@ -39,6 +40,10 @@ export default function ExhibitionDetail() {
   const [fileName, setFileName] = useState("");
   const [loading, setLoading] = useState(true);
   const [defaultTags, setDefaultTags] = useState([]);
+  const [isOwner, setIsOwner] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  // Map of email -> display_name for scanned-by labels
+  const [userNames, setUserNames] = useState({});
 
   useEffect(() => {
     if (exhibitionId) {
@@ -48,27 +53,51 @@ export default function ExhibitionDetail() {
 
   const loadData = async () => {
     try {
-      const currentUser = await base44.auth.me();
-      
-      const [exList, contactsList, myPlaces, publicPlaces] = await Promise.all([
-        Exhibition.filter({ id: exhibitionId, created_by: currentUser.email }),
-        Contact.filter({ exhibition_id: exhibitionId, created_by: currentUser.email }, "-created_date"),
-        base44.entities.Place.filter({ exhibition_id: exhibitionId, created_by: currentUser.email }, "-created_date"),
-        base44.entities.Place.filter({ exhibition_id: exhibitionId, is_public: true }, "-created_date")
-      ]);
+      const user = await base44.auth.me();
+      setCurrentUser(user);
 
-      const ex = exList[0];
+      // Load exhibition — owner or team member
+      const allMatching = await Exhibition.filter({ id: exhibitionId });
+      const ex = allMatching[0];
+
       if (!ex) {
         navigate(createPageUrl("Exhibitions"));
         return;
       }
-      
+
+      const owner = ex.created_by === user.email;
+      const isMember = (ex.team_members || []).includes(user.email);
+
+      if (!owner && !isMember) {
+        navigate(createPageUrl("Exhibitions"));
+        return;
+      }
+
+      setIsOwner(owner);
       setExhibition(ex);
+
+      // Load ALL contacts for the exhibition (entire team)
+      const [contactsList, myPlaces, publicPlaces] = await Promise.all([
+        Contact.filter({ exhibition_id: exhibitionId }, "-created_date"),
+        base44.entities.Place.filter({ exhibition_id: exhibitionId, created_by: user.email }, "-created_date"),
+        base44.entities.Place.filter({ exhibition_id: exhibitionId, is_public: true }, "-created_date")
+      ]);
+
       setContacts(contactsList);
-      
-      const otherUsersPublicPlaces = publicPlaces.filter(p => p.created_by !== currentUser.email);
+
+      const otherUsersPublicPlaces = publicPlaces.filter(p => p.created_by !== user.email);
       setPlaces([...myPlaces, ...otherUsersPublicPlaces]);
-      setDefaultTags(currentUser?.default_tags || []);
+      setDefaultTags(user?.default_tags || []);
+
+      // Build a names map from unique created_by emails in contacts
+      const emails = [...new Set(contactsList.map(c => c.created_by).filter(Boolean))];
+      if (emails.length > 0) {
+        const allUsers = await base44.entities.User.list();
+        const namesMap = {};
+        allUsers.forEach(u => { namesMap[u.email] = u.display_name || u.full_name || u.email; });
+        setUserNames(namesMap);
+      }
+
       setLoading(false);
     } catch (err) {
       base44.auth.redirectToLogin();
@@ -92,6 +121,7 @@ export default function ExhibitionDetail() {
   const exportToExcel = async () => {
     const exportData = contacts.map(contact => ({
       'Exhibition': exhibition?.name || '',
+      'Scanned By': userNames[contact.created_by] || contact.created_by || '',
       'Name': contact.full_name || '',
       'Company': contact.company || '',
       'Position': contact.position || '',
@@ -171,31 +201,50 @@ export default function ExhibitionDetail() {
               </p>
             </div>
             
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setShowEdit(true)}
-                className="bg-white hover:bg-gray-50"
-              >
-                <Settings className="w-4 h-4" />
-              </Button>
-              
-              {contacts.length > 0 && (
+            {isOwner && (
+              <div className="flex gap-2">
                 <Button
                   variant="outline"
-                  onClick={() => {
-                    setFileName(exhibition?.name || '');
-                    setShowExport(true);
-                  }}
+                  size="icon"
+                  onClick={() => setShowEdit(true)}
                   className="bg-white hover:bg-gray-50"
                 >
-                  <Download className="w-4 h-4 mr-2" />
-                  Export CSV
+                  <Settings className="w-4 h-4" />
                 </Button>
-              )}
-            </div>
+                
+                {contacts.length > 0 && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setFileName(exhibition?.name || '');
+                      setShowExport(true);
+                    }}
+                    className="bg-white hover:bg-gray-50"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Export CSV
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
+
+          {/* Team code - owner only */}
+          {isOwner && exhibition.team_code && (
+            <div className="mb-4">
+              <TeamCodeDisplay
+                code={exhibition.team_code}
+                memberCount={(exhibition.team_members || []).length}
+              />
+            </div>
+          )}
+
+          {/* Team member info */}
+          {!isOwner && (
+            <div className="mb-4 bg-purple-50 border border-purple-200 rounded-xl px-4 py-2 text-sm text-purple-700">
+              You are a team member of this exhibition. You can add contacts but only the owner can edit or export.
+            </div>
+          )}
 
           <div className="grid grid-cols-3 gap-3">
             <Link to={createPageUrl(`ScanCard?exhibition_id=${exhibitionId}`)}>
@@ -244,12 +293,22 @@ export default function ExhibitionDetail() {
 
             <div className="space-y-4">
               {filteredContacts.map((contact) => (
-                <ContactCard
-                  key={contact.id}
-                  contact={contact}
-                  onUpdate={loadData}
-                  defaultTags={defaultTags}
-                />
+                <div key={contact.id}>
+                  {/* Show scanned-by if this is a team exhibition */}
+                  {(exhibition.team_members || []).length > 0 && contact.created_by && (
+                    <p className="text-xs text-gray-400 mb-1 ml-1">
+                      Scanned by <span className="font-semibold text-gray-500">{userNames[contact.created_by] || contact.created_by}</span>
+                    </p>
+                  )}
+                  <ContactCard
+                    key={contact.id}
+                    contact={contact}
+                    onUpdate={loadData}
+                    defaultTags={defaultTags}
+                    isOwner={isOwner}
+                    isOwnContact={contact.created_by === currentUser?.email}
+                  />
+                </div>
               ))}
             </div>
 
@@ -294,13 +353,45 @@ export default function ExhibitionDetail() {
         </Tabs>
       </div>
 
-      <EditExhibitionDialog
-        open={showEdit}
-        onOpenChange={setShowEdit}
-        exhibition={exhibition}
-        onSave={handleSaveExhibition}
-        onDelete={handleDeleteExhibition}
-      />
+      {isOwner && (
+        <>
+          <EditExhibitionDialog
+            open={showEdit}
+            onOpenChange={setShowEdit}
+            exhibition={exhibition}
+            onSave={handleSaveExhibition}
+            onDelete={handleDeleteExhibition}
+          />
+          <Dialog open={showExport} onOpenChange={setShowExport}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Export to CSV</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div>
+                  <Label htmlFor="filename">File Name</Label>
+                  <Input
+                    id="filename"
+                    value={fileName}
+                    onChange={(e) => setFileName(e.target.value)}
+                    placeholder="Enter file name"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">.csv will be added automatically</p>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowExport(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={exportToExcel} className="bg-blue-600 hover:bg-blue-700">
+                  <Download className="w-4 h-4 mr-2" />
+                  Export
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
 
       <AddPlaceDialog
         open={showAddPlace}
@@ -314,35 +405,6 @@ export default function ExhibitionDetail() {
         onOpenChange={setShowBookTaxi}
         defaultDestination={exhibition?.location || ""}
       />
-
-      <Dialog open={showExport} onOpenChange={setShowExport}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Export to CSV</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div>
-              <Label htmlFor="filename">File Name</Label>
-              <Input
-                id="filename"
-                value={fileName}
-                onChange={(e) => setFileName(e.target.value)}
-                placeholder="Enter file name"
-              />
-              <p className="text-xs text-gray-500 mt-1">.csv will be added automatically</p>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowExport(false)}>
-              Cancel
-            </Button>
-            <Button onClick={exportToExcel} className="bg-blue-600 hover:bg-blue-700">
-              <Download className="w-4 h-4 mr-2" />
-              Export
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
