@@ -152,10 +152,10 @@ export default function Rewards() {
                   }`}
                 >
                   <div className="text-3xl mb-2">{milestone.icon}</div>
-                  <p className="font-bold text-sm text-gray-900">{milestone.badge}</p>
-                  <p className="text-xs text-gray-600">{milestone.entries} entries</p>
+                  <p className={`font-bold text-sm ${earned ? "text-white" : "text-gray-900"}`}>{milestone.badge}</p>
+                  <p className={`text-xs ${earned ? "text-purple-100" : "text-gray-600"}`}>{milestone.entries} entries</p>
                   {milestone.discount && (
-                    <p className="text-xs font-semibold text-green-600 mt-1">
+                    <p className={`text-xs font-semibold mt-1 ${earned ? "text-yellow-300" : "text-green-600"}`}>
                       {milestone.discount}% off
                     </p>
                   )}
