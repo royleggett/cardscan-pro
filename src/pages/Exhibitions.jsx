@@ -121,9 +121,14 @@ export default function Exhibitions() {
                           {ex.to_date ? format(new Date(ex.to_date), "MMM d, yyyy") : ""}
                         </p>
                       )}
-                      {ex.hotel && (
+                        {ex.hotel && (
                         <p className="text-sm text-gray-500 mt-0.5">🏨 {ex.hotel}</p>
                       )}
+                      <div className="flex items-center gap-3 mt-2">
+                        <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                          👥 {contactCounts[ex.id] ?? "..."} contact{contactCounts[ex.id] !== 1 ? "s" : ""}
+                        </span>
+                      </div>
                     </div>
                     <div className="text-blue-400 ml-4">›</div>
                   </div>
