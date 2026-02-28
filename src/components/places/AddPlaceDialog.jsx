@@ -82,20 +82,10 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
         
         <div className="space-y-4 py-4">
           <div>
-            <Label>Place Name *</Label>
-            <Input
-              value={placeData.name}
-              onChange={(e) => setPlaceData({ ...placeData, name: e.target.value })}
-              placeholder="Restaurant name or place"
-              className="mt-1"
-            />
-          </div>
-
-          <div>
             <Label>Category *</Label>
             <Select
               value={placeData.category}
-              onValueChange={(value) => setPlaceData({ ...placeData, category: value })}
+              onValueChange={(value) => setPlaceData({ ...placeData, category: value, attributes: [] })}
             >
               <SelectTrigger className="mt-1">
                 <SelectValue placeholder="Select category" />
@@ -113,6 +103,22 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
                 <SelectItem value="Other">Other</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <CategoryAttributesSection
+            category={placeData.category}
+            selectedAttributes={placeData.attributes || []}
+            onChange={(attrs) => setPlaceData({ ...placeData, attributes: attrs })}
+          />
+
+          <div>
+            <Label>Place Name *</Label>
+            <Input
+              value={placeData.name}
+              onChange={(e) => setPlaceData({ ...placeData, name: e.target.value })}
+              placeholder="Restaurant name or place"
+              className="mt-1"
+            />
           </div>
 
           <div>
