@@ -40,6 +40,9 @@ Deno.serve(async (req) => {
       customerId = customer.id;
     }
 
+    // Build base URL from the incoming request origin
+    const origin = req.headers.get('origin') || req.headers.get('referer')?.split('/').slice(0, 3).join('/') || Deno.env.get('BASE44_APP_URL');
+
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -50,8 +53,8 @@ Deno.serve(async (req) => {
         }
       ],
       mode: 'subscription',
-      success_url: `${Deno.env.get('BASE44_APP_URL')}/Success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${Deno.env.get('BASE44_APP_URL')}/Pricing`,
+      success_url: `${origin}/Success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/Pricing`,
       metadata: {
         user_email: user.email,
         tier: tier
