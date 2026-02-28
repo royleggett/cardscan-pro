@@ -197,6 +197,14 @@ export default function Home() {
         )}
 
         <div className="max-w-md mx-auto space-y-4">
+          <Button
+            onClick={() => setShowAddPlace(true)}
+            className="w-full h-20 text-lg justify-center bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-md hover:shadow-lg transition-all"
+          >
+            <MapPin className="w-6 h-6 mr-3" />
+            Add a Place
+          </Button>
+
           <Link to={createPageUrl("Exhibitions")} className="block w-full">
             <Button className="w-full h-20 text-lg justify-center bg-white hover:bg-gray-50 active:bg-blue-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
               <FolderOpen className="w-6 h-6 mr-3" />
