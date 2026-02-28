@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { tier } = await req.json();
+    const { tier, base_url } = await req.json();
 
     if (!tier || !PRICES[tier]) {
       return Response.json({ error: 'Invalid tier' }, { status: 400 });
