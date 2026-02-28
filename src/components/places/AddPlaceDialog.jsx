@@ -64,7 +64,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
 
   const handleSave = async () => {
     await base44.entities.Place.create({
-      exhibition_id: exhibitionId,
+      exhibition_id: exhibitionId || "none",
       ...placeData
     });
     
