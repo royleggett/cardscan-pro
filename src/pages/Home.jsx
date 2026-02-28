@@ -32,6 +32,13 @@ export default function Home() {
 
   useEffect(() => {
     loadUser();
+    // Check for ?join=CODE in URL and auto-open join dialog
+    const params = new URLSearchParams(window.location.search);
+    const joinCode = params.get("join");
+    if (joinCode) {
+      setAutoJoinCode(joinCode);
+      setShowJoin(true);
+    }
   }, []);
 
   const loadUser = async () => {
