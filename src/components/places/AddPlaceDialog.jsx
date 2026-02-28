@@ -30,7 +30,8 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
     website: "",
     notes: "",
     rating: 0,
-    is_public: false
+    is_public: false,
+    attributes: []
   });
   const [locating, setLocating] = useState(false);
 
