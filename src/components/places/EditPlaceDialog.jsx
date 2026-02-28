@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Loader2, Locate } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import CategoryAttributesSection from "./CategoryAttributesSection";
 import {
   Select,
   SelectContent,
