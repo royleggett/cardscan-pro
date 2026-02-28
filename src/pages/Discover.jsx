@@ -177,6 +177,16 @@ export default function Discover() {
                           </div>
                         )}
 
+                        {place.attributes && place.attributes.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mb-2">
+                            {place.attributes.map(attr => (
+                              <span key={attr} className="inline-block bg-blue-50 text-blue-700 border border-blue-100 rounded-full px-2 py-0.5 text-xs font-medium">
+                                ✓ {attr}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
                         {place.notes && (
                           <p className="text-sm text-gray-600 italic bg-gray-50 rounded-lg px-3 py-2 mb-2 line-clamp-2">
                             "{place.notes}"
