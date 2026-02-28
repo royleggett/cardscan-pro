@@ -14,6 +14,7 @@ export default function Home() {
   const [followUpAlerts, setFollowUpAlerts] = useState([]);
   const [topPlaces, setTopPlaces] = useState([]);
   const [showJoin, setShowJoin] = useState(false);
+  const [showAddPlace, setShowAddPlace] = useState(false);
 
   useEffect(() => {
     loadUser();
