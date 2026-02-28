@@ -82,11 +82,15 @@ export default function Pricing() {
     
     setLoading(true);
     try {
-      // Pass current base URL so backend can build the correct redirect URLs
-      const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
+      // Build full redirect URLs on the frontend to avoid any server-side URL guessing
+      const currentBase = window.location.href.split('?')[0].replace(/\/[^/]*$/, '');
+      const successUrl = `${window.location.origin}${window.location.pathname.includes('/') ? window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')) : ''}/Success?session_id={CHECKOUT_SESSION_ID}`;
+      const cancelUrl = window.location.href.split('?')[0];
+
       const response = await base44.functions.invoke("createCheckoutSession", {
         tier,
-        base_url: window.location.origin
+        success_url: successUrl,
+        cancel_url: cancelUrl
       });
       
       console.log("Checkout response:", response);
