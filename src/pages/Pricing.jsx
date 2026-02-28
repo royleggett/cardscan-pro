@@ -82,9 +82,11 @@ export default function Pricing() {
     
     setLoading(true);
     try {
-      // Call backend to create Stripe checkout session
+      // Pass current base URL so backend can build the correct redirect URLs
+      const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/');
       const response = await base44.functions.invoke("createCheckoutSession", {
-        tier
+        tier,
+        base_url: window.location.origin
       });
       
       console.log("Checkout response:", response);
