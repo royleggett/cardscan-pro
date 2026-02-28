@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,6 +25,7 @@ export default function NewExhibition() {
     hotel: "",
     notes: ""
   });
+  const [isTeam, setIsTeam] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -32,8 +33,7 @@ export default function NewExhibition() {
     setSaving(true);
     const exhibition = await base44.entities.Exhibition.create({
       ...formData,
-      team_code: generateTeamCode(),
-      team_members: []
+      ...(isTeam ? { team_code: generateTeamCode(), team_members: [] } : {})
     });
     navigate(createPageUrl(`ExhibitionDetail?id=${exhibition.id}`));
   };
