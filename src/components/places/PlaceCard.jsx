@@ -144,6 +144,16 @@ export default function PlaceCard({ place, onUpdate }) {
             </div>
           )}
 
+          {place.attributes && place.attributes.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {place.attributes.map(attr => (
+                <span key={attr} className="inline-block bg-blue-50 text-blue-700 border border-blue-100 rounded-full px-2.5 py-0.5 text-xs font-medium">
+                  ✓ {attr}
+                </span>
+              ))}
+            </div>
+          )}
+
           {place.notes && (
             <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg mt-2">
               {place.notes}
