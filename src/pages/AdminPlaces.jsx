@@ -23,10 +23,8 @@ export default function AdminPlaces() {
       window.location.href = createPageUrl("Home");
       return;
     }
-    // Fetch all public places
     const allPlaces = await base44.entities.Place.list();
-    const publicPlaces = allPlaces.filter(p => p.is_public);
-    setPlaces(publicPlaces);
+    setPlaces(allPlaces);
     setLoading(false);
   };
 
