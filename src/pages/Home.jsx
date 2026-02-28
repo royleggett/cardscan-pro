@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, FolderOpen, Users, Upload, Settings, Flame, Thermometer, Snowflake, AlertCircle, Compass, Star, MapPin, ChevronRight, UserPlus } from "lucide-react";
 import JoinExhibitionDialog from "@/components/exhibitions/JoinExhibitionDialog";
 import LandingPage from "@/components/LandingPage";
+import AddPlaceDialog from "@/components/places/AddPlaceDialog";
 
 export default function Home() {
   const [user, setUser] = useState(null);
