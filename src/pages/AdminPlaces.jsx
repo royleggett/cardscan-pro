@@ -51,7 +51,7 @@ export default function AdminPlaces() {
           </Link>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Community Moderation</h1>
-            <p className="text-gray-500 text-sm">{places.length} public place{places.length !== 1 ? "s" : ""}</p>
+            <p className="text-gray-500 text-sm">{places.length} place{places.length !== 1 ? "s" : ""} total</p>
           </div>
         </div>
 
