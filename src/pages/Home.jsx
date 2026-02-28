@@ -269,6 +269,7 @@ export default function Home() {
         open={showJoin}
         onOpenChange={setShowJoin}
         onJoined={handleJoined}
+        initialCode={autoJoinCode || ""}
       />
       <AddPlaceDialog
         open={showAddPlace}
