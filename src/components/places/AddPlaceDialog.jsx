@@ -105,12 +105,6 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
             </Select>
           </div>
 
-          <CategoryAttributesSection
-            category={placeData.category}
-            selectedAttributes={placeData.attributes || []}
-            onChange={(attrs) => setPlaceData({ ...placeData, attributes: attrs })}
-          />
-
           <div>
             <Label>Place Name *</Label>
             <Input
