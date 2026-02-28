@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { tier, base_url } = await req.json();
+    const { tier, success_url, cancel_url } = await req.json();
 
     if (!tier || !PRICES[tier]) {
       return Response.json({ error: 'Invalid tier' }, { status: 400 });
@@ -40,8 +40,10 @@ Deno.serve(async (req) => {
       customerId = customer.id;
     }
 
-    // Use the base_url passed from frontend, fallback to env var
-    const origin = base_url || Deno.env.get('BASE44_APP_URL');
+    // Use URLs from frontend, fallback to env var
+    const appBase = Deno.env.get('BASE44_APP_URL');
+    const finalSuccessUrl = success_url || `${appBase}/Success?session_id={CHECKOUT_SESSION_ID}`;
+    const finalCancelUrl = cancel_url || `${appBase}/Pricing`;
 
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
@@ -53,8 +55,8 @@ Deno.serve(async (req) => {
         }
       ],
       mode: 'subscription',
-      success_url: `${origin}/Success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/Pricing`,
+      success_url: finalSuccessUrl,
+      cancel_url: finalCancelUrl,
       metadata: {
         user_email: user.email,
         tier: tier
