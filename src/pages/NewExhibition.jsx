@@ -117,6 +117,33 @@ export default function NewExhibition() {
               />
             </div>
 
+            {/* Team Exhibition toggle */}
+            <div
+              onClick={() => setIsTeam(!isTeam)}
+              className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                isTeam
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-200 bg-gray-50 hover:border-gray-300"
+              }`}
+            >
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${isTeam ? "bg-blue-600" : "bg-gray-300"}`}>
+                <Users className="w-5 h-5 text-white" />
+              </div>
+              <div className="flex-1">
+                <p className={`font-semibold ${isTeam ? "text-blue-800" : "text-gray-700"}`}>
+                  Team Exhibition
+                </p>
+                <p className={`text-sm ${isTeam ? "text-blue-600" : "text-gray-500"}`}>
+                  {isTeam
+                    ? "A join link & code will be created — share with your team"
+                    : "Tap to enable team sharing with a join link & code"}
+                </p>
+              </div>
+              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isTeam ? "border-blue-500 bg-blue-500" : "border-gray-300"}`}>
+                {isTeam && <div className="w-2 h-2 rounded-full bg-white" />}
+              </div>
+            </div>
+
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" onClick={() => navigate(createPageUrl("Exhibitions"))} className="flex-1">
                 Cancel
