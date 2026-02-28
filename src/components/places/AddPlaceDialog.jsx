@@ -68,7 +68,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
       ...placeData
     });
     
-    setPlaceData({ name: "", category: "Restaurant", address: "", website: "", notes: "", rating: 0, is_public: false });
+    setPlaceData({ name: "", category: "Restaurant", address: "", website: "", notes: "", rating: 0, is_public: false, attributes: [] });
     onPlaceAdded();
     onOpenChange(false);
   };
