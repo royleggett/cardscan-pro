@@ -254,6 +254,11 @@ export default function Home() {
         onOpenChange={setShowJoin}
         onJoined={handleJoined}
       />
+      <AddPlaceDialog
+        open={showAddPlace}
+        onOpenChange={setShowAddPlace}
+        onPlaceAdded={() => setShowAddPlace(false)}
+      />
     </div>
   );
 }
