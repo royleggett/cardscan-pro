@@ -61,7 +61,9 @@ export default function JoinExhibitionDialog({ open, onOpenChange, onJoined, ini
         </DialogHeader>
         <div className="py-4 space-y-4">
           <p className="text-sm text-gray-500">
-            Enter the team code shared by your exhibition manager to join their booth.
+            {initialCode
+              ? "We found your invite link! Tap below to join the exhibition."
+              : "Enter the team code shared by your exhibition manager to join their booth."}
           </p>
           <div>
             <Label>Team Code</Label>
