@@ -74,10 +74,12 @@ export default function Discover() {
   };
 
   const filtered = places.filter(p => {
+    const searchLower = search.toLowerCase();
     const matchesSearch = !search || 
-      p.name?.toLowerCase().includes(search.toLowerCase()) ||
-      p.address?.toLowerCase().includes(search.toLowerCase()) ||
-      p.notes?.toLowerCase().includes(search.toLowerCase());
+      p.name?.toLowerCase().includes(searchLower) ||
+      p.address?.toLowerCase().includes(searchLower) ||
+      p.notes?.toLowerCase().includes(searchLower) ||
+      (p.attributes || []).some(a => a.toLowerCase().includes(searchLower));
     const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
