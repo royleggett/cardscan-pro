@@ -105,7 +105,7 @@ export default function Discover() {
             <Input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Search places, addresses..."
+              placeholder="Search places, features (e.g. Vegan, Pool)..."
               className="pl-9"
             />
           </div>
