@@ -40,8 +40,8 @@ Deno.serve(async (req) => {
       customerId = customer.id;
     }
 
-    // Build base URL from the incoming request origin
-    const origin = req.headers.get('origin') || req.headers.get('referer')?.split('/').slice(0, 3).join('/') || Deno.env.get('BASE44_APP_URL');
+    // Use the base_url passed from frontend, fallback to env var
+    const origin = base_url || Deno.env.get('BASE44_APP_URL');
 
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
