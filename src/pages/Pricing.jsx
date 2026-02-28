@@ -82,10 +82,10 @@ export default function Pricing() {
     
     setLoading(true);
     try {
-      // Build full redirect URLs on the frontend to avoid any server-side URL guessing
-      const currentBase = window.location.href.split('?')[0].replace(/\/[^/]*$/, '');
-      const successUrl = `${window.location.origin}${window.location.pathname.includes('/') ? window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')) : ''}/Success?session_id={CHECKOUT_SESSION_ID}`;
-      const cancelUrl = window.location.href.split('?')[0];
+      // Build redirect URLs from current page URL to ensure correct app path
+      const appBase = window.location.href.split('?')[0].replace(/\/[^/]+$/, '');
+      const successUrl = `${appBase}/Success?session_id={CHECKOUT_SESSION_ID}`;
+      const cancelUrl = `${appBase}/Pricing`;
 
       const response = await base44.functions.invoke("createCheckoutSession", {
         tier,
