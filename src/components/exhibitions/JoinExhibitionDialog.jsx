@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Users } from "lucide-react";
 
-export default function JoinExhibitionDialog({ open, onOpenChange, onJoined }) {
-  const [code, setCode] = useState("");
+export default function JoinExhibitionDialog({ open, onOpenChange, onJoined, initialCode = "" }) {
+  const [code, setCode] = useState(initialCode);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
