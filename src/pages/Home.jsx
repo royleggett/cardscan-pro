@@ -15,6 +15,20 @@ export default function Home() {
   const [topPlaces, setTopPlaces] = useState([]);
   const [showJoin, setShowJoin] = useState(false);
   const [showAddPlace, setShowAddPlace] = useState(false);
+  const [pressedBtn, setPressedBtn] = useState(null);
+
+  const handlePress = (key, fn) => {
+    setPressedBtn(key);
+    setTimeout(() => setPressedBtn(null), 300);
+    if (fn) fn();
+  };
+
+  const btnClass = (key) =>
+    `w-full h-20 text-lg justify-center border-2 border-gray-200 shadow-md hover:shadow-lg transition-all ${
+      pressedBtn === key
+        ? "bg-purple-600 text-white border-purple-600"
+        : "bg-white hover:bg-purple-50 text-gray-900"
+    }`;
 
   useEffect(() => {
     loadUser();
