@@ -16,6 +16,7 @@ export default function Home() {
   const [showJoin, setShowJoin] = useState(false);
   const [showAddPlace, setShowAddPlace] = useState(false);
   const [pressedBtn, setPressedBtn] = useState(null);
+  const [autoJoinCode, setAutoJoinCode] = useState(null);
 
   const handlePress = (key, fn) => {
     setPressedBtn(key);
