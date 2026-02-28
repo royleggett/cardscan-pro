@@ -237,7 +237,7 @@ export default function ExhibitionDetail() {
         open={showAddPlace}
         onOpenChange={setShowAddPlace}
         exhibitionId={exhibitionId}
-        onAdded={loadData}
+        onPlaceAdded={loadData}
       />
     </div>
   );
