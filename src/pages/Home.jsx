@@ -211,52 +211,46 @@ export default function Home() {
         )}
 
         <div className="max-w-md mx-auto space-y-4">
-          <Button
-            onClick={() => setShowAddPlace(true)}
-            className="w-full h-20 text-lg justify-center bg-white hover:bg-purple-50 active:bg-purple-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all"
-          >
+          <Button onClick={() => handlePress("addplace", () => setShowAddPlace(true))} className={btnClass("addplace")}>
             <MapPin className="w-6 h-6 mr-3" />
             Add a Place
           </Button>
 
-          <Link to={createPageUrl("Exhibitions")} className="block w-full">
-            <Button className="w-full h-20 text-lg justify-center bg-white hover:bg-purple-50 active:bg-purple-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
+          <Link to={createPageUrl("Exhibitions")} className="block w-full" onClick={() => handlePress("exhibitions")}>
+            <Button className={btnClass("exhibitions")}>
               <FolderOpen className="w-6 h-6 mr-3" />
               My Exhibitions
             </Button>
           </Link>
           
-          <Link to={createPageUrl("NewExhibition")} className="block w-full">
-            <Button className="w-full h-20 text-lg justify-center bg-white hover:bg-purple-50 active:bg-purple-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
+          <Link to={createPageUrl("NewExhibition")} className="block w-full" onClick={() => handlePress("newexhibition")}>
+            <Button className={btnClass("newexhibition")}>
               <Plus className="w-6 h-6 mr-3" />
               Create New Exhibition
             </Button>
           </Link>
 
-          <Link to={createPageUrl("AllContacts")} className="block w-full">
-            <Button className="w-full h-20 text-lg justify-center bg-white hover:bg-purple-50 active:bg-purple-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
+          <Link to={createPageUrl("AllContacts")} className="block w-full" onClick={() => handlePress("contacts")}>
+            <Button className={btnClass("contacts")}>
               <Users className="w-6 h-6 mr-3" />
               View All Contacts
             </Button>
           </Link>
 
-          <Link to={createPageUrl("ImportExport")} className="block w-full">
-            <Button className="w-full h-20 text-lg justify-center bg-white hover:bg-purple-50 active:bg-purple-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
+          <Link to={createPageUrl("ImportExport")} className="block w-full" onClick={() => handlePress("importexport")}>
+            <Button className={btnClass("importexport")}>
               <Upload className="w-6 h-6 mr-3" />
               Import / Export
             </Button>
           </Link>
 
-          <Button
-            onClick={() => setShowJoin(true)}
-            className="w-full h-20 text-lg justify-center bg-white hover:bg-purple-50 active:bg-purple-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all"
-          >
+          <Button onClick={() => handlePress("join", () => setShowJoin(true))} className={btnClass("join")}>
             <UserPlus className="w-6 h-6 mr-3" />
             Join Team Exhibition
           </Button>
 
-          <Link to={createPageUrl("Settings")} className="block w-full">
-            <Button className="w-full h-20 text-lg justify-center bg-white hover:bg-purple-50 active:bg-purple-600 active:text-white text-gray-900 border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
+          <Link to={createPageUrl("Settings")} className="block w-full" onClick={() => handlePress("settings")}>
+            <Button className={btnClass("settings")}>
               <Settings className="w-6 h-6 mr-3" />
               Settings
             </Button>
