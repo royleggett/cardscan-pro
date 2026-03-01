@@ -891,11 +891,32 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
             </div>
           </button>
 
+          <button
+            onClick={() => batchFileInputRef.current?.click()}
+            className="w-full p-8 rounded-2xl border-2 border-dashed border-gray-300 hover:border-teal-400 hover:bg-teal-50 transition-all"
+          >
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mb-4">
+                <Users className="w-8 h-8 text-teal-600" />
+              </div>
+              <h3 className="text-lg font-semibold mb-1">Batch Scan</h3>
+              <p className="text-sm text-gray-500">Upload multiple card photos at once</p>
+            </div>
+          </button>
+
           <input
             ref={fileInputRef}
             type="file"
             accept="image/*"
             onChange={handleFileSelect}
+            className="hidden"
+          />
+          <input
+            ref={batchFileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleBatchFileSelect}
             className="hidden"
           />
         </div>
