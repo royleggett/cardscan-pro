@@ -342,8 +342,19 @@ export default function ImportExport() {
               disabled={!exportExhibition || exporting}
               className="w-full"
             >
-              {exporting ? "Exporting..." : `Export ${exportType}`}
+              {exporting ? "Exporting..." : `Export ${exportType} as CSV`}
             </Button>
+
+            {exportType === "contacts" && (
+              <Button
+                onClick={handleExportVCard}
+                disabled={!exportExhibition || exporting}
+                variant="outline"
+                className="w-full"
+              >
+                {exporting ? "Exporting..." : "Export Contacts as vCard (.vcf)"}
+              </Button>
+            )}
           </CardContent>
         </Card>
       </div>
