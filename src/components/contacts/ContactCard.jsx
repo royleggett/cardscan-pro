@@ -36,6 +36,30 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [], isOwn
   const [savingTag, setSavingTag] = useState(false);
   const [newTag, setNewTag] = useState("");
 
+  const handleSaveToPhone = () => {
+    const lines = ["BEGIN:VCARD", "VERSION:3.0"];
+    if (contact.full_name) lines.push(`FN:${contact.full_name}`);
+    if (contact.company || contact.position) lines.push(`ORG:${contact.company || ""}`);
+    if (contact.position) lines.push(`TITLE:${contact.position}`);
+    if (contact.email) lines.push(`EMAIL;TYPE=INTERNET:${contact.email}`);
+    if (contact.phone_mobile) lines.push(`TEL;TYPE=CELL:${contact.phone_mobile}`);
+    if (contact.phone_landline) lines.push(`TEL;TYPE=WORK:${contact.phone_landline}`);
+    if (contact.phone_fax) lines.push(`TEL;TYPE=FAX:${contact.phone_fax}`);
+    if (contact.phone_other) lines.push(`TEL;TYPE=OTHER:${contact.phone_other}`);
+    if (contact.website) lines.push(`URL:${contact.website}`);
+    if (contact.address) lines.push(`ADR;TYPE=WORK:;;${contact.address};;;;${contact.country || ""}`);
+    if (contact.notes) lines.push(`NOTE:${contact.notes}`);
+    lines.push("END:VCARD");
+
+    const blob = new Blob([lines.join("\n")], { type: "text/vcard" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${contact.full_name || "contact"}.vcf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const handleDelete = async () => {
     await base44.entities.Contact.delete(contact.id);
     onUpdate();
