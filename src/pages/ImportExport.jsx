@@ -163,6 +163,56 @@ export default function ImportExport() {
     setExporting(false);
   };
 
+  const handleExportVCard = async () => {
+    if (!exportExhibition) return;
+
+    setExporting(true);
+    try {
+      const contacts = await base44.entities.Contact.filter({ exhibition_id: exportExhibition });
+
+      if (contacts.length === 0) {
+        alert("No contacts found for this exhibition.");
+        setExporting(false);
+        return;
+      }
+
+      const vcards = contacts.map(c => {
+        const nameParts = (c.full_name || "").trim().split(" ");
+        const firstName = nameParts.slice(0, -1).join(" ");
+        const lastName = nameParts.slice(-1).join(" ");
+
+        const lines = [
+          "BEGIN:VCARD",
+          "VERSION:3.0",
+          `FN:${c.full_name || ""}`,
+          `N:${lastName};${firstName};;;`,
+        ];
+        if (c.company) lines.push(`ORG:${c.company}`);
+        if (c.position) lines.push(`TITLE:${c.position}`);
+        if (c.email) lines.push(`EMAIL;TYPE=WORK:${c.email}`);
+        if (c.phone_mobile) lines.push(`TEL;TYPE=CELL:${c.phone_mobile}`);
+        if (c.phone_landline) lines.push(`TEL;TYPE=WORK:${c.phone_landline}`);
+        if (c.phone_fax) lines.push(`TEL;TYPE=FAX:${c.phone_fax}`);
+        if (c.website) lines.push(`URL:${c.website}`);
+        if (c.address) lines.push(`ADR;TYPE=WORK:;;${c.address};;;;`);
+        if (c.notes) lines.push(`NOTE:${c.notes.replace(/\n/g, "\\n")}`);
+        lines.push("END:VCARD");
+        return lines.join("\r\n");
+      });
+
+      const blob = new Blob([vcards.join("\r\n\r\n")], { type: "text/vcard" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `contacts_${new Date().toISOString().split('T')[0]}.vcf`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      alert("vCard export failed: " + err.message);
+    }
+    setExporting(false);
+  };
+
   return (
     <div className="px-4 py-8 max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-2">Import & Export</h1>
