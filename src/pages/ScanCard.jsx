@@ -46,6 +46,7 @@ export default function ScanCard() {
   const [batchProcessing, setBatchProcessing] = useState(false);
   const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0 });
   const [batchResults, setBatchResults] = useState(null);
+  const [batchReviewCards, setBatchReviewCards] = useState(null);
 
   useEffect(() => {
     const loadData = async () => {
