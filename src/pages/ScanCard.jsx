@@ -701,6 +701,16 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
     );
   }
 
+  if (batchReviewCards) {
+    return (
+      <BatchReview
+        cards={batchReviewCards}
+        onSaveAll={handleBatchSaveAll}
+        onCancel={() => setBatchReviewCards(null)}
+      />
+    );
+  }
+
   if (batchResults) {
     return (
       <BatchScanResults
