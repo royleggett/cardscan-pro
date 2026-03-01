@@ -522,6 +522,102 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
     navigate(createPageUrl(`ExhibitionDetail?id=${exhibitionId}`));
   };
 
+  const processSingleCardForBatch = async (file, allContacts) => {
+    const compressed = await compressImage(file);
+    const { file_url } = await uploadWithRetry(compressed);
+
+    const result = await base44.integrations.Core.ExtractDataFromUploadedFile({
+      file_url,
+      json_schema: {
+        type: "object",
+        properties: {
+          full_name: { type: "string" },
+          company: { type: "string" },
+          position: { type: "string" },
+          email: { type: "string" },
+          phone_numbers: { type: "array", items: { type: "string" } },
+          website: { type: "string" },
+          address: { type: "string" }
+        }
+      }
+    });
+
+    if (!result.status === "success" || !result.output) {
+      return { status: "failed", name: file.name, error: "Could not extract data" };
+    }
+
+    const output = result.output;
+    let phoneData = { phone_mobile: "", phone_landline: "", phone_fax: "", phone_other: "" };
+
+    if (output.phone_numbers?.length > 0) {
+      phoneData = await base44.integrations.Core.InvokeLLM({
+        prompt: `Categorize these phone numbers: ${JSON.stringify(output.phone_numbers)}. Return JSON with phone_mobile, phone_landline, phone_fax, phone_other.`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            phone_mobile: { type: "string" },
+            phone_landline: { type: "string" },
+            phone_fax: { type: "string" },
+            phone_other: { type: "string" }
+          }
+        }
+      });
+    }
+
+    const nameNorm = (output.full_name || "").toLowerCase().trim();
+    const emailNorm = (output.email || "").toLowerCase().trim();
+    const isDuplicate = allContacts.some(c =>
+      (nameNorm && c.full_name?.toLowerCase().trim() === nameNorm) ||
+      (emailNorm && c.email?.toLowerCase().trim() === emailNorm)
+    );
+
+    if (isDuplicate) {
+      return { status: "skipped", name: output.full_name, company: output.company };
+    }
+
+    const contact = {
+      exhibition_id: exhibitionId,
+      full_name: output.full_name || "",
+      company: output.company || "",
+      position: output.position || "",
+      email: output.email || "",
+      ...phoneData,
+      website: output.website || "",
+      address: output.address || "",
+      card_image_url: file_url,
+      follow_up_type: "none"
+    };
+
+    await Contact.create(contact);
+    return { status: "saved", name: output.full_name, company: output.company };
+  };
+
+  const handleBatchFileSelect = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    setBatchProcessing(true);
+    setBatchProgress({ current: 0, total: files.length });
+
+    const currentUser = await base44.auth.me();
+    const allContacts = await Contact.filter({ created_by: currentUser.email });
+    const results = [];
+
+    for (let i = 0; i < files.length; i++) {
+      setBatchProgress({ current: i + 1, total: files.length });
+      try {
+        const result = await processSingleCardForBatch(files[i], allContacts);
+        results.push(result);
+      } catch (err) {
+        results.push({ status: "failed", name: files[i].name, error: err.message });
+      }
+    }
+
+    setBatchProcessing(false);
+    setBatchResults(results);
+    e.target.value = "";
+  };
+
   const handleCancel = () => {
     if (extractedData) {
       setExtractedData(null);
