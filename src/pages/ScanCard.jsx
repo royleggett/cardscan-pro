@@ -15,6 +15,7 @@ import QRScanner from "../components/scan/QRScanner";
 import FollowUpDialog from "../components/scan/FollowUpDialog";
 import DuplicateWarningDialog from "../components/scan/DuplicateWarningDialog";
 import BatchScanResults from "../components/scan/BatchScanResults";
+import BatchReview from "../components/scan/BatchReview";
 
 export default function ScanCard() {
   const navigate = useNavigate();
