@@ -692,6 +692,26 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
     );
   }
 
+  if (batchResults) {
+    return (
+      <BatchScanResults
+        results={batchResults}
+        onDone={() => navigate(createPageUrl(`ExhibitionDetail?id=${exhibitionId}`))}
+      />
+    );
+  }
+
+  if (batchProcessing) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <Loader2 className="w-16 h-16 text-blue-600 animate-spin mb-4" />
+        <p className="text-gray-600 font-medium">Processing cards...</p>
+        <p className="text-2xl font-bold text-blue-600 mt-2">{batchProgress.current} / {batchProgress.total}</p>
+        <p className="text-sm text-gray-500 mt-1">Please wait, this may take a while</p>
+      </div>
+    );
+  }
+
   if (processing) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
