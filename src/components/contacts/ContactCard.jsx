@@ -328,6 +328,15 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [], isOwn
                 </div>
               )}
 
+              <Button
+                variant="outline"
+                className="w-full text-green-700 hover:bg-green-50 hover:text-green-800 hover:border-green-300 border-green-200"
+                onClick={handleSaveToPhone}
+              >
+                <UserPlus className="w-4 h-4 mr-2" />
+                Save to Phone / Contacts App
+              </Button>
+
               {canDelete && (
                 <Button
                   variant="outline"
