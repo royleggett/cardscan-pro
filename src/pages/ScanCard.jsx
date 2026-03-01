@@ -14,6 +14,7 @@ import ContactPreview from "../components/scan/ContactPreview";
 import QRScanner from "../components/scan/QRScanner";
 import FollowUpDialog from "../components/scan/FollowUpDialog";
 import DuplicateWarningDialog from "../components/scan/DuplicateWarningDialog";
+import BatchScanResults from "../components/scan/BatchScanResults";
 
 export default function ScanCard() {
   const navigate = useNavigate();
