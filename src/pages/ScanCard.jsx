@@ -4,7 +4,7 @@ const Contact = base44.entities.Contact;
 const Exhibition = base44.entities.Exhibition;
 import { sendThankYouEmail } from "@/functions/sendThankYouEmail";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Camera, Upload, Loader2, Edit, AlertCircle, QrCode, FlipHorizontal, Lock } from "lucide-react";
+import { ArrowLeft, Camera, Upload, Loader2, Edit, AlertCircle, QrCode, FlipHorizontal, Lock, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Alert, AlertDescription } from "@/components/ui/alert";
