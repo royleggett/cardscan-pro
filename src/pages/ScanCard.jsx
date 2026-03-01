@@ -524,7 +524,7 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
     navigate(createPageUrl(`ExhibitionDetail?id=${exhibitionId}`));
   };
 
-  const processSingleCardForBatch = async (file, allContacts) => {
+  const extractSingleCardForBatch = async (file, allContacts) => {
     const compressed = await compressImage(file);
     const { file_url } = await uploadWithRetry(compressed);
 
@@ -544,11 +544,7 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
       }
     });
 
-    if (!result.status === "success" || !result.output) {
-      return { status: "failed", name: file.name, error: "Could not extract data" };
-    }
-
-    const output = result.output;
+    const output = (result.status === "success" && result.output) ? result.output : {};
     let phoneData = { phone_mobile: "", phone_landline: "", phone_fax: "", phone_other: "" };
 
     if (output.phone_numbers?.length > 0) {
@@ -573,10 +569,6 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
       (emailNorm && c.email?.toLowerCase().trim() === emailNorm)
     );
 
-    if (isDuplicate) {
-      return { status: "skipped", name: output.full_name, company: output.company };
-    }
-
     const contact = {
       exhibition_id: exhibitionId,
       full_name: output.full_name || "",
@@ -590,8 +582,7 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
       follow_up_type: "none"
     };
 
-    await Contact.create(contact);
-    return { status: "saved", name: output.full_name, company: output.company };
+    return { contact, isDuplicate };
   };
 
   const handleBatchFileSelect = async (e) => {
@@ -603,21 +594,37 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
 
     const currentUser = await base44.auth.me();
     const allContacts = await Contact.filter({ created_by: currentUser.email });
-    const results = [];
+    const cards = [];
 
     for (let i = 0; i < files.length; i++) {
       setBatchProgress({ current: i + 1, total: files.length });
       try {
-        const result = await processSingleCardForBatch(files[i], allContacts);
-        results.push(result);
+        const card = await extractSingleCardForBatch(files[i], allContacts);
+        cards.push(card);
       } catch (err) {
-        results.push({ status: "failed", name: files[i].name, error: err.message });
+        cards.push({ contact: { full_name: files[i].name, exhibition_id: exhibitionId, follow_up_type: "none" }, isDuplicate: false, error: err.message });
       }
     }
 
     setBatchProcessing(false);
-    setBatchResults(results);
+    setBatchReviewCards(cards);
     e.target.value = "";
+  };
+
+  const handleBatchSaveAll = async (contacts) => {
+    setBatchProcessing(true);
+    const results = [];
+    for (const contact of contacts) {
+      try {
+        await Contact.create(contact);
+        results.push({ status: "saved", name: contact.full_name, company: contact.company });
+      } catch (err) {
+        results.push({ status: "failed", name: contact.full_name, error: err.message });
+      }
+    }
+    setBatchReviewCards(null);
+    setBatchProcessing(false);
+    setBatchResults(results);
   };
 
   const handleCancel = () => {
