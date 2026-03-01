@@ -41,6 +41,10 @@ export default function ScanCard() {
   const [cardCount, setCardCount] = useState(0);
   const [loadingData, setLoadingData] = useState(true);
   const fileInputRef = useRef(null);
+  const batchFileInputRef = useRef(null);
+  const [batchProcessing, setBatchProcessing] = useState(false);
+  const [batchProgress, setBatchProgress] = useState({ current: 0, total: 0 });
+  const [batchResults, setBatchResults] = useState(null);
 
   useEffect(() => {
     const loadData = async () => {
