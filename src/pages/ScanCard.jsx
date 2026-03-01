@@ -611,13 +611,26 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
     e.target.value = "";
   };
 
-  const handleBatchSaveAll = async (contacts) => {
+  const handleBatchSaveAll = async (payload) => {
     setBatchProcessing(true);
+    const currentUser = await base44.auth.me();
     const results = [];
-    for (const contact of contacts) {
+    for (const { contact, sendThankYou } of payload) {
       try {
-        await Contact.create(contact);
+        await Contact.create({ ...contact, exhibition_id: exhibitionId });
         results.push({ status: "saved", name: contact.full_name, company: contact.company });
+        if (sendThankYou && contact.email) {
+          try {
+            await sendThankYouEmail({
+              contactEmail: contact.email,
+              contactName: contact.full_name,
+              exhibitionName,
+              senderName: currentUser?.full_name || ""
+            });
+          } catch (e) {
+            console.error("Thank you email failed for", contact.full_name, e);
+          }
+        }
       } catch (err) {
         results.push({ status: "failed", name: contact.full_name, error: err.message });
       }
