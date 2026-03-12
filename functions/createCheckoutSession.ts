@@ -4,8 +4,13 @@ import Stripe from 'npm:stripe@17.0.0';
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 
 const PRICES = {
-  places: 'price_1T5StL2Sv2QAKzjTPCNQW9cz', // £20/year
-  premium: 'price_1T5SuO2Sv2QAKzjTnfLufEdh'  // £59/year
+  places: {
+    annual: 'price_1T5StL2Sv2QAKzjTPCNQW9cz' // £20/year
+  },
+  premium: {
+    annual: 'price_1T5SuO2Sv2QAKzjTnfLufEdh', // £59/year
+    monthly: 'prod_U8VksBDH3Q8SaT' // £5/month
+  }
 };
 
 Deno.serve(async (req) => {
@@ -17,10 +22,19 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { tier, success_url, cancel_url } = await req.json();
+    const { tier, billing_period, success_url, cancel_url } = await req.json();
 
     if (!tier || !PRICES[tier]) {
       return Response.json({ error: 'Invalid tier' }, { status: 400 });
+    }
+
+    const period = billing_period || 'annual';
+    const priceId = typeof PRICES[tier] === 'string' 
+      ? PRICES[tier] 
+      : PRICES[tier][period];
+
+    if (!priceId) {
+      return Response.json({ error: 'Invalid billing period for tier' }, { status: 400 });
     }
 
     // Create or retrieve Stripe customer
@@ -50,7 +64,7 @@ Deno.serve(async (req) => {
       customer: customerId,
       line_items: [
         {
-          price: PRICES[tier],
+          price: priceId,
           quantity: 1
         }
       ],
@@ -59,7 +73,8 @@ Deno.serve(async (req) => {
       cancel_url: finalCancelUrl,
       metadata: {
         user_email: user.email,
-        tier: tier
+        tier: tier,
+        billing_period: period
       }
     });
 

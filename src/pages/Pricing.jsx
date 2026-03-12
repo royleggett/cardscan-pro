@@ -61,6 +61,7 @@ export default function Pricing() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [billingPeriod, setBillingPeriod] = useState("annual");
 
   useEffect(() => {
     const loadUser = async () => {
@@ -91,6 +92,7 @@ export default function Pricing() {
 
       const response = await base44.functions.invoke("createCheckoutSession", {
         tier,
+        billing_period: billingPeriod,
         success_url: successUrl,
         cancel_url: cancelUrl
       });
@@ -138,30 +140,56 @@ export default function Pricing() {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Simple, Transparent Pricing</h1>
           <p className="text-xl text-gray-600">Choose the plan that fits your networking needs</p>
+          
+          <div className="flex items-center justify-center gap-4 mt-8">
+            <span className={`text-lg font-medium ${billingPeriod === "monthly" ? "text-gray-400" : "text-gray-900"}`}>
+              Annual
+            </span>
+            <button
+              onClick={() => setBillingPeriod(billingPeriod === "annual" ? "monthly" : "annual")}
+              className="relative inline-flex h-8 w-14 items-center rounded-full bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              <span
+                className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
+                  billingPeriod === "monthly" ? "translate-x-7" : "translate-x-1"
+                }`}
+              />
+            </button>
+            <span className={`text-lg font-medium ${billingPeriod === "annual" ? "text-gray-400" : "text-gray-900"}`}>
+              Monthly
+            </span>
+          </div>
+          {billingPeriod === "annual" && (
+            <p className="text-sm text-green-600 font-medium mt-2">Save up to 17% with annual billing</p>
+          )}
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-12">
-          {plans.map((plan) => (
-            <Card
-              key={plan.tier}
-              className={`relative flex flex-col transition-all ${
-                plan.featured ? "md:scale-105 ring-2 ring-blue-600 shadow-xl" : "hover:shadow-lg"
-              }`}
-            >
-              {plan.featured && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                  Most Popular
-                </div>
-              )}
+          {plans.map((plan) => {
+            const displayPrice = plan.tier === "premium" && billingPeriod === "monthly" ? "£5" : plan.price;
+            const displayPeriod = plan.tier === "premium" && billingPeriod === "monthly" ? "per month" : plan.period;
+            
+            return (
+              <Card
+                key={plan.tier}
+                className={`relative flex flex-col transition-all ${
+                  plan.featured ? "md:scale-105 ring-2 ring-blue-600 shadow-xl" : "hover:shadow-lg"
+                }`}
+              >
+                {plan.featured && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                    Most Popular
+                  </div>
+                )}
 
-              <CardHeader>
-                <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                <CardDescription>{plan.description}</CardDescription>
-                <div className="mt-4">
-                  <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
-                  <span className="text-gray-600 ml-2">/{plan.period}</span>
-                </div>
-              </CardHeader>
+                <CardHeader>
+                  <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                  <CardDescription>{plan.description}</CardDescription>
+                  <div className="mt-4">
+                    <span className="text-4xl font-bold text-gray-900">{displayPrice}</span>
+                    <span className="text-gray-600 ml-2">/{displayPeriod}</span>
+                  </div>
+                </CardHeader>
 
               <CardContent className="flex-grow">
                 <ul className="space-y-3">
@@ -187,7 +215,8 @@ export default function Pricing() {
                 </Button>
               </CardFooter>
             </Card>
-          ))}
+            );
+          })}
         </div>
 
         <div className="bg-white rounded-xl p-8 shadow-sm">
