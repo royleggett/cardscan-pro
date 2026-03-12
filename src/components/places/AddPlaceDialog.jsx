@@ -75,7 +75,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} modal={true}>
-      <DialogContent className="max-w-lg max-h-[90vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()}>
+      <DialogContent className="max-w-lg max-h-[90vh] flex flex-col">
         <DialogHeader className="flex-shrink-0">
           <div className="flex items-center gap-3">
             <Button
