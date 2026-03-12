@@ -15,10 +15,12 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import EditPlaceDialog from "./EditPlaceDialog";
+import BookTaxiDialog from "@/components/taxi/BookTaxiDialog";
 
 export default function PlaceCard({ place, onUpdate }) {
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [showTaxi, setShowTaxi] = useState(false);
   const [isMyPlace, setIsMyPlace] = useState(false);
 
   useEffect(() => {
@@ -141,6 +143,14 @@ export default function PlaceCard({ place, onUpdate }) {
                   Get Directions
                 </Button>
               </a>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowTaxi(true)}
+                className="flex items-center gap-2"
+              >
+                🚕 Book Taxi
+              </Button>
             </div>
           )}
 
@@ -167,6 +177,12 @@ export default function PlaceCard({ place, onUpdate }) {
         onOpenChange={setShowEdit}
         place={place}
         onPlaceUpdated={onUpdate}
+      />
+
+      <BookTaxiDialog
+        open={showTaxi}
+        onOpenChange={setShowTaxi}
+        defaultDestination={place.address || place.name}
       />
 
       <AlertDialog open={showDelete} onOpenChange={setShowDelete}>
