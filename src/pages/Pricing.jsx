@@ -160,7 +160,7 @@ export default function Pricing() {
             </span>
           </div>
           {billingPeriod === "annual" && (
-            <p className="text-sm text-green-600 font-medium mt-2">Save up to 17% with annual billing</p>
+            <p className="text-sm text-green-600 font-medium mt-2">Save 18% with annual billing</p>
           )}
         </div>
 
