@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { MapPin, Loader2, Locate } from "lucide-react";
+import { MapPin, Loader2, Locate, ArrowLeft } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import CategoryAttributesSection from "./CategoryAttributesSection";
 import {
@@ -77,7 +77,17 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg" onPointerDownOutside={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>Add Place or Restaurant</DialogTitle>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onOpenChange(false)}
+              className="h-8 w-8"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <DialogTitle>Add Place or Restaurant</DialogTitle>
+          </div>
         </DialogHeader>
         
         <div className="space-y-4 py-4">
