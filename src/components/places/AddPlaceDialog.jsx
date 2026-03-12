@@ -75,7 +75,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="max-w-lg" onPointerDownOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Add Place or Restaurant</DialogTitle>
         </DialogHeader>
