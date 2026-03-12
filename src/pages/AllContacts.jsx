@@ -120,7 +120,8 @@ export default function AllContacts() {
     );
   }
 
-  const isFreeUser = !user?.subscription_tier || user.subscription_tier === 'free';
+  const isAdmin = user?.role === 'admin';
+  const isFreeUser = !isAdmin && (!user?.subscription_tier || user.subscription_tier === 'free');
 
   return (
     <div className="px-4 py-6 max-w-7xl mx-auto">
