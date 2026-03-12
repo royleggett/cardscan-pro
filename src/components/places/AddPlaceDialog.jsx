@@ -74,15 +74,15 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange} modal={true}>
-      <DialogContent className="max-w-lg max-h-[90vh] flex flex-col">
-        <DialogHeader className="flex-shrink-0">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => onOpenChange(false)}
-              className="h-8 w-8 flex-shrink-0"
+              className="h-8 w-8"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -90,7 +90,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
           </div>
         </DialogHeader>
         
-        <div className="space-y-4 py-4 overflow-y-auto flex-1">
+        <div className="space-y-4 py-4">
           <div>
             <Label>Category *</Label>
             <Select
@@ -209,7 +209,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
           </div>
         </div>
 
-        <DialogFooter className="flex-shrink-0">
+        <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
