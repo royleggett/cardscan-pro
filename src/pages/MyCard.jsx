@@ -18,6 +18,7 @@ export default function MyCard() {
   // User data
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [businessEmail, setBusinessEmail] = useState("");
   const [company, setCompany] = useState("");
   const [position, setPosition] = useState("");
   const [phone, setPhone] = useState("");
@@ -32,6 +33,7 @@ export default function MyCard() {
     const user = await base44.auth.me();
     setFullName(user?.full_name || "");
     setEmail(user?.email || "");
+    setBusinessEmail(user?.business_email || "");
     setCompany(user?.company || "");
     setPosition(user?.position || "");
     setPhone(user?.phone || "");
@@ -43,6 +45,7 @@ export default function MyCard() {
   const handleSave = async () => {
     setSaving(true);
     await base44.auth.updateMe({
+      business_email: businessEmail,
       company,
       position,
       phone,
@@ -58,7 +61,7 @@ export default function MyCard() {
       "BEGIN:VCARD",
       "VERSION:3.0",
       `FN:${fullName}`,
-      `EMAIL:${email}`,
+      `EMAIL:${businessEmail || email}`,
       company ? `ORG:${company}` : "",
       position ? `TITLE:${position}` : "",
       phone ? `TEL:${phone}` : "",
@@ -120,9 +123,20 @@ export default function MyCard() {
               </div>
 
               <div>
-                <Label>Email</Label>
+                <Label>Account Email</Label>
                 <Input value={email} disabled className="bg-gray-50" />
-                <p className="text-xs text-gray-500 mt-1">Your email cannot be changed</p>
+                <p className="text-xs text-gray-500 mt-1">Your login email cannot be changed</p>
+              </div>
+
+              <div>
+                <Label>Business Email</Label>
+                <Input
+                  value={businessEmail}
+                  onChange={e => setBusinessEmail(e.target.value)}
+                  placeholder="e.g. john@company.com"
+                  type="email"
+                />
+                <p className="text-xs text-gray-500 mt-1">This email will appear on your QR code</p>
               </div>
 
               <div>
@@ -252,10 +266,10 @@ export default function MyCard() {
                 </div>
 
                 <div className="space-y-3 text-sm">
-                  {email && (
+                  {(businessEmail || email) && (
                     <div className="flex items-center gap-3">
                       <Mail className="w-4 h-4 flex-shrink-0 text-blue-200" />
-                      <span className="break-all">{email}</span>
+                      <span className="break-all">{businessEmail || email}</span>
                     </div>
                   )}
                   {phone && (
