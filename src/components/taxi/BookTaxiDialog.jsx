@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { MapPin, Loader2, Navigation } from "lucide-react";
 
 export default function BookTaxiDialog({ open, onOpenChange, defaultDestination = "" }) {
-  const [destination, setDestination] = useState(defaultDestination);
+  const [destination, setDestination] = useState("");
   const [locating, setLocating] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
   const [locationError, setLocationError] = useState("");
@@ -56,23 +56,19 @@ export default function BookTaxiDialog({ open, onOpenChange, defaultDestination 
     }
   };
 
-  const handleOpen = (isOpen) => {
-    if (isOpen) {
+  useEffect(() => {
+    if (open) {
+      setDestination(defaultDestination);
       setUserLocation(null);
       setLocationError("");
-      getLocation();
+      setLocating(false);
+      // Start location detection automatically when dialog opens
+      setTimeout(() => getLocation(), 100);
     }
-    onOpenChange(isOpen);
-  };
-
-  React.useEffect(() => {
-    if (defaultDestination) {
-      setDestination(defaultDestination);
-    }
-  }, [defaultDestination]);
+  }, [open, defaultDestination]);
 
   return (
-    <Dialog open={open} onOpenChange={handleOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
