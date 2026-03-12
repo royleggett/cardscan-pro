@@ -58,13 +58,18 @@ export default function BookTaxiDialog({ open, onOpenChange, defaultDestination 
 
   const handleOpen = (isOpen) => {
     if (isOpen) {
-      setDestination(defaultDestination);
       setUserLocation(null);
       setLocationError("");
       getLocation();
     }
     onOpenChange(isOpen);
   };
+
+  React.useEffect(() => {
+    if (defaultDestination) {
+      setDestination(defaultDestination);
+    }
+  }, [defaultDestination]);
 
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
