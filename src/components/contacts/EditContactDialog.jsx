@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -10,7 +11,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Save } from "lucide-react";
+import { Save, Flame, Thermometer, Snowflake } from "lucide-react";
 import VoiceNoteButton from "@/components/contacts/VoiceNoteButton";
 
 export default function EditContactDialog({ open, onOpenChange, contact, onSave }) {
@@ -153,6 +154,62 @@ export default function EditContactDialog({ open, onOpenChange, contact, onSave 
                   }
                 />
               </div>
+            </div>
+          </div>
+
+          <div className="border-t pt-4 space-y-4">
+            <h3 className="font-semibold text-gray-900">Follow-up Settings</h3>
+            
+            <div>
+              <Label className="mb-3 block">Lead Temperature</Label>
+              <div className="grid grid-cols-4 gap-2">
+                <Button
+                  type="button"
+                  variant={formData.follow_up_type === "hot" ? "default" : "outline"}
+                  onClick={() => setFormData({...formData, follow_up_type: "hot"})}
+                  className={formData.follow_up_type === "hot" ? "bg-red-600 hover:bg-red-700" : ""}
+                >
+                  <Flame className="w-4 h-4 mr-1" />
+                  Hot
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.follow_up_type === "warm" ? "default" : "outline"}
+                  onClick={() => setFormData({...formData, follow_up_type: "warm"})}
+                  className={formData.follow_up_type === "warm" ? "bg-amber-500 hover:bg-amber-600" : ""}
+                >
+                  <Thermometer className="w-4 h-4 mr-1" />
+                  Warm
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.follow_up_type === "cool" ? "default" : "outline"}
+                  onClick={() => setFormData({...formData, follow_up_type: "cool"})}
+                  className={formData.follow_up_type === "cool" ? "bg-blue-500 hover:bg-blue-600" : ""}
+                >
+                  <Snowflake className="w-4 h-4 mr-1" />
+                  Cool
+                </Button>
+                <Button
+                  type="button"
+                  variant={!formData.follow_up_type || formData.follow_up_type === "none" ? "default" : "outline"}
+                  onClick={() => setFormData({...formData, follow_up_type: "none"})}
+                >
+                  None
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div>
+                <Label htmlFor="thank_you_sent">Thank You Email Sent</Label>
+                <p className="text-xs text-gray-500">Mark if you've sent a follow-up email</p>
+              </div>
+              <Switch
+                id="thank_you_sent"
+                checked={formData.thank_you_sent || false}
+                onCheckedChange={(checked) => setFormData({...formData, thank_you_sent: checked})}
+              />
             </div>
           </div>
 
