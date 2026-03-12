@@ -661,7 +661,8 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
   }
 
   const isFreeTier = user?.subscription_tier === 'free' || !user?.subscription_tier;
-  const hasReachedCardLimit = isFreeTier && cardCount >= 10;
+  const isAdmin = user?.role === 'admin';
+  const hasReachedCardLimit = isFreeTier && cardCount >= 10 && !isAdmin;
 
   if (hasReachedCardLimit) {
     return (
