@@ -4,6 +4,7 @@ import { MapPin, Star, ExternalLink, Search, Filter, Navigation } from "lucide-r
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import BookTaxiDialog from "@/components/taxi/BookTaxiDialog";
 
 const CATEGORIES = ["All", "Restaurant", "Bar", "Cafe", "Hotel", "Tourist Attraction", "Bakery", "Shopping", "Supermarket", "Taxi Rank", "Other"];
 
@@ -43,6 +44,8 @@ export default function Discover() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [userNumbers, setUserNumbers] = useState({});
+  const [taxiDialogOpen, setTaxiDialogOpen] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState(null);
 
   useEffect(() => {
     loadPlaces();
@@ -219,15 +222,26 @@ export default function Discover() {
                         </a>
                       )}
                       {place.address && (
-                        <a
-                          href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place.address)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 text-sm text-green-600 hover:text-green-800 font-medium"
-                        >
-                          <Navigation className="w-3.5 h-3.5" />
-                          Get Directions
-                        </a>
+                        <>
+                          <a
+                            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place.address)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 text-sm text-green-600 hover:text-green-800 font-medium"
+                          >
+                            <Navigation className="w-3.5 h-3.5" />
+                            Get Directions
+                          </a>
+                          <button
+                            onClick={() => {
+                              setSelectedPlace(place);
+                              setTaxiDialogOpen(true);
+                            }}
+                            className="flex items-center gap-1.5 text-sm text-orange-600 hover:text-orange-800 font-medium"
+                          >
+                            🚕 Book Taxi
+                          </button>
+                        </>
                       )}
                     </div>
                   </div>
@@ -237,6 +251,12 @@ export default function Discover() {
           </div>
         )}
       </div>
+
+      <BookTaxiDialog
+        open={taxiDialogOpen}
+        onOpenChange={setTaxiDialogOpen}
+        defaultDestination={selectedPlace?.address || selectedPlace?.name || ""}
+      />
     </div>
   );
 }
