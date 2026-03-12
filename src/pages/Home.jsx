@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
-import { Plus, FolderOpen, Users, Upload, Settings, Flame, Thermometer, Snowflake, AlertCircle, Compass, Star, MapPin, ChevronRight, UserPlus } from "lucide-react";
+import { Plus, FolderOpen, Users, Upload, Settings, Flame, Thermometer, Snowflake, AlertCircle, Compass, Star, MapPin, ChevronRight, UserPlus, QrCode } from "lucide-react";
 import JoinExhibitionDialog from "@/components/exhibitions/JoinExhibitionDialog";
 import LandingPage from "@/components/LandingPage";
 import AddPlaceDialog from "@/components/places/AddPlaceDialog";
@@ -219,6 +219,13 @@ export default function Home() {
         )}
 
         <div className="max-w-md mx-auto space-y-4">
+          <Link to={createPageUrl("MyCard")} className="block w-full" onClick={() => handlePress("mycard")}>
+            <Button className={`w-full h-20 text-lg justify-center border-2 shadow-md hover:shadow-lg transition-all ${pressedBtn === "mycard" ? "bg-blue-700 text-white border-blue-700" : "bg-gradient-to-br from-blue-600 to-indigo-700 text-white border-blue-600 hover:from-blue-700 hover:to-indigo-800"}`}>
+              <QrCode className="w-6 h-6 mr-3" />
+              My Digital Card
+            </Button>
+          </Link>
+
           <Button onClick={() => handlePress("addplace", () => setShowAddPlace(true))} className={btnClass("addplace")}>
             <MapPin className="w-6 h-6 mr-3" />
             Add a Place
