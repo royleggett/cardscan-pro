@@ -8,7 +8,7 @@ const PRICES = {
     annual: 'price_1T5StL2Sv2QAKzjTPCNQW9cz' // £20/year
   },
   premium: {
-    annual: 'price_1T5SuO2Sv2QAKzjTnfLufEdh', // £59/year
+    annual: 'price_1TAF0A2Sv2QAKzjTKFU2R71r', // £49/year
     monthly: 'price_1TAEjO2Sv2QAKzjTo9n6tFUg' // £5/month
   }
 };
