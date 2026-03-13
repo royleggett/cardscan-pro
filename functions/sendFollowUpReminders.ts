@@ -9,6 +9,8 @@ Deno.serve(async (req) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    console.log(`Processing ${allUsers.length} users. Today is: ${today.toISOString()}`);
+
     let totalSent = 0;
 
     for (const user of allUsers) {
@@ -20,7 +22,12 @@ Deno.serve(async (req) => {
       if (user.followup_remind_warm) leadTypes.push({ type: "warm", days: user.followup_days_warm ?? 3, label: "🌡️ Warm" });
       if (user.followup_remind_cool) leadTypes.push({ type: "cool", days: user.followup_days_cool ?? 7, label: "❄️ Cool" });
 
-      if (leadTypes.length === 0) continue;
+      console.log(`User ${user.email}: leadTypes = ${JSON.stringify(leadTypes)}`);
+
+      if (leadTypes.length === 0) {
+        console.log(`User ${user.email}: No lead types configured, skipping`);
+        continue;
+      }
 
       // Get all contacts for this user
       const contacts = await base44.asServiceRole.entities.Contact.filter({ created_by: user.email });
@@ -28,6 +35,8 @@ Deno.serve(async (req) => {
       const exhibitions = await base44.asServiceRole.entities.Exhibition.filter({ created_by: user.email });
       const exhibitionMap = {};
       exhibitions.forEach(ex => { exhibitionMap[ex.id] = ex; });
+
+      console.log(`User ${user.email}: ${contacts.length} contacts, ${exhibitions.length} exhibitions`);
 
       // Find contacts due for follow-up today
       const dueContacts = [];
@@ -47,6 +56,8 @@ Deno.serve(async (req) => {
         const reminderDate = new Date(exhibitionEnd);
         reminderDate.setDate(reminderDate.getDate() + matchingRule.days);
 
+        console.log(`Contact ${contact.full_name}: type=${contact.follow_up_type}, exhibition end=${exhibitionEnd.toISOString()}, reminder date=${reminderDate.toISOString()}, matches today=${reminderDate.getTime() === today.getTime()}`);
+
         if (reminderDate.getTime() === today.getTime()) {
           dueContacts.push({
             contact,
@@ -56,7 +67,12 @@ Deno.serve(async (req) => {
         }
       }
 
-      if (dueContacts.length === 0) continue;
+      if (dueContacts.length === 0) {
+        console.log(`User ${user.email}: No contacts due today`);
+        continue;
+      }
+
+      console.log(`User ${user.email}: ${dueContacts.length} contacts due for follow-up`);
 
       // Group by lead type
       const grouped = {};
@@ -84,15 +100,16 @@ Deno.serve(async (req) => {
       const htmlBody = `<pre style="font-family:sans-serif;white-space:pre-wrap;">${emailBody}</pre>`;
 
       try {
-        await base44.asServiceRole.integrations.Core.SendEmail({
+        const emailResult = await base44.asServiceRole.integrations.Core.SendEmail({
           from_name: "CardScan Pro",
           to: user.email,
           subject: `📋 Follow-up reminder: ${dueContacts.length} lead${dueContacts.length !== 1 ? "s" : ""} due today`,
           body: htmlBody
         });
+        console.log(`Email sent to ${user.email}:`, JSON.stringify(emailResult));
         totalSent++;
       } catch (err) {
-        console.error(`Failed to send to ${user.email}:`, err.message);
+        console.error(`Failed to send to ${user.email}:`, err.message, JSON.stringify(err));
       }
     }
 
