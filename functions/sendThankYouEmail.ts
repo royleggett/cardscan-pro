@@ -73,15 +73,20 @@ Deno.serve(async (req) => {
 </html>`;
 
     // Use Base44's built-in email service
-    const emailResult = await base44.integrations.Core.SendEmail({
-      from_name: senderName || user.full_name,
-      to: contactEmail,
-      subject,
-      body: htmlBody
-    });
+    try {
+      const emailResult = await base44.integrations.Core.SendEmail({
+        from_name: senderName || user.full_name,
+        to: contactEmail,
+        subject,
+        body: htmlBody
+      });
 
-    console.log("Email sent successfully:", JSON.stringify(emailResult));
-    return Response.json({ success: true });
+      console.log("Email sent successfully:", JSON.stringify(emailResult));
+      return Response.json({ success: true, details: emailResult });
+    } catch (emailError) {
+      console.error("Email send error:", emailError.message, JSON.stringify(emailError));
+      return Response.json({ error: "Failed to send email", details: emailError.message }, { status: 500 });
+    }
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
