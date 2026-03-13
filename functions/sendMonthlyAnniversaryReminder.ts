@@ -112,11 +112,6 @@ Deno.serve(async (req) => {
       return Response.json({ error: "Forbidden: Admin access required" }, { status: 403 });
     }
 
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    if (!resendApiKey) {
-      return Response.json({ error: "Email service not configured" }, { status: 500 });
-    }
-
     const allUsers = await base44.entities.User.list();
     const emailsSent = [];
 
@@ -137,21 +132,17 @@ Deno.serve(async (req) => {
           const name = userRecord.full_name || "there";
           const html = buildHtmlEmail(name, entries, nextMilestone, potentialRewards);
 
-          const res = await fetch("https://api.resend.com/emails", {
-            method: "POST",
-            headers: {
-              "Authorization": `Bearer ${resendApiKey}`,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              from: "CardScan Pro Rewards <hello@cardscan-pro.com>",
-              to: [userRecord.email],
+          try {
+            await base44.asServiceRole.integrations.Core.SendEmail({
+              from_name: "CardScan Pro Rewards",
+              to: userRecord.email,
               subject: "🏆 You're So Close to Your Next Reward!",
-              html
-            })
-          });
-
-          if (res.ok) emailsSent.push(userRecord.email);
+              body: html
+            });
+            emailsSent.push(userRecord.email);
+          } catch (err) {
+            console.error(`Failed to send to ${userRecord.email}:`, err.message);
+          }
         }
       }
     }

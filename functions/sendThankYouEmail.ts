@@ -27,12 +27,6 @@ Deno.serve(async (req) => {
 
     if (!contactEmail) return Response.json({ error: 'No email provided' }, { status: 400 });
 
-    // Use shared Resend API key
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    if (!resendApiKey) {
-      return Response.json({ error: 'Email service not configured' }, { status: 500 });
-    }
-
     // Load custom template if one exists (scoped to this user)
     const templates = await base44.entities.EmailTemplate.filter({ template_key: "thank_you", created_by: user.email });
     const subjectTemplate = templates.length > 0 ? templates[0].subject : DEFAULT_SUBJECT;
@@ -78,30 +72,16 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${resendApiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        from: `${senderName || user.full_name} <hello@cardscan-pro.com>`,
-        to: [contactEmail],
-        subject,
-        text: body,
-        html: htmlBody
-      })
+    // Use Base44's built-in email service
+    const emailResult = await base44.integrations.Core.SendEmail({
+      from_name: senderName || user.full_name,
+      to: contactEmail,
+      subject,
+      body: htmlBody
     });
 
-    const data = await res.json();
-
-    if (!res.ok) {
-      console.error("Resend error:", JSON.stringify(data));
-      return Response.json({ error: data.message || data.name || "Failed to send email", details: data }, { status: 500 });
-    }
-
-    console.log("Email sent successfully:", JSON.stringify(data));
-    return Response.json({ success: true, id: data.id });
+    console.log("Email sent successfully:", JSON.stringify(emailResult));
+    return Response.json({ success: true });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

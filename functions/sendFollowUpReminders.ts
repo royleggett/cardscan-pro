@@ -11,11 +11,6 @@ Deno.serve(async (req) => {
 
     let totalSent = 0;
 
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    if (!resendApiKey) {
-      return Response.json({ error: 'Email service not configured' }, { status: 500 });
-    }
-
     for (const user of allUsers) {
       if (!user.email) continue;
 
@@ -86,22 +81,19 @@ Deno.serve(async (req) => {
 
       emailBody += "Log in to CardScan Pro to follow up.\n\nGood luck!";
 
-      const res = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${resendApiKey}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          from: `CardScan Pro <hello@cardscan-pro.com>`,
-          to: [user.email],
-          subject: `📋 Follow-up reminder: ${dueContacts.length} lead${dueContacts.length !== 1 ? "s" : ""} due today`,
-          text: emailBody,
-          html: `<pre style="font-family:sans-serif;white-space:pre-wrap;">${emailBody}</pre>`
-        })
-      });
+      const htmlBody = `<pre style="font-family:sans-serif;white-space:pre-wrap;">${emailBody}</pre>`;
 
-      if (res.ok) totalSent++;
+      try {
+        await base44.asServiceRole.integrations.Core.SendEmail({
+          from_name: "CardScan Pro",
+          to: user.email,
+          subject: `📋 Follow-up reminder: ${dueContacts.length} lead${dueContacts.length !== 1 ? "s" : ""} due today`,
+          body: htmlBody
+        });
+        totalSent++;
+      } catch (err) {
+        console.error(`Failed to send to ${user.email}:`, err.message);
+      }
     }
 
     return Response.json({ success: true, emailsSent: totalSent });
