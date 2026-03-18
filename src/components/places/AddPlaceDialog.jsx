@@ -38,7 +38,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
   const [allUsers, setAllUsers] = useState([]);
   const [selectedUserEmail, setSelectedUserEmail] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (open) {
       checkAdmin();
     }
