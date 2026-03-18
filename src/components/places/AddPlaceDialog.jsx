@@ -42,6 +42,8 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
   useEffect(() => {
     if (open) {
       checkAdmin();
+      // Reset form state when dialog opens
+      setPlaceData({ name: "", category: "Restaurant", address: "", website: "", notes: "", rating: 0, is_public: false, attributes: [] });
     }
   }, [open]);
 
@@ -53,6 +55,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
     if (adminStatus) {
       // Create fictional users for admin seeding
       const fictionalUsers = [
+        { id: "fictional-0", email: user.email, user_number: "Me (real post)" },
         { id: "fictional-1", email: "sarah.mitchell@demo.app", user_number: "User #2847" },
         { id: "fictional-2", email: "james.chen@demo.app", user_number: "User #3921" },
         { id: "fictional-3", email: "maria.rodriguez@demo.app", user_number: "User #1563" },
