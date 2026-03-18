@@ -217,7 +217,14 @@ export default function Discover() {
               const isExpanded = expandedPlaceId === place.id;
               const isOwnPlace = place.created_by === currentUserEmail;
               return (
-                <div key={place.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all">
+                <div 
+                  key={place.id} 
+                  className={`bg-white rounded-2xl border overflow-hidden transition-all duration-300 ${
+                    isExpanded 
+                      ? "shadow-2xl scale-[1.02] border-blue-300" 
+                      : "shadow-sm border-gray-100 hover:shadow-lg"
+                  }`}
+                >
                   {/* Top accent bar based on rating */}
                   <div className={`h-1 ${place.rating >= 4 ? "bg-gradient-to-r from-yellow-400 to-orange-400" : place.rating >= 3 ? "bg-gradient-to-r from-blue-400 to-blue-500" : "bg-gray-100"}`} />
                   
@@ -284,31 +291,33 @@ export default function Discover() {
 
                     {/* Community Rating - Always visible */}
                     {!isOwnPlace && (
-                      <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
-                        <span className="text-xs font-medium text-gray-500">Rate this recommendation:</span>
-                        <div className="flex items-center gap-3">
-                          <button
-                            onClick={(e) => { e.stopPropagation(); handleRating(place.id, "up"); }}
-                            className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
-                              userRatings[place.id] === "up"
-                                ? "bg-green-100 text-green-700 border border-green-300"
-                                : "bg-gray-50 text-gray-500 border border-gray-200 hover:bg-green-50 hover:border-green-200"
-                            }`}
-                          >
-                            <ThumbsUp className="w-3.5 h-3.5" />
-                            {place.community_upvotes || 0}
-                          </button>
-                          <button
-                            onClick={(e) => { e.stopPropagation(); handleRating(place.id, "down"); }}
-                            className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
-                              userRatings[place.id] === "down"
-                                ? "bg-red-100 text-red-700 border border-red-300"
-                                : "bg-gray-50 text-gray-500 border border-gray-200 hover:bg-red-50 hover:border-red-200"
-                            }`}
-                          >
-                            <ThumbsDown className="w-3.5 h-3.5" />
-                            {place.community_downvotes || 0}
-                          </button>
+                      <div className="mt-3 pt-3 border-t border-gray-100">
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="text-xs font-semibold text-gray-700">Community Rating:</span>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleRating(place.id, "up"); }}
+                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold transition-all shadow-sm ${
+                                userRatings[place.id] === "up"
+                                  ? "bg-green-500 text-white border-2 border-green-600 scale-105"
+                                  : "bg-white text-gray-700 border-2 border-gray-300 hover:bg-green-50 hover:border-green-400"
+                              }`}
+                            >
+                              <ThumbsUp className="w-4 h-4" />
+                              <span className="font-bold">{place.community_upvotes || 0}</span>
+                            </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); handleRating(place.id, "down"); }}
+                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold transition-all shadow-sm ${
+                                userRatings[place.id] === "down"
+                                  ? "bg-red-500 text-white border-2 border-red-600 scale-105"
+                                  : "bg-white text-gray-700 border-2 border-gray-300 hover:bg-red-50 hover:border-red-400"
+                              }`}
+                            >
+                              <ThumbsDown className="w-4 h-4" />
+                              <span className="font-bold">{place.community_downvotes || 0}</span>
+                            </button>
+                          </div>
                         </div>
                       </div>
                     )}
