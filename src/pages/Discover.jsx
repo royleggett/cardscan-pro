@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import BookTaxiDialog from "@/components/taxi/BookTaxiDialog";
+import EditPlaceDialog from "@/components/places/EditPlaceDialog";
 
 const CATEGORIES = ["All", "Restaurant", "Bar", "Cafe", "Hotel", "Tourist Attraction", "Bakery", "Shopping", "Supermarket", "Taxi Rank", "Other"];
 
@@ -50,6 +51,8 @@ export default function Discover() {
   const [currentUserEmail, setCurrentUserEmail] = useState(null);
   const [expandedPlaceId, setExpandedPlaceId] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingPlace, setEditingPlace] = useState(null);
 
   useEffect(() => {
     loadPlaces();
@@ -386,18 +389,33 @@ export default function Discover() {
                             </>
                           )}
                         </div>
-                        {isAdmin && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(place.id);
-                            }}
-                            className="flex items-center gap-1.5 text-sm text-red-600 hover:text-red-800 font-medium"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            Delete
-                          </button>
-                        )}
+                        <div className="flex gap-2">
+                          {isOwnPlace && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingPlace(place);
+                                setEditDialogOpen(true);
+                              }}
+                              className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                              Edit
+                            </button>
+                          )}
+                          {isAdmin && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDelete(place.id);
+                              }}
+                              className="flex items-center gap-1.5 text-sm text-red-600 hover:text-red-800 font-medium"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                              Delete
+                            </button>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -412,6 +430,13 @@ export default function Discover() {
         open={taxiDialogOpen}
         onOpenChange={setTaxiDialogOpen}
         defaultDestination={selectedPlace?.address || selectedPlace?.name || ""}
+      />
+
+      <EditPlaceDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        place={editingPlace}
+        onPlaceUpdated={loadPlaces}
       />
     </div>
   );
