@@ -82,8 +82,9 @@ export default function Discover() {
     allExhibitions.forEach(ex => { exMap[ex.id] = ex; });
     setExhibitions(exMap);
     
-    // Map fictional users + real users
+    // Map fictional users + real users (service role creates as these fictional users)
     const userMap = {
+      "service+9efd0b9d-01ad-4aca-8915-8d14c8663f72@no-reply.base44.com": "User #2847",
       "sarah.mitchell@demo.app": "User #2847",
       "james.chen@demo.app": "User #3921",
       "maria.rodriguez@demo.app": "User #1563",
