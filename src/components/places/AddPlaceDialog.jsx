@@ -53,11 +53,11 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
     if (adminStatus) {
       // Create fictional users for admin seeding
       const fictionalUsers = [
-        { id: "fictional-1", email: "sarah.mitchell@demo.app", full_name: "Sarah Mitchell", user_number: "User #2847" },
-        { id: "fictional-2", email: "james.chen@demo.app", full_name: "James Chen", user_number: "User #3921" },
-        { id: "fictional-3", email: "maria.rodriguez@demo.app", full_name: "Maria Rodriguez", user_number: "User #1563" },
-        { id: "fictional-4", email: "david.thompson@demo.app", full_name: "David Thompson", user_number: "User #4205" },
-        { id: "fictional-5", email: "emily.watson@demo.app", full_name: "Emily Watson", user_number: "User #2674" }
+        { id: "fictional-1", email: "sarah.mitchell@demo.app", user_number: "User #2847" },
+        { id: "fictional-2", email: "james.chen@demo.app", user_number: "User #3921" },
+        { id: "fictional-3", email: "maria.rodriguez@demo.app", user_number: "User #1563" },
+        { id: "fictional-4", email: "david.thompson@demo.app", user_number: "User #4205" },
+        { id: "fictional-5", email: "emily.watson@demo.app", user_number: "User #2674" }
       ];
       setAllUsers(fictionalUsers);
     }
@@ -153,7 +153,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
                 <SelectContent>
                   {allUsers.map(user => (
                     <SelectItem key={user.id} value={user.email}>
-                      {user.full_name || user.email} ({user.user_number || user.email})
+                      {user.user_number || user.email}
                     </SelectItem>
                   ))}
                 </SelectContent>

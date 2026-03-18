@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { MapPin, Star, ExternalLink, Search, Filter, Navigation, ThumbsUp, ThumbsDown, Trash2 } from "lucide-react";
+import { MapPin, Star, ExternalLink, Search, Filter, Navigation, ThumbsUp, ThumbsDown, Trash2, Pencil } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
