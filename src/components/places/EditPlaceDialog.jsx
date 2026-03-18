@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,6 +32,12 @@ export default function EditPlaceDialog({ open, onOpenChange, place, onPlaceUpda
     rating: 0
   });
   const [locating, setLocating] = useState(false);
+
+  useEffect(() => {
+    if (place) {
+      setPlaceData(place);
+    }
+  }, [place]);
 
   const handleLocateMe = async () => {
     setLocating(true);
