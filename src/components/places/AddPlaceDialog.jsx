@@ -95,6 +95,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
   };
 
   const handleSave = async () => {
+    setSaving(true);
     try {
       const createData = {
         exhibition_id: exhibitionId || "none",
@@ -122,6 +123,8 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
     } catch (error) {
       console.error("Save error:", error);
       alert(`Failed to save: ${error.message}`);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -284,11 +287,15 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={!placeData.name}>
-            Save Place
+          <Button 
+            onClick={handleSave} 
+            disabled={!placeData.name || saving}
+            className="active:scale-95 transition-transform"
+          >
+            {saving ? "Saving..." : "Save Place"}
           </Button>
         </DialogFooter>
       </DialogContent>
