@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { MapPin, Star, ExternalLink, Search, Filter, Navigation, ThumbsUp, ThumbsDown } from "lucide-react";
+import { MapPin, Star, ExternalLink, Search, Filter, Navigation, ThumbsUp, ThumbsDown, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -49,6 +49,7 @@ export default function Discover() {
   const [userRatings, setUserRatings] = useState({});
   const [currentUserEmail, setCurrentUserEmail] = useState(null);
   const [expandedPlaceId, setExpandedPlaceId] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     loadPlaces();
@@ -64,6 +65,7 @@ export default function Discover() {
   const loadPlaces = async () => {
     const user = await base44.auth.me();
     setCurrentUserEmail(user.email);
+    setIsAdmin(user?.role === "admin");
 
     const [allPlaces, allExhibitions] = await Promise.all([
       base44.entities.Place.filter({ is_public: true }),
@@ -77,12 +79,22 @@ export default function Discover() {
     allExhibitions.forEach(ex => { exMap[ex.id] = ex; });
     setExhibitions(exMap);
     
-    const userMap = {};
+    // Map fictional users + real users
+    const userMap = {
+      "sarah.mitchell@demo.app": "Sarah Mitchell",
+      "james.chen@demo.app": "James Chen",
+      "maria.rodriguez@demo.app": "Maria Rodriguez",
+      "david.thompson@demo.app": "David Thompson",
+      "emily.watson@demo.app": "Emily Watson"
+    };
+    
     const uniqueEmails = [...new Set(validPlaces.map(p => p.created_by))];
     for (const email of uniqueEmails) {
-      const users = await base44.entities.User.filter({ email });
-      if (users.length > 0) {
-        userMap[email] = users[0].user_number || email;
+      if (!userMap[email]) {
+        const users = await base44.entities.User.filter({ email });
+        if (users.length > 0) {
+          userMap[email] = users[0].user_number || email;
+        }
       }
     }
     setUserNumbers(userMap);
@@ -140,6 +152,17 @@ export default function Discover() {
 
     // Reload places to reflect changes
     loadPlaces();
+  };
+
+  const handleDelete = async (placeId) => {
+    if (!confirm("Are you sure you want to delete this place?")) return;
+    
+    try {
+      await base44.entities.Place.delete(placeId);
+      loadPlaces();
+    } catch (error) {
+      alert(`Failed to delete: ${error.message}`);
+    }
   };
 
   const filtered = places.filter(p => {
@@ -324,42 +347,56 @@ export default function Discover() {
 
                     {/* Expanded Actions - Only show when expanded */}
                     {isExpanded && (
-                      <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap gap-2">
-                        {place.website && (
-                          <a
-                            href={place.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium"
-                          >
-                            <ExternalLink className="w-3.5 h-3.5" />
-                            Visit Website
-                          </a>
-                        )}
-                        {place.address && (
-                          <>
+                      <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap gap-2 items-center justify-between">
+                        <div className="flex flex-wrap gap-2">
+                          {place.website && (
                             <a
-                              href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place.address)}`}
+                              href={place.website}
                               target="_blank"
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
-                              className="flex items-center gap-1.5 text-sm text-green-600 hover:text-green-800 font-medium"
+                              className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium"
                             >
-                              <Navigation className="w-3.5 h-3.5" />
-                              Get Directions
+                              <ExternalLink className="w-3.5 h-3.5" />
+                              Visit Website
                             </a>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedPlace(place);
-                                setTaxiDialogOpen(true);
-                              }}
-                              className="flex items-center gap-1.5 text-sm text-orange-600 hover:text-orange-800 font-medium"
-                            >
-                              🚕 Book Taxi
-                            </button>
-                          </>
+                          )}
+                          {place.address && (
+                            <>
+                              <a
+                                href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place.address)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className="flex items-center gap-1.5 text-sm text-green-600 hover:text-green-800 font-medium"
+                              >
+                                <Navigation className="w-3.5 h-3.5" />
+                                Get Directions
+                              </a>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedPlace(place);
+                                  setTaxiDialogOpen(true);
+                                }}
+                                className="flex items-center gap-1.5 text-sm text-orange-600 hover:text-orange-800 font-medium"
+                              >
+                                🚕 Book Taxi
+                              </button>
+                            </>
+                          )}
+                        </div>
+                        {isAdmin && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(place.id);
+                            }}
+                            className="flex items-center gap-1.5 text-sm text-red-600 hover:text-red-800 font-medium"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            Delete
+                          </button>
                         )}
                       </div>
                     )}
