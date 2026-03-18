@@ -391,7 +391,7 @@ export default function Discover() {
                           )}
                         </div>
                         <div className="flex gap-2">
-                          {isOwnPlace && (
+                          {(isOwnPlace || isAdmin) && (
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
