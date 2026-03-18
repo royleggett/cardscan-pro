@@ -91,29 +91,34 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
   };
 
   const handleSave = async () => {
-    const createData = {
-      exhibition_id: exhibitionId || "none",
-      ...placeData
-    };
-    
-    const currentUser = await base44.auth.me();
-    const isPostingAsOther = isAdmin && selectedUserEmail && selectedUserEmail !== currentUser.email;
-    
-    if (isPostingAsOther) {
-      // Admin creating as another user - use service role
-      await base44.asServiceRole.entities.Place.create({
-        ...createData,
-        created_by: selectedUserEmail
-      });
-    } else {
-      // Normal user creation
-      await base44.entities.Place.create(createData);
+    try {
+      const createData = {
+        exhibition_id: exhibitionId || "none",
+        ...placeData
+      };
+      
+      const currentUser = await base44.auth.me();
+      const isPostingAsOther = isAdmin && selectedUserEmail && selectedUserEmail !== currentUser.email;
+      
+      if (isPostingAsOther) {
+        // Admin creating as another user - use service role with created_by override
+        await base44.asServiceRole.entities.Place.create({
+          ...createData,
+          created_by: selectedUserEmail
+        });
+      } else {
+        // Normal user creation
+        await base44.entities.Place.create(createData);
+      }
+      
+      setPlaceData({ name: "", category: "Restaurant", address: "", website: "", notes: "", rating: 0, is_public: false, attributes: [] });
+      setSelectedUserEmail(currentUser.email);
+      onPlaceAdded();
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Save error:", error);
+      alert(`Failed to save: ${error.message}`);
     }
-    
-    setPlaceData({ name: "", category: "Restaurant", address: "", website: "", notes: "", rating: 0, is_public: false, attributes: [] });
-    setSelectedUserEmail(currentUser.email);
-    onPlaceAdded();
-    onOpenChange(false);
   };
 
   return (
