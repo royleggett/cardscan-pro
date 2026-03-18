@@ -81,11 +81,11 @@ export default function Discover() {
     
     // Map fictional users + real users
     const userMap = {
-      "sarah.mitchell@demo.app": "Sarah Mitchell",
-      "james.chen@demo.app": "James Chen",
-      "maria.rodriguez@demo.app": "Maria Rodriguez",
-      "david.thompson@demo.app": "David Thompson",
-      "emily.watson@demo.app": "Emily Watson"
+      "sarah.mitchell@demo.app": "User #2847",
+      "james.chen@demo.app": "User #3921",
+      "maria.rodriguez@demo.app": "User #1563",
+      "david.thompson@demo.app": "User #4205",
+      "emily.watson@demo.app": "User #2674"
     };
     
     const uniqueEmails = [...new Set(validPlaces.map(p => p.created_by))];
