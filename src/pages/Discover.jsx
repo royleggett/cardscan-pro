@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { MapPin, Star, ExternalLink, Search, Filter, Navigation } from "lucide-react";
+import { MapPin, Star, ExternalLink, Search, Filter, Navigation, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -46,22 +46,38 @@ export default function Discover() {
   const [userNumbers, setUserNumbers] = useState({});
   const [taxiDialogOpen, setTaxiDialogOpen] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState(null);
+  const [userRatings, setUserRatings] = useState({});
+  const [currentUserEmail, setCurrentUserEmail] = useState(null);
 
   useEffect(() => {
     loadPlaces();
   }, []);
 
+  const loadUserRatings = async (email) => {
+    const ratings = await base44.entities.PlaceRating.filter({ user_email: email });
+    const ratingsMap = {};
+    ratings.forEach(r => { ratingsMap[r.place_id] = r.rating; });
+    setUserRatings(ratingsMap);
+  };
+
   const loadPlaces = async () => {
+    const user = await base44.auth.me();
+    setCurrentUserEmail(user.email);
+
     const [allPlaces, allExhibitions] = await Promise.all([
       base44.entities.Place.filter({ is_public: true }),
       base44.entities.Exhibition.list()
     ]);
+
+    // Filter out flagged places
+    const validPlaces = allPlaces.filter(p => !p.is_flagged);
+
     const exMap = {};
     allExhibitions.forEach(ex => { exMap[ex.id] = ex; });
     setExhibitions(exMap);
     
     const userMap = {};
-    const uniqueEmails = [...new Set(allPlaces.map(p => p.created_by))];
+    const uniqueEmails = [...new Set(validPlaces.map(p => p.created_by))];
     for (const email of uniqueEmails) {
       const users = await base44.entities.User.filter({ email });
       if (users.length > 0) {
@@ -70,10 +86,59 @@ export default function Discover() {
     }
     setUserNumbers(userMap);
     
-    // Sort by rating descending
-    const sorted = allPlaces.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    // Calculate community score and sort
+    const withScores = validPlaces.map(p => ({
+      ...p,
+      communityScore: (p.community_upvotes || 0) - (p.community_downvotes || 0)
+    }));
+    const sorted = withScores.sort((a, b) => {
+      // Primary: community score
+      if (b.communityScore !== a.communityScore) return b.communityScore - a.communityScore;
+      // Secondary: personal rating
+      return (b.rating || 0) - (a.rating || 0);
+    });
     setPlaces(sorted);
+    
+    await loadUserRatings(user.email);
     setLoading(false);
+  };
+
+  const handleRating = async (placeId, newRating) => {
+    const existingRatings = await base44.entities.PlaceRating.filter({ place_id: placeId, user_email: currentUserEmail });
+    
+    if (existingRatings.length > 0) {
+      const existing = existingRatings[0];
+      if (existing.rating === newRating) {
+        // Remove rating if clicking same button
+        await base44.entities.PlaceRating.delete(existing.id);
+        setUserRatings({ ...userRatings, [placeId]: null });
+      } else {
+        // Update to opposite rating
+        await base44.entities.PlaceRating.update(existing.id, { rating: newRating });
+        setUserRatings({ ...userRatings, [placeId]: newRating });
+      }
+    } else {
+      // Create new rating
+      await base44.entities.PlaceRating.create({ place_id: placeId, user_email: currentUserEmail, rating: newRating });
+      setUserRatings({ ...userRatings, [placeId]: newRating });
+    }
+
+    // Recalculate place votes
+    const allRatings = await base44.entities.PlaceRating.filter({ place_id: placeId });
+    const upvotes = allRatings.filter(r => r.rating === "up").length;
+    const downvotes = allRatings.filter(r => r.rating === "down").length;
+    
+    // Auto-flag if downvotes exceed threshold
+    const shouldFlag = downvotes >= 5 && downvotes > upvotes * 2;
+    
+    await base44.entities.Place.update(placeId, {
+      community_upvotes: upvotes,
+      community_downvotes: downvotes,
+      is_flagged: shouldFlag
+    });
+
+    // Reload places to reflect changes
+    loadPlaces();
   };
 
   const filtered = places.filter(p => {
@@ -204,12 +269,43 @@ export default function Discover() {
                          )}
 
                         <div className="text-xs text-gray-400 mt-2">
-                           Posted by {userNumbers[place.created_by] || place.created_by}
+                          Posted by {userNumbers[place.created_by] || place.created_by}
                         </div>
-                      </div>
-                    </div>
+                        </div>
+                        </div>
 
-                    <div className="mt-3 flex flex-wrap gap-2">
+                        {/* Community Rating */}
+                        {place.created_by !== currentUserEmail && (
+                        <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
+                        <span className="text-xs font-medium text-gray-500">Rate this recommendation:</span>
+                        <div className="flex items-center gap-3">
+                         <button
+                           onClick={() => handleRating(place.id, "up")}
+                           className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+                             userRatings[place.id] === "up"
+                               ? "bg-green-100 text-green-700 border border-green-300"
+                               : "bg-gray-50 text-gray-500 border border-gray-200 hover:bg-green-50 hover:border-green-200"
+                           }`}
+                         >
+                           <ThumbsUp className="w-3.5 h-3.5" />
+                           {place.community_upvotes || 0}
+                         </button>
+                         <button
+                           onClick={() => handleRating(place.id, "down")}
+                           className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+                             userRatings[place.id] === "down"
+                               ? "bg-red-100 text-red-700 border border-red-300"
+                               : "bg-gray-50 text-gray-500 border border-gray-200 hover:bg-red-50 hover:border-red-200"
+                           }`}
+                         >
+                           <ThumbsDown className="w-3.5 h-3.5" />
+                           {place.community_downvotes || 0}
+                         </button>
+                        </div>
+                        </div>
+                        )}
+
+                        <div className="mt-3 flex flex-wrap gap-2">
                       {place.website && (
                         <a
                           href={place.website}
