@@ -12,10 +12,20 @@ Deno.serve(async (req) => {
 
     const { placeData, asUserEmail } = await req.json();
 
+    // Map fictional user emails to consistent IDs
+    const fictionalUserIds = {
+      "sarah.mitchell@demo.app": "fictional-user-2847",
+      "james.chen@demo.app": "fictional-user-3921",
+      "maria.rodriguez@demo.app": "fictional-user-1563",
+      "david.thompson@demo.app": "fictional-user-4205",
+      "emily.watson@demo.app": "fictional-user-2674"
+    };
+
     // Create the place as the specified user using service role
     const place = await base44.asServiceRole.entities.Place.create({
       ...placeData,
-      created_by: asUserEmail
+      created_by: asUserEmail,
+      created_by_id: fictionalUserIds[asUserEmail] || asUserEmail
     });
 
     return Response.json({ success: true, place });
