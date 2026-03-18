@@ -34,6 +34,27 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
     attributes: []
   });
   const [locating, setLocating] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedUserEmail, setSelectedUserEmail] = useState(null);
+
+  React.useEffect(() => {
+    if (open) {
+      checkAdmin();
+    }
+  }, [open]);
+
+  const checkAdmin = async () => {
+    const user = await base44.auth.me();
+    const adminStatus = user?.role === "admin";
+    setIsAdmin(adminStatus);
+    
+    if (adminStatus) {
+      const users = await base44.entities.User.list();
+      setAllUsers(users);
+    }
+    setSelectedUserEmail(user.email);
+  };
 
 
 
@@ -63,10 +84,21 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
   };
 
   const handleSave = async () => {
-    await base44.entities.Place.create({
+    const createData = {
       exhibition_id: exhibitionId || "none",
       ...placeData
-    });
+    };
+    
+    if (isAdmin && selectedUserEmail) {
+      // Admin creating as another user - use service role
+      await base44.asServiceRole.entities.Place.create({
+        ...createData,
+        created_by: selectedUserEmail
+      });
+    } else {
+      // Normal user creation
+      await base44.entities.Place.create(createData);
+    }
     
     setPlaceData({ name: "", category: "Restaurant", address: "", website: "", notes: "", rating: 0, is_public: false, attributes: [] });
     onPlaceAdded();
@@ -91,6 +123,28 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
         </DialogHeader>
         
         <div className="space-y-4 py-4">
+          {isAdmin && allUsers.length > 0 && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+              <Label className="text-sm font-semibold text-yellow-900">👑 Admin: Post as User</Label>
+              <Select
+                value={selectedUserEmail}
+                onValueChange={setSelectedUserEmail}
+              >
+                <SelectTrigger className="mt-2">
+                  <SelectValue placeholder="Select user" />
+                </SelectTrigger>
+                <SelectContent>
+                  {allUsers.map(user => (
+                    <SelectItem key={user.id} value={user.email}>
+                      {user.full_name || user.email} ({user.user_number || user.email})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-yellow-700 mt-1">This place will appear as posted by the selected user</p>
+            </div>
+          )}
+
           <div>
             <Label>Category *</Label>
             <Select
