@@ -108,7 +108,7 @@ export default function PrivacyPolicy() {
               <h2 className="text-xl font-semibold mb-3">10. Contact Us</h2>
               <p className="text-gray-700">
                 If you have any questions about this privacy policy, please contact us through the Help section 
-                in the app or email us at your contact email.
+                in the app or email us at <a href="mailto:support@cardscan-pro.com" className="text-blue-600 hover:underline">support@cardscan-pro.com</a>.
               </p>
             </section>
           </CardContent>
