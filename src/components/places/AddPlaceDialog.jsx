@@ -92,25 +92,35 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
 
   const handleSave = async () => {
     try {
+      console.log("Starting save...", { placeData, exhibitionId, selectedUserEmail });
+      
       const createData = {
         exhibition_id: exhibitionId || "none",
         ...placeData
       };
       
+      console.log("Create data:", createData);
+      
       const currentUser = await base44.auth.me();
+      console.log("Current user:", currentUser.email);
+      
       const isPostingAsOther = isAdmin && selectedUserEmail && selectedUserEmail !== currentUser.email;
+      console.log("Is posting as other:", isPostingAsOther, { isAdmin, selectedUserEmail });
       
       if (isPostingAsOther) {
+        console.log("Using service role to create as:", selectedUserEmail);
         // Admin creating as another user - use service role with created_by override
         await base44.asServiceRole.entities.Place.create({
           ...createData,
           created_by: selectedUserEmail
         });
       } else {
+        console.log("Using normal create");
         // Normal user creation
         await base44.entities.Place.create(createData);
       }
       
+      console.log("Save successful!");
       setPlaceData({ name: "", category: "Restaurant", address: "", website: "", notes: "", rating: 0, is_public: false, attributes: [] });
       setSelectedUserEmail(currentUser.email);
       onPlaceAdded();
