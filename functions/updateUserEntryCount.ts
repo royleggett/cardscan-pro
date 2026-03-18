@@ -27,7 +27,17 @@ Deno.serve(async (req) => {
       base44.entities.Place.filter({ created_by: email })
     ]);
 
-    const totalEntries = contacts.length + places.length;
+    // Calculate trust score for places
+    let qualityScore = 0;
+    for (const place of places.filter(p => p.is_public)) {
+      const upvotes = place.community_upvotes || 0;
+      const downvotes = place.community_downvotes || 0;
+      qualityScore += upvotes - downvotes;
+    }
+
+    // Only count quality places (not flagged) for rewards
+    const qualityPlaces = places.filter(p => !p.is_flagged);
+    const totalEntries = contacts.length + qualityPlaces.length;
     const userData = await base44.auth.me();
     const users = await base44.entities.User.filter({ email });
     
@@ -55,7 +65,8 @@ Deno.serve(async (req) => {
     const updateData = {
       total_entries: totalEntries,
       badges_earned: newBadges,
-      discount_tier: newDiscount
+      discount_tier: newDiscount,
+      trust_score: qualityScore
     };
 
     if (subscriptionStatus) {
