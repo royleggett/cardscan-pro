@@ -35,6 +35,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
     attributes: []
   });
   const [locating, setLocating] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
   const [selectedUserEmail, setSelectedUserEmail] = useState(null);
