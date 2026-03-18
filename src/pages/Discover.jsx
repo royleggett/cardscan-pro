@@ -48,6 +48,7 @@ export default function Discover() {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [userRatings, setUserRatings] = useState({});
   const [currentUserEmail, setCurrentUserEmail] = useState(null);
+  const [expandedPlaceId, setExpandedPlaceId] = useState(null);
 
   useEffect(() => {
     loadPlaces();
@@ -213,12 +214,18 @@ export default function Discover() {
             <p className="text-sm text-gray-500 font-medium">{filtered.length} place{filtered.length !== 1 ? "s" : ""} found</p>
             {filtered.map((place, i) => {
               const exhibition = exhibitions[place.exhibition_id];
+              const isExpanded = expandedPlaceId === place.id;
+              const isOwnPlace = place.created_by === currentUserEmail;
               return (
                 <div key={place.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all">
                   {/* Top accent bar based on rating */}
                   <div className={`h-1 ${place.rating >= 4 ? "bg-gradient-to-r from-yellow-400 to-orange-400" : place.rating >= 3 ? "bg-gradient-to-r from-blue-400 to-blue-500" : "bg-gray-100"}`} />
                   
                   <div className="p-4">
+                    <button 
+                      onClick={() => setExpandedPlaceId(isExpanded ? null : place.id)}
+                      className="w-full text-left"
+                    >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -272,15 +279,15 @@ export default function Discover() {
                           Posted by {userNumbers[place.created_by] || place.created_by}
                         </div>
                         </div>
-                        </div>
+                        </button>
 
-                        {/* Community Rating */}
-                        {place.created_by !== currentUserEmail && (
+                        {/* Community Rating - Always visible */}
+                        {!isOwnPlace && (
                         <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
                         <span className="text-xs font-medium text-gray-500">Rate this recommendation:</span>
                         <div className="flex items-center gap-3">
                          <button
-                           onClick={() => handleRating(place.id, "up")}
+                           onClick={(e) => { e.stopPropagation(); handleRating(place.id, "up"); }}
                            className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
                              userRatings[place.id] === "up"
                                ? "bg-green-100 text-green-700 border border-green-300"
@@ -291,7 +298,7 @@ export default function Discover() {
                            {place.community_upvotes || 0}
                          </button>
                          <button
-                           onClick={() => handleRating(place.id, "down")}
+                           onClick={(e) => { e.stopPropagation(); handleRating(place.id, "down"); }}
                            className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
                              userRatings[place.id] === "down"
                                ? "bg-red-100 text-red-700 border border-red-300"
@@ -305,12 +312,15 @@ export default function Discover() {
                         </div>
                         )}
 
-                        <div className="mt-3 flex flex-wrap gap-2">
+                        {/* Expanded Actions - Only show when expanded */}
+                        {isExpanded && (
+                        <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap gap-2">
                       {place.website && (
                         <a
                           href={place.website}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
                           className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
@@ -323,13 +333,15 @@ export default function Discover() {
                             href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place.address)}`}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
                             className="flex items-center gap-1.5 text-sm text-green-600 hover:text-green-800 font-medium"
                           >
                             <Navigation className="w-3.5 h-3.5" />
                             Get Directions
                           </a>
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setSelectedPlace(place);
                               setTaxiDialogOpen(true);
                             }}
@@ -340,6 +352,7 @@ export default function Discover() {
                         </>
                       )}
                     </div>
+                    )}
                   </div>
                 </div>
               );
