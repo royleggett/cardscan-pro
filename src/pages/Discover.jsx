@@ -315,45 +315,45 @@ export default function Discover() {
                         {/* Expanded Actions - Only show when expanded */}
                         {isExpanded && (
                         <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap gap-2">
-                      {place.website && (
-                        <a
-                          href={place.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5" />
-                          Visit Website
-                        </a>
-                      )}
-                      {place.address && (
-                        <>
-                          <a
-                            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place.address)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="flex items-center gap-1.5 text-sm text-green-600 hover:text-green-800 font-medium"
-                          >
-                            <Navigation className="w-3.5 h-3.5" />
-                            Get Directions
-                          </a>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedPlace(place);
-                              setTaxiDialogOpen(true);
-                            }}
-                            className="flex items-center gap-1.5 text-sm text-orange-600 hover:text-orange-800 font-medium"
-                          >
-                            🚕 Book Taxi
-                          </button>
-                        </>
-                      )}
-                    </div>
-                    )}
-                  </div>
+                        {place.website && (
+                         <a
+                           href={place.website}
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           onClick={(e) => e.stopPropagation()}
+                           className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium"
+                         >
+                           <ExternalLink className="w-3.5 h-3.5" />
+                           Visit Website
+                         </a>
+                        )}
+                        {place.address && (
+                         <>
+                           <a
+                             href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place.address)}`}
+                             target="_blank"
+                             rel="noopener noreferrer"
+                             onClick={(e) => e.stopPropagation()}
+                             className="flex items-center gap-1.5 text-sm text-green-600 hover:text-green-800 font-medium"
+                           >
+                             <Navigation className="w-3.5 h-3.5" />
+                             Get Directions
+                           </a>
+                           <button
+                             onClick={(e) => {
+                               e.stopPropagation();
+                               setSelectedPlace(place);
+                               setTaxiDialogOpen(true);
+                             }}
+                             className="flex items-center gap-1.5 text-sm text-orange-600 hover:text-orange-800 font-medium"
+                           >
+                             🚕 Book Taxi
+                           </button>
+                         </>
+                        )}
+                        </div>
+                        )}
+                        </div>
                 </div>
               );
             })}
