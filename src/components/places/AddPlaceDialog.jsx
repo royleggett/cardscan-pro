@@ -50,8 +50,15 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
     setIsAdmin(adminStatus);
     
     if (adminStatus) {
-      const users = await base44.entities.User.list();
-      setAllUsers(users);
+      // Create fictional users for admin seeding
+      const fictionalUsers = [
+        { id: "fictional-1", email: "sarah.mitchell@demo.app", full_name: "Sarah Mitchell", user_number: "User #2847" },
+        { id: "fictional-2", email: "james.chen@demo.app", full_name: "James Chen", user_number: "User #3921" },
+        { id: "fictional-3", email: "maria.rodriguez@demo.app", full_name: "Maria Rodriguez", user_number: "User #1563" },
+        { id: "fictional-4", email: "david.thompson@demo.app", full_name: "David Thompson", user_number: "User #4205" },
+        { id: "fictional-5", email: "emily.watson@demo.app", full_name: "Emily Watson", user_number: "User #2674" }
+      ];
+      setAllUsers(fictionalUsers);
     }
     setSelectedUserEmail(user.email);
   };
@@ -89,7 +96,10 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
       ...placeData
     };
     
-    if (isAdmin && selectedUserEmail) {
+    const currentUser = await base44.auth.me();
+    const isPostingAsOther = isAdmin && selectedUserEmail && selectedUserEmail !== currentUser.email;
+    
+    if (isPostingAsOther) {
       // Admin creating as another user - use service role
       await base44.asServiceRole.entities.Place.create({
         ...createData,
@@ -101,6 +111,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
     }
     
     setPlaceData({ name: "", category: "Restaurant", address: "", website: "", notes: "", rating: 0, is_public: false, attributes: [] });
+    setSelectedUserEmail(currentUser.email);
     onPlaceAdded();
     onOpenChange(false);
   };
