@@ -20,15 +20,15 @@ export default function Home() {
 
   const handlePress = (key, fn) => {
     setPressedBtn(key);
-    setTimeout(() => setPressedBtn(null), 300);
+    setTimeout(() => setPressedBtn(null), 150);
     if (fn) fn();
   };
 
   const btnClass = (key) =>
-    `w-full h-20 text-lg justify-center border-2 border-gray-200 shadow-md hover:shadow-lg transition-all ${
+    `w-full h-20 text-lg justify-center border-2 border-gray-200 shadow-md transition-all duration-150 ${
       pressedBtn === key
-        ? "bg-purple-600 text-white border-purple-600"
-        : "bg-white hover:bg-purple-50 text-gray-900"
+        ? "bg-purple-700 text-white border-purple-700 scale-95 shadow-inner"
+        : "bg-white hover:bg-purple-50 text-gray-900 hover:shadow-xl hover:scale-[1.02] active:scale-95"
     }`;
 
   useEffect(() => {
