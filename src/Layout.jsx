@@ -11,16 +11,19 @@ export default function Layout({ children }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [logoTaps, setLogoTaps] = useState(0);
   const [showAdminFlash, setShowAdminFlash] = useState(false);
+  const [loading, setLoading] = useState(true);
   const tapTimerRef = React.useRef(null);
 
   useEffect(() => {
     const checkAuth = async () => {
+      setLoading(true);
       const authenticated = await base44.auth.isAuthenticated();
       setIsAuthenticated(authenticated);
       if (authenticated) {
         const user = await base44.auth.me();
         setIsAdmin(user?.role === "admin");
       }
+      setLoading(false);
     };
     checkAuth();
   }, [location]);
@@ -49,6 +52,10 @@ export default function Layout({ children }) {
     base44.auth.redirectToLogin();
   };
 
+  const handleLogin = () => {
+    base44.auth.redirectToLogin(window.location.href);
+  };
+
   const isSuccessPage = location.pathname.includes("Success");
 
   return (
@@ -62,15 +69,29 @@ export default function Layout({ children }) {
               className={`h-10 w-10 cursor-pointer select-none transition-all ${showAdminFlash ? "opacity-30 scale-95" : "opacity-100 hover:scale-105"}`}
               onClick={handleLogoTap}
             />
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={handleLogout}
-              className="text-gray-600 hover:text-gray-900"
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
-            </Button>
+            {!loading && (
+              isAuthenticated ? (
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={handleLogout}
+                  className="text-gray-600 hover:text-gray-900"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </Button>
+              ) : (
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={handleLogin}
+                  className="text-gray-600 hover:text-gray-900"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Login
+                </Button>
+              )
+            )}
           </div>
         </header>
       )}
