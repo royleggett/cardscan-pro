@@ -66,58 +66,64 @@ export default function Discover() {
   };
 
   const loadPlaces = async () => {
-    const user = await base44.auth.me();
-    setCurrentUserEmail(user.email);
-    setIsAdmin(user?.role === "admin");
+    try {
+      const user = await base44.auth.me();
+      setCurrentUserEmail(user.email);
+      setIsAdmin(user?.role === "admin");
 
-    const [allPlaces, allExhibitions] = await Promise.all([
-      base44.entities.Place.filter({ is_public: true }),
-      base44.entities.Exhibition.list()
-    ]);
+      const [allPlaces, allExhibitions] = await Promise.all([
+        base44.entities.Place.filter({ is_public: true }),
+        base44.entities.Exhibition.list()
+      ]);
 
-    // Filter out flagged places
-    const validPlaces = allPlaces.filter(p => !p.is_flagged);
+      // Filter out flagged places
+      const validPlaces = allPlaces.filter(p => !p.is_flagged);
 
-    const exMap = {};
-    allExhibitions.forEach(ex => { exMap[ex.id] = ex; });
-    setExhibitions(exMap);
-    
-    // Map fictional users + real users (service role creates as these fictional users)
-    const userMap = {
-      "service+9efd0b9d-01ad-4aca-8915-8d14c8663f72@no-reply.base44.com": "User #2847",
-      "sarah.mitchell@demo.app": "User #2847",
-      "james.chen@demo.app": "User #3921",
-      "maria.rodriguez@demo.app": "User #1563",
-      "david.thompson@demo.app": "User #4205",
-      "emily.watson@demo.app": "User #2674"
-    };
-    
-    const uniqueEmails = [...new Set(validPlaces.map(p => p.created_by))];
-    for (const email of uniqueEmails) {
-      if (!userMap[email]) {
-        const users = await base44.entities.User.filter({ email });
-        if (users.length > 0) {
-          userMap[email] = users[0].user_number || email;
+      const exMap = {};
+      allExhibitions.forEach(ex => { exMap[ex.id] = ex; });
+      setExhibitions(exMap);
+      
+      // Map fictional users + real users (service role creates as these fictional users)
+      const userMap = {
+        "service+9efd0b9d-01ad-4aca-8915-8d14c8663f72@no-reply.base44.com": "User #2847",
+        "sarah.mitchell@demo.app": "User #2847",
+        "james.chen@demo.app": "User #3921",
+        "maria.rodriguez@demo.app": "User #1563",
+        "david.thompson@demo.app": "User #4205",
+        "emily.watson@demo.app": "User #2674"
+      };
+      
+      const uniqueEmails = [...new Set(validPlaces.map(p => p.created_by))];
+      for (const email of uniqueEmails) {
+        if (!userMap[email]) {
+          const users = await base44.entities.User.filter({ email });
+          if (users.length > 0) {
+            userMap[email] = users[0].user_number || email;
+          }
         }
       }
+      setUserNumbers(userMap);
+      
+      // Calculate community score and sort
+      const withScores = validPlaces.map(p => ({
+        ...p,
+        communityScore: (p.community_upvotes || 0) - (p.community_downvotes || 0)
+      }));
+      const sorted = withScores.sort((a, b) => {
+        // Primary: community score
+        if (b.communityScore !== a.communityScore) return b.communityScore - a.communityScore;
+        // Secondary: personal rating
+        return (b.rating || 0) - (a.rating || 0);
+      });
+      setPlaces(sorted);
+      
+      await loadUserRatings(user.email);
+    } catch (error) {
+      console.error("Error loading places:", error);
+      setPlaces([]);
+    } finally {
+      setLoading(false);
     }
-    setUserNumbers(userMap);
-    
-    // Calculate community score and sort
-    const withScores = validPlaces.map(p => ({
-      ...p,
-      communityScore: (p.community_upvotes || 0) - (p.community_downvotes || 0)
-    }));
-    const sorted = withScores.sort((a, b) => {
-      // Primary: community score
-      if (b.communityScore !== a.communityScore) return b.communityScore - a.communityScore;
-      // Secondary: personal rating
-      return (b.rating || 0) - (a.rating || 0);
-    });
-    setPlaces(sorted);
-    
-    await loadUserRatings(user.email);
-    setLoading(false);
   };
 
   const handleRating = async (placeId, newRating) => {
@@ -230,10 +236,27 @@ export default function Discover() {
             <div className="w-10 h-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
             Loading places...
           </div>
+        ) : places.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="text-5xl mb-4">🌍</div>
+            <p className="font-bold text-xl text-gray-800 mb-2">Welcome to Community Discover!</p>
+            <p className="text-gray-600 mb-4 max-w-md mx-auto">
+              This is where the CardScan Pro community shares their favorite restaurants, hotels, and local spots from exhibitions around the world.
+            </p>
+            <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 max-w-md mx-auto text-left">
+              <p className="font-semibold text-blue-900 mb-2">✨ Getting Started:</p>
+              <ul className="text-sm text-blue-800 space-y-1">
+                <li>• Attend exhibitions and discover great places</li>
+                <li>• Rate and share your finds with the community</li>
+                <li>• Help fellow exhibitors navigate new cities</li>
+              </ul>
+            </div>
+            <p className="text-xs text-gray-400 mt-4">Places shared by users will appear here</p>
+          </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 text-gray-400">
             <div className="text-4xl mb-3">📍</div>
-            <p className="font-medium">No places found</p>
+            <p className="font-medium">No places match your search</p>
             <p className="text-sm mt-1">Try a different search or category</p>
           </div>
         ) : (
