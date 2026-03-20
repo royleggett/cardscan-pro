@@ -499,14 +499,15 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
       ...pendingContact,
       follow_up_type,
       follow_up_date: follow_up_date || undefined,
-      thank_you_sent: sendThankYou
+      thank_you_sent: false
     };
 
-    await Contact.create(contactToSave);
+    const savedContact = await Contact.create(contactToSave);
 
     if (sendThankYou && pendingContact.email) {
       try {
         const emailRes = await sendThankYouEmail({
+          contactId: savedContact.id,
           contactEmail: pendingContact.email,
           contactName: pendingContact.full_name,
           exhibitionName,
@@ -617,11 +618,12 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
     const results = [];
     for (const { contact, sendThankYou } of payload) {
       try {
-        await Contact.create({ ...contact, exhibition_id: exhibitionId });
+        const savedContact = await Contact.create({ ...contact, exhibition_id: exhibitionId });
         results.push({ status: "saved", name: contact.full_name, company: contact.company });
         if (sendThankYou && contact.email) {
           try {
             await sendThankYouEmail({
+              contactId: savedContact.id,
               contactEmail: contact.email,
               contactName: contact.full_name,
               exhibitionName,
