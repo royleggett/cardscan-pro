@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { 
   Camera, Users, MapPin, Calendar, Mail, Star, 
   Shield, Globe, Award, TrendingUp, FileText, QrCode,
-  Clock, Tag, Bell, Download, Upload, Sparkles
+  Clock, Tag, Bell, Download, Upload, Sparkles, ArrowLeft
 } from "lucide-react";
 
 const features = [
@@ -209,8 +209,18 @@ const plans = [
 export default function Features() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      {/* Back Button */}
+      <div className="container mx-auto px-4 py-6">
+        <Link to="/">
+          <Button variant="ghost" className="gap-2 text-gray-700 hover:text-blue-600 text-base">
+            <ArrowLeft className="w-5 h-5" />
+            Back to Home
+          </Button>
+        </Link>
+      </div>
+
       {/* Hero */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-16">
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-12">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Everything You Need to Network Smarter
