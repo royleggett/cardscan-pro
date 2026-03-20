@@ -20,15 +20,19 @@ export default function Home() {
 
   const handlePress = (key, fn) => {
     setPressedBtn(key);
+    // Brief vibration on mobile devices
+    if (navigator.vibrate) {
+      navigator.vibrate(50);
+    }
     setTimeout(() => setPressedBtn(null), 150);
     if (fn) fn();
   };
 
   const btnClass = (key) =>
-    `w-full h-20 text-lg justify-center border-2 border-gray-200 shadow-md transition-all duration-150 ${
+    `w-full h-20 text-lg justify-center border-2 transition-all duration-150 relative overflow-hidden ${
       pressedBtn === key
-        ? "bg-purple-700 text-white border-purple-700 scale-95 shadow-inner"
-        : "bg-white hover:bg-purple-50 text-gray-900 hover:shadow-xl hover:scale-[1.02] active:scale-95"
+        ? "bg-gradient-to-br from-yellow-400 via-purple-600 to-blue-600 text-white border-yellow-400 scale-95 shadow-[0_0_20px_rgba(168,85,247,0.8)] animate-pulse"
+        : "bg-white hover:bg-purple-50 text-gray-900 border-gray-200 hover:shadow-xl hover:scale-[1.02] active:scale-95 shadow-md"
     }`;
 
   useEffect(() => {
@@ -174,7 +178,7 @@ export default function Home() {
 
         <div className="max-w-md mx-auto space-y-4">
           <Link to={createPageUrl("MyCard")} className="block w-full" onClick={() => handlePress("mycard")}>
-            <Button className={`w-full h-20 text-lg justify-center border-2 shadow-md transition-all duration-150 ${pressedBtn === "mycard" ? "bg-blue-800 text-white border-blue-800 scale-95 shadow-inner" : "bg-gradient-to-br from-blue-600 to-indigo-700 text-white border-blue-600 hover:from-blue-700 hover:to-indigo-800 hover:shadow-xl active:scale-95"}`}>
+            <Button className={`w-full h-20 text-lg justify-center border-2 transition-all duration-150 relative overflow-hidden ${pressedBtn === "mycard" ? "bg-gradient-to-br from-yellow-400 via-blue-600 to-indigo-700 text-white border-yellow-400 scale-95 shadow-[0_0_20px_rgba(59,130,246,0.8)] animate-pulse" : "bg-gradient-to-br from-blue-600 to-indigo-700 text-white border-blue-600 hover:from-blue-700 hover:to-indigo-800 hover:shadow-xl hover:scale-[1.02] active:scale-95 shadow-md"}`}>
               <QrCode className="w-6 h-6 mr-3" />
               My Digital Card
             </Button>
