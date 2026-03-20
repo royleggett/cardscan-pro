@@ -82,11 +82,14 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header Navigation */}
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-4 py-6">
         <div className="flex justify-end">
           <Link to="/Features">
-            <Button variant="ghost" className="text-gray-700 hover:text-blue-600">
-              Features & Pricing
+            <Button 
+              size="lg"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg"
+            >
+              View Features & Pricing →
             </Button>
           </Link>
         </div>
