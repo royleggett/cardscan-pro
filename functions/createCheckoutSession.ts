@@ -5,11 +5,11 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 
 const PRICES = {
   places: {
-    annual: 'price_1T5StL2Sv2QAKzjTPCNQW9cz' // £20/year
+    annual: 'price_1TD0Pd2Sv2QAKzjT3ED6U3ZB' // £20/year
   },
   premium: {
-    annual: 'price_1TAF0A2Sv2QAKzjTKFU2R71r', // £49/year
-    monthly: 'price_1TAEjO2Sv2QAKzjTo9n6tFUg' // £5/month
+    annual: 'price_1TD0Sk2Sv2QAKzjTl7IoM1Am', // £59/year
+    monthly: 'price_1TD0ds2Sv2QAKzjTFX37OK6t' // £5/month
   }
 };
 
