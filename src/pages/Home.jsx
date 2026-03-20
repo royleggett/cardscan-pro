@@ -173,8 +173,8 @@ export default function Home() {
 
 
         <div className="max-w-md mx-auto space-y-4">
-          <Link to={createPageUrl("MyCard")} className="block w-full" onClick={() => handlePress("mycard")}>
-            <Button className={`w-full h-20 text-lg justify-center border-2 transition-all duration-150 ${pressedBtn === "mycard" ? "bg-blue-800 text-white border-blue-800 scale-95 shadow-inner" : "bg-gradient-to-br from-blue-600 to-indigo-700 text-white border-blue-600 hover:from-blue-700 hover:to-indigo-800 hover:shadow-xl hover:scale-[1.02] active:scale-95 shadow-md"}`}>
+          <Link to={createPageUrl("MyCard")} className="block w-full">
+            <Button className={`w-full h-20 text-lg justify-center border-2 transition-all duration-150 ${pressedBtn === "mycard" ? "bg-blue-800 text-white border-blue-800 scale-95 shadow-inner" : "bg-gradient-to-br from-blue-600 to-indigo-700 text-white border-blue-600 hover:from-blue-700 hover:to-indigo-800 hover:shadow-xl hover:scale-[1.02] active:scale-95 shadow-md"}`} onClick={(e) => { e.preventDefault(); handlePress("mycard", () => window.location.href = createPageUrl("MyCard")); }}>
               <QrCode className="w-6 h-6 mr-3" />
               My Digital Card
             </Button>
@@ -185,29 +185,29 @@ export default function Home() {
             Add a Place
           </Button>
 
-          <Link to={createPageUrl("Exhibitions")} className="block w-full" onClick={() => handlePress("exhibitions")}>
-            <Button className={btnClass("exhibitions")}>
+          <Link to={createPageUrl("Exhibitions")} className="block w-full">
+            <Button className={btnClass("exhibitions")} onClick={(e) => { e.preventDefault(); handlePress("exhibitions", () => window.location.href = createPageUrl("Exhibitions")); }}>
               <FolderOpen className="w-6 h-6 mr-3" />
               My Exhibitions
             </Button>
           </Link>
           
-          <Link to={createPageUrl("NewExhibition")} className="block w-full" onClick={() => handlePress("newexhibition")}>
-            <Button className={btnClass("newexhibition")}>
+          <Link to={createPageUrl("NewExhibition")} className="block w-full">
+            <Button className={btnClass("newexhibition")} onClick={(e) => { e.preventDefault(); handlePress("newexhibition", () => window.location.href = createPageUrl("NewExhibition")); }}>
               <Plus className="w-6 h-6 mr-3" />
               Create New Exhibition
             </Button>
           </Link>
 
-          <Link to={createPageUrl("AllContacts")} className="block w-full" onClick={() => handlePress("contacts")}>
-            <Button className={btnClass("contacts")}>
+          <Link to={createPageUrl("AllContacts")} className="block w-full">
+            <Button className={btnClass("contacts")} onClick={(e) => { e.preventDefault(); handlePress("contacts", () => window.location.href = createPageUrl("AllContacts")); }}>
               <Users className="w-6 h-6 mr-3" />
               View All Contacts
             </Button>
           </Link>
 
-          <Link to={createPageUrl("ImportExport")} className="block w-full" onClick={() => handlePress("importexport")}>
-            <Button className={btnClass("importexport")}>
+          <Link to={createPageUrl("ImportExport")} className="block w-full">
+            <Button className={btnClass("importexport")} onClick={(e) => { e.preventDefault(); handlePress("importexport", () => window.location.href = createPageUrl("ImportExport")); }}>
               <Upload className="w-6 h-6 mr-3" />
               Import / Export
             </Button>
@@ -218,8 +218,8 @@ export default function Home() {
             Join Team Exhibition
           </Button>
 
-          <Link to={createPageUrl("Settings")} className="block w-full" onClick={() => handlePress("settings")}>
-            <Button className={btnClass("settings")}>
+          <Link to={createPageUrl("Settings")} className="block w-full">
+            <Button className={btnClass("settings")} onClick={(e) => { e.preventDefault(); handlePress("settings", () => window.location.href = createPageUrl("Settings")); }}>
               <Settings className="w-6 h-6 mr-3" />
               Settings
             </Button>
