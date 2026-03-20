@@ -147,13 +147,13 @@ export default function ExhibitionDetail() {
       <div className="flex gap-1 mb-6 bg-gray-100 rounded-xl p-1">
         <button
           onClick={() => setActiveTab("contacts")}
-          className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === "contacts" ? "bg-white shadow text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
+          className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-150 ${activeTab === "contacts" ? "bg-white shadow text-blue-600" : "text-gray-500 hover:text-gray-700 active:scale-95"}`}
         >
           Contacts ({contacts.length})
         </button>
         <button
           onClick={() => setActiveTab("places")}
-          className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === "places" ? "bg-white shadow text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
+          className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all duration-150 ${activeTab === "places" ? "bg-white shadow text-blue-600" : "text-gray-500 hover:text-gray-700 active:scale-95"}`}
         >
           Places ({places.length})
         </button>
@@ -163,7 +163,7 @@ export default function ExhibitionDetail() {
       <div className="mb-4">
         {activeTab === "contacts" ? (
           <Button
-            className="w-full bg-blue-600 hover:bg-blue-700 h-14 text-base"
+            className="w-full bg-blue-600 hover:bg-blue-700 h-14 text-base transition-all duration-150 active:scale-95 active:bg-blue-800"
             onClick={() => navigate(createPageUrl(`ScanCard?exhibition_id=${exhibitionId}`))}
           >
             <Camera className="w-5 h-5 mr-2" />
@@ -171,7 +171,7 @@ export default function ExhibitionDetail() {
           </Button>
         ) : (
           <Button
-            className="w-full bg-green-600 hover:bg-green-700 h-14 text-base"
+            className="w-full bg-green-600 hover:bg-green-700 h-14 text-base transition-all duration-150 active:scale-95 active:bg-green-800"
             onClick={() => setShowAddPlace(true)}
           >
             <Plus className="w-5 h-5 mr-2" />

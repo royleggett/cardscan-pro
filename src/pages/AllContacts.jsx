@@ -146,6 +146,7 @@ export default function AllContacts() {
           variant="outline"
           onClick={() => setShowExport(true)}
           disabled={contacts.length === 0}
+          className="transition-all duration-150 active:scale-95"
         >
           <Download className="w-4 h-4 mr-2" />
           Export CSV
@@ -215,7 +216,7 @@ export default function AllContacts() {
               </p>
               <Button
                 onClick={() => navigate(createPageUrl("Pricing"))}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-blue-600 hover:bg-blue-700 transition-all duration-150 active:scale-95 active:bg-blue-800"
               >
                 View Pricing
               </Button>
@@ -265,7 +266,7 @@ export default function AllContacts() {
             <Button variant="outline" onClick={() => setShowExport(false)}>
               Cancel
             </Button>
-            <Button onClick={exportToExcel} className="bg-blue-600 hover:bg-blue-700">
+            <Button onClick={exportToExcel} className="bg-blue-600 hover:bg-blue-700 transition-all duration-150 active:scale-95 active:bg-blue-800">
               <Download className="w-4 h-4 mr-2" />
               Export
             </Button>

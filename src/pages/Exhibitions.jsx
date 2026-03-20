@@ -89,7 +89,7 @@ export default function Exhibitions() {
           <p className="text-gray-500 text-sm mt-1">{exhibitions.length} exhibition{exhibitions.length !== 1 ? "s" : ""}</p>
         </div>
         <Link to={createPageUrl("NewExhibition")}>
-          <Button className="bg-blue-600 hover:bg-blue-700">
+          <Button className="bg-blue-600 hover:bg-blue-700 transition-all duration-150 active:scale-95 active:bg-blue-800">
             <Plus className="w-4 h-4 mr-2" />
             New
           </Button>
@@ -104,7 +104,7 @@ export default function Exhibitions() {
           <h3 className="text-lg font-semibold text-gray-900 mb-2">No exhibitions yet</h3>
           <p className="text-gray-500 mb-6">Create your first exhibition to start scanning cards</p>
           <Link to={createPageUrl("NewExhibition")}>
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button className="bg-blue-600 hover:bg-blue-700 transition-all duration-150 active:scale-95 active:bg-blue-800">
               <Plus className="w-4 h-4 mr-2" />
               Create Exhibition
             </Button>
@@ -117,7 +117,7 @@ export default function Exhibitions() {
             return (
               <Card
                 key={ex.id}
-                className="cursor-pointer hover:shadow-lg hover:border-blue-200 border-2 transition-all overflow-hidden"
+                className="cursor-pointer hover:shadow-lg hover:border-blue-200 border-2 transition-all duration-150 overflow-hidden active:scale-[0.98] active:shadow-md"
                 onClick={() => navigate(createPageUrl(`ExhibitionDetail?id=${ex.id}`))}
               >
                 <CardContent className="p-0">
