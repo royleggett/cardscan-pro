@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { contactEmail, contactName, exhibitionName, senderName } = await req.json();
+    const { contactEmail, contactName, exhibitionName, senderName, contactId } = await req.json();
 
     if (!contactEmail) return Response.json({ error: 'No email provided' }, { status: 400 });
 
@@ -82,6 +82,12 @@ Deno.serve(async (req) => {
       });
 
       console.log("Email sent successfully:", JSON.stringify(emailResult));
+      
+      // Mark contact as having received thank you email
+      if (contactId) {
+        await base44.entities.Contact.update(contactId, { thank_you_sent: true });
+      }
+      
       return Response.json({ success: true, details: emailResult });
     } catch (emailError) {
       console.error("Email send error:", emailError.message, JSON.stringify(emailError));
