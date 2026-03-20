@@ -174,7 +174,7 @@ export default function Home() {
 
         <div className="max-w-md mx-auto space-y-4">
           <Link to={createPageUrl("MyCard")} className="block w-full" onClick={() => handlePress("mycard")}>
-            <Button className={`w-full h-20 text-lg justify-center border-2 shadow-md hover:shadow-lg transition-all ${pressedBtn === "mycard" ? "bg-blue-700 text-white border-blue-700" : "bg-gradient-to-br from-blue-600 to-indigo-700 text-white border-blue-600 hover:from-blue-700 hover:to-indigo-800"}`}>
+            <Button className={`w-full h-20 text-lg justify-center border-2 shadow-md transition-all duration-150 ${pressedBtn === "mycard" ? "bg-blue-800 text-white border-blue-800 scale-95 shadow-inner" : "bg-gradient-to-br from-blue-600 to-indigo-700 text-white border-blue-600 hover:from-blue-700 hover:to-indigo-800 hover:shadow-xl active:scale-95"}`}>
               <QrCode className="w-6 h-6 mr-3" />
               My Digital Card
             </Button>
