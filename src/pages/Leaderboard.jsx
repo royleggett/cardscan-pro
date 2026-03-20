@@ -75,10 +75,31 @@ export default function Leaderboard() {
         </div>
 
         {leaderboard.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">
-            <Trophy className="w-12 h-12 mx-auto mb-4 opacity-50" />
-            <p className="font-medium">No contributions yet</p>
-            <p className="text-sm mt-1">Be the first to add places and scan cards!</p>
+          <div className="text-center py-16">
+            <Trophy className="w-16 h-16 mx-auto mb-4 text-yellow-500 opacity-70" />
+            <p className="font-bold text-xl text-gray-800 mb-2">Welcome to the Leaderboard!</p>
+            <p className="text-gray-600 mb-4 max-w-md mx-auto">
+              Track the top contributors in the CardScan Pro community who help others by sharing places and scanning cards.
+            </p>
+            <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-4 max-w-md mx-auto text-left mb-4">
+              <p className="font-semibold text-amber-900 mb-2">⚙️ First Time Setup Required:</p>
+              <p className="text-sm text-amber-800 mb-3">
+                Complete your profile in <strong>Settings</strong> to unlock leaderboard access and start earning rewards.
+              </p>
+              <Link to={createPageUrl("Settings")}>
+                <Button className="w-full bg-amber-600 hover:bg-amber-700 text-white">
+                  Go to Settings
+                </Button>
+              </Link>
+            </div>
+            <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 max-w-md mx-auto text-left">
+              <p className="font-semibold text-blue-900 mb-2">🏆 How It Works:</p>
+              <ul className="text-sm text-blue-800 space-y-1">
+                <li>• Earn points by scanning cards and adding places</li>
+                <li>• Climb the leaderboard as you contribute</li>
+                <li>• Unlock badges and exclusive rewards</li>
+              </ul>
+            </div>
           </div>
         ) : (
           <div className="space-y-3">

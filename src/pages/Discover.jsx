@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 import { MapPin, Star, ExternalLink, Search, Filter, Navigation, ThumbsUp, ThumbsDown, Trash2, Pencil } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -243,15 +245,25 @@ export default function Discover() {
             <p className="text-gray-600 mb-4 max-w-md mx-auto">
               This is where the CardScan Pro community shares their favorite restaurants, hotels, and local spots from exhibitions around the world.
             </p>
+            <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-4 max-w-md mx-auto text-left mb-4">
+              <p className="font-semibold text-amber-900 mb-2">⚙️ First Time Setup Required:</p>
+              <p className="text-sm text-amber-800 mb-3">
+                Complete your profile in <strong>Settings</strong> to unlock full access to Community Discover and start sharing places.
+              </p>
+              <Link to={createPageUrl("Settings")}>
+                <Button className="w-full bg-amber-600 hover:bg-amber-700 text-white">
+                  Go to Settings
+                </Button>
+              </Link>
+            </div>
             <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 max-w-md mx-auto text-left">
-              <p className="font-semibold text-blue-900 mb-2">✨ Getting Started:</p>
+              <p className="font-semibold text-blue-900 mb-2">✨ What You'll Be Able To Do:</p>
               <ul className="text-sm text-blue-800 space-y-1">
-                <li>• Attend exhibitions and discover great places</li>
-                <li>• Rate and share your finds with the community</li>
-                <li>• Help fellow exhibitors navigate new cities</li>
+                <li>• Discover great places from fellow exhibitors</li>
+                <li>• Rate and share your favorite finds</li>
+                <li>• Help others navigate new cities</li>
               </ul>
             </div>
-            <p className="text-xs text-gray-400 mt-4">Places shared by users will appear here</p>
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 text-gray-400">
