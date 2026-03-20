@@ -8,6 +8,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import Features from './pages/Features';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -60,6 +61,11 @@ const AuthenticatedApp = () => {
         />
       ))}
       <Route path="/PrivacyPolicy" element={<PrivacyPolicy />} />
+      <Route path="/Features" element={
+        <LayoutWrapper currentPageName="Features">
+          <Features />
+        </LayoutWrapper>
+      } />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
