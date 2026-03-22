@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ArrowLeft, Save, RotateCcw, Flame, Thermometer, Snowflake, Plus, X } from "lucide-react";
+import { ArrowLeft, Save, RotateCcw, Flame, Thermometer, Snowflake, Plus, X, Key } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Switch } from "@/components/ui/switch";
@@ -238,6 +238,28 @@ export default function Settings() {
                 onChange={e => setDisplayName(e.target.value)}
               />
             )}
+          </CardContent>
+        </Card>
+
+        {/* Password Reset */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Password</CardTitle>
+            <CardDescription>
+              Reset your password via email verification.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              variant="outline"
+              onClick={() => {
+                window.open('https://app.base44.com/reset-password', '_blank');
+              }}
+              className="gap-2"
+            >
+              <Key className="w-4 h-4" />
+              Reset Password
+            </Button>
           </CardContent>
         </Card>
 
