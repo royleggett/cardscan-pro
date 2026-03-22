@@ -9,6 +9,7 @@ import { ArrowLeft, Save, RotateCcw, Flame, Thermometer, Snowflake, Plus, X } fr
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Switch } from "@/components/ui/switch";
+import { isDemoUser, showDemoRestriction } from "@/lib/demoMode";
 
 const DEFAULT_SUBJECT = `Thank you for visiting us at {exhibition_name}`;
 const DEFAULT_BODY = `Dear {contact_name},
@@ -61,6 +62,11 @@ export default function Settings() {
   };
 
   const handleSave = async () => {
+    const user = await base44.auth.me();
+    if (isDemoUser(user)) {
+      showDemoRestriction();
+      return;
+    }
     setSaving(true);
     const templates = await base44.entities.EmailTemplate.filter({ template_key: "thank_you" });
     if (templates.length > 0) {
@@ -91,6 +97,11 @@ export default function Settings() {
   };
 
   const handleAddDefaultTag = async () => {
+    const user = await base44.auth.me();
+    if (isDemoUser(user)) {
+      showDemoRestriction();
+      return;
+    }
     const t = newDefaultTag.trim();
     if (!t || defaultTags.includes(t)) { setNewDefaultTag(""); return; }
     const updated = [...defaultTags, t];
@@ -100,6 +111,11 @@ export default function Settings() {
   };
 
   const handleRemoveDefaultTag = async (tag) => {
+    const user = await base44.auth.me();
+    if (isDemoUser(user)) {
+      showDemoRestriction();
+      return;
+    }
     const updated = defaultTags.filter(t => t !== tag);
     setDefaultTags(updated);
     await base44.auth.updateMe({ default_tags: updated });
