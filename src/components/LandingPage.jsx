@@ -197,11 +197,11 @@ export default function LandingPage() {
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase">Email</label>
                   <div className="flex items-center gap-2 mt-1">
-                    <code className="flex-1 bg-white px-3 py-2 rounded border text-sm">demo@cardscanpro.com</code>
+                    <code className="flex-1 bg-white px-3 py-2 rounded border text-sm">demo.cardscanpro@gmail.com</code>
                     <Button 
                       size="sm" 
                       variant="outline"
-                      onClick={() => copyToClipboard("demo@cardscanpro.com")}
+                      onClick={() => copyToClipboard("demo.cardscanpro@gmail.com")}
                     >
                       Copy
                     </Button>
