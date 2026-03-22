@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import { Contact } from "@/entities/Contact";
+import React, { useState, useEffect } from "react";
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { isDemoUser, showDemoRestriction } from "@/lib/demoMode";
 
 export default function AddContact() {
   const navigate = useNavigate();
@@ -16,10 +17,23 @@ export default function AddContact() {
   const [company, setCompany] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const currentUser = await base44.auth.me();
+      setUser(currentUser);
+    };
+    loadUser();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await Contact.create({
+    if (isDemoUser(user)) {
+      showDemoRestriction();
+      return;
+    }
+    await base44.entities.Contact.create({
       exhibition_id: exhibitionId,
       full_name: fullName,
       company,

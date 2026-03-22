@@ -16,6 +16,7 @@ import FollowUpDialog from "../components/scan/FollowUpDialog";
 import DuplicateWarningDialog from "../components/scan/DuplicateWarningDialog";
 import BatchScanResults from "../components/scan/BatchScanResults";
 import BatchReview from "../components/scan/BatchReview";
+import { isDemoUser, showDemoRestriction } from "@/lib/demoMode";
 
 export default function ScanCard() {
   const navigate = useNavigate();
@@ -462,11 +463,16 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
   };
 
   const handleSave = async (contactData) => {
+    const currentUser = await base44.auth.me();
+    if (isDemoUser(currentUser)) {
+      showDemoRestriction();
+      return;
+    }
+    
     setPendingContact(contactData);
 
     // Check for duplicates by name or email
-    const user = await base44.auth.me();
-    const allContacts = await Contact.filter({ created_by: user.email });
+    const allContacts = await Contact.filter({ created_by: currentUser.email });
     const nameNorm = (contactData.full_name || "").toLowerCase().trim();
     const emailNorm = (contactData.email || "").toLowerCase().trim();
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,7 @@ import { ArrowLeft, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { isDemoUser, showDemoRestriction } from "@/lib/demoMode";
 
 const generateTeamCode = () => {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -27,9 +28,22 @@ export default function NewExhibition() {
   });
   const [isTeam, setIsTeam] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const currentUser = await base44.auth.me();
+      setUser(currentUser);
+    };
+    loadUser();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isDemoUser(user)) {
+      showDemoRestriction();
+      return;
+    }
     setSaving(true);
     const exhibition = await base44.entities.Exhibition.create({
       ...formData,
