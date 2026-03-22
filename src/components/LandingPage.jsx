@@ -8,9 +8,21 @@ import { base44 } from "@/api/base44Client";
 
 export default function LandingPage() {
   const [selectedFeature, setSelectedFeature] = useState(null);
+  const [loadingDemo, setLoadingDemo] = useState(false);
 
   const handleGetStarted = () => {
     base44.auth.redirectToLogin(window.location.href);
+  };
+
+  const handleDemoMode = async () => {
+    setLoadingDemo(true);
+    // Redirect to demo account login - Google Play testers can use this
+    const demoEmail = "demo@cardscanpro.com";
+    const demoPassword = "DemoTester2026!";
+    
+    // Create a login URL with pre-filled demo credentials hint
+    const loginUrl = `/login?demo=true`;
+    window.location.href = loginUrl;
   };
 
   const features = [
@@ -119,19 +131,34 @@ export default function LandingPage() {
             <Button 
               onClick={handleGetStarted}
               size="lg" 
-              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-lg px-8 py-6 shadow-lg"
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-lg px-8 py-6 shadow-lg transition-all duration-150 active:scale-95"
             >
               Get Started Free
             </Button>
             <Button 
+              onClick={handleDemoMode}
+              disabled={loadingDemo}
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 py-6 border-2 border-green-500 text-green-600 hover:bg-green-50 transition-all duration-150 active:scale-95"
+            >
+              {loadingDemo ? "Loading..." : "🎯 Try Demo Mode"}
+            </Button>
+            <Button 
               variant="outline" 
               size="lg"
-              className="text-lg px-8 py-6 border-2"
+              className="text-lg px-8 py-6 border-2 transition-all duration-150 active:scale-95"
               onClick={() => document.getElementById('features').scrollIntoView({ behavior: 'smooth' })}
             >
               Learn More
             </Button>
           </div>
+          <p className="text-sm text-gray-500 mt-4">
+            <span className="inline-flex items-center gap-2">
+              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+              Demo Mode: Explore the app instantly with pre-loaded test data
+            </span>
+          </p>
         </div>
 
         {/* Feature Grid */}
@@ -308,6 +335,15 @@ export default function LandingPage() {
       <footer className="border-t border-gray-200 bg-white/50 backdrop-blur-sm py-8">
         <div className="container mx-auto px-4 text-center text-gray-600">
           <p>&copy; 2026 CardScan Pro. All rights reserved.</p>
+          <div className="mt-3 flex gap-4 justify-center text-sm">
+            <Link to="/PrivacyPolicy" className="text-blue-600 hover:underline">
+              Privacy Policy
+            </Link>
+            <span className="text-gray-300">|</span>
+            <a href="mailto:support@cardscanpro.com" className="text-blue-600 hover:underline">
+              Contact Support
+            </a>
+          </div>
         </div>
       </footer>
     </div>
