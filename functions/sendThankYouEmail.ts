@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
 
 const DEFAULT_SUBJECT = `Thank you for visiting us at {exhibition_name}`;
 const DEFAULT_BODY = `Dear {contact_name},
