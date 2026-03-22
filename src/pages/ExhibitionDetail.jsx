@@ -12,6 +12,7 @@ import EditExhibitionDialog from "@/components/exhibitions/EditExhibitionDialog"
 import TeamCodeDisplay from "@/components/exhibitions/TeamCodeDisplay";
 import AddPlaceDialog from "@/components/places/AddPlaceDialog";
 import PlaceCard from "@/components/places/PlaceCard";
+import { isDemoUser, showDemoRestriction } from "@/lib/demoMode";
 
 export default function ExhibitionDetail() {
   const navigate = useNavigate();
@@ -55,12 +56,22 @@ export default function ExhibitionDetail() {
   };
 
   const handleSaveExhibition = async (data) => {
+    if (isDemoUser(user)) {
+      showDemoRestriction();
+      setShowEditDialog(false);
+      return;
+    }
     await base44.entities.Exhibition.update(exhibitionId, data);
     setShowEditDialog(false);
     loadData();
   };
 
   const handleDeleteExhibition = async () => {
+    if (isDemoUser(user)) {
+      showDemoRestriction();
+      setShowEditDialog(false);
+      return;
+    }
     // Delete all contacts and places first
     await Promise.all([
       ...contacts.map(c => base44.entities.Contact.delete(c.id)),
