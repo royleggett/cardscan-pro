@@ -8,21 +8,18 @@ import { base44 } from "@/api/base44Client";
 
 export default function LandingPage() {
   const [selectedFeature, setSelectedFeature] = useState(null);
-  const [loadingDemo, setLoadingDemo] = useState(false);
+  const [showDemoDialog, setShowDemoDialog] = useState(false);
 
   const handleGetStarted = () => {
     base44.auth.redirectToLogin(window.location.href);
   };
 
-  const handleDemoMode = async () => {
-    setLoadingDemo(true);
-    // Redirect to demo account login - Google Play testers can use this
-    const demoEmail = "demo@cardscanpro.com";
-    const demoPassword = "DemoTester2026!";
-    
-    // Create a login URL with pre-filled demo credentials hint
-    const loginUrl = `/login?demo=true`;
-    window.location.href = loginUrl;
+  const handleDemoMode = () => {
+    setShowDemoDialog(true);
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
   };
 
   const features = [
@@ -137,12 +134,11 @@ export default function LandingPage() {
             </Button>
             <Button 
               onClick={handleDemoMode}
-              disabled={loadingDemo}
               size="lg"
               variant="outline"
               className="text-lg px-8 py-6 border-2 border-green-500 text-green-600 hover:bg-green-50 transition-all duration-150 active:scale-95"
             >
-              {loadingDemo ? "Loading..." : "🎯 Try Demo Mode"}
+              🎯 Try Demo Mode
             </Button>
             <Button 
               variant="outline" 
@@ -185,6 +181,67 @@ export default function LandingPage() {
             );
           })}
         </div>
+
+        {/* Demo Mode Dialog */}
+        <Dialog open={showDemoDialog} onOpenChange={setShowDemoDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-2xl">🎯 Demo Mode Credentials</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <p className="text-gray-600">
+                Use these credentials to explore CardScan Pro with pre-loaded test data:
+              </p>
+              
+              <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase">Email</label>
+                  <div className="flex items-center gap-2 mt-1">
+                    <code className="flex-1 bg-white px-3 py-2 rounded border text-sm">demo@cardscanpro.com</code>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => copyToClipboard("demo@cardscanpro.com")}
+                    >
+                      Copy
+                    </Button>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase">Password</label>
+                  <div className="flex items-center gap-2 mt-1">
+                    <code className="flex-1 bg-white px-3 py-2 rounded border text-sm">DemoTester2026!</code>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => copyToClipboard("DemoTester2026!")}
+                    >
+                      Copy
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-sm text-blue-800">
+                  💡 Click the credentials to copy them, then paste into the login screen.
+                </p>
+              </div>
+
+              <Button 
+                onClick={() => {
+                  setShowDemoDialog(false);
+                  base44.auth.redirectToLogin(window.location.href);
+                }}
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                size="lg"
+              >
+                Go to Login Screen
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Feature Detail Dialog */}
         <Dialog open={!!selectedFeature} onOpenChange={() => setSelectedFeature(null)}>
