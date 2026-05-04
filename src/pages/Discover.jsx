@@ -317,7 +317,7 @@ export default function Discover() {
                           {place.address && (
                             <div className="flex items-start gap-1.5 text-sm text-gray-500 mb-2">
                               <MapPin className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
-                              <span className="line-clamp-2">{place.address}</span>
+                              <span className={isExpanded ? "" : "line-clamp-2"}>{place.address}</span>
                             </div>
                           )}
 
@@ -332,7 +332,7 @@ export default function Discover() {
                           )}
 
                           {place.notes && (
-                            <p className="text-sm text-gray-600 italic bg-gray-50 rounded-lg px-3 py-2 mb-2 line-clamp-2">
+                            <p className="text-sm text-gray-600 italic bg-gray-50 rounded-lg px-3 py-2 mb-2">
                               "{place.notes}"
                             </p>
                           )}
@@ -347,6 +347,10 @@ export default function Discover() {
                           <div className="text-xs text-gray-400 mt-2">
                             Posted by {userNumbers[place.phantom_created_by || place.created_by] || place.created_by}
                           </div>
+
+                          {!isExpanded && (
+                            <div className="text-xs text-blue-500 mt-1 font-medium">Tap to see more ▾</div>
+                          )}
                         </div>
                       </div>
                     </button>
