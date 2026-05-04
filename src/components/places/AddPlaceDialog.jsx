@@ -96,6 +96,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
   };
 
   const handleSave = async () => {
+    if (!placeData.name) return;
     setSaving(true);
     try {
       const createData = {
@@ -103,11 +104,17 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
         ...placeData
       };
       
-      const currentUser = await base44.auth.me();
-      const isPostingAsOther = isAdmin && selectedUserEmail && selectedUserEmail !== currentUser.email;
+      const phantomEmails = [
+        "sarah.mitchell@demo.app",
+        "james.chen@demo.app",
+        "maria.rodriguez@demo.app",
+        "david.thompson@demo.app",
+        "emily.watson@demo.app"
+      ];
+      const isPostingAsPhantom = isAdmin && selectedUserEmail && phantomEmails.includes(selectedUserEmail);
       
-      if (isPostingAsOther) {
-        // Admin creating as another user - use backend function
+      if (isPostingAsPhantom) {
+        // Admin creating as a phantom user - use backend function
         await createPlaceAsUser({
           placeData: createData,
           asUserEmail: selectedUserEmail
@@ -118,7 +125,6 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
       }
       
       setPlaceData({ name: "", category: "Restaurant", address: "", website: "", notes: "", rating: 0, is_public: false, attributes: [] });
-      setSelectedUserEmail(currentUser.email);
       onPlaceAdded();
       onOpenChange(false);
     } catch (error) {

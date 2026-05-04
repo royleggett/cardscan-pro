@@ -12,15 +12,6 @@ Deno.serve(async (req) => {
 
     const { placeData, asUserEmail } = await req.json();
 
-    // Map fictional user emails to consistent IDs
-    const fictionalUserIds = {
-      "sarah.mitchell@demo.app": "fictional-user-2847",
-      "james.chen@demo.app": "fictional-user-3921",
-      "maria.rodriguez@demo.app": "fictional-user-1563",
-      "david.thompson@demo.app": "fictional-user-4205",
-      "emily.watson@demo.app": "fictional-user-2674"
-    };
-
     // Create the place using service role, storing the phantom identity in a dedicated field
     // (created_by is controlled by the platform and cannot be overridden)
     const place = await base44.asServiceRole.entities.Place.create({
