@@ -57,11 +57,11 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
       // Create fictional users for admin seeding
       const fictionalUsers = [
         { id: "fictional-0", email: user.email, user_number: "Me (real post)" },
-        { id: "fictional-1", email: "sarah.mitchell@demo.app", user_number: "User #2847" },
-        { id: "fictional-2", email: "james.chen@demo.app", user_number: "User #3921" },
-        { id: "fictional-3", email: "maria.rodriguez@demo.app", user_number: "User #1563" },
-        { id: "fictional-4", email: "david.thompson@demo.app", user_number: "User #4205" },
-        { id: "fictional-5", email: "emily.watson@demo.app", user_number: "User #2674" }
+        { id: "fictional-1", email: "sarah.mitchell@demo.app", user_number: "Sarah Mitchell (User #2847)" },
+        { id: "fictional-2", email: "james.chen@demo.app", user_number: "James Chen (User #3921)" },
+        { id: "fictional-3", email: "maria.rodriguez@demo.app", user_number: "Maria Rodriguez (User #1563)" },
+        { id: "fictional-4", email: "david.thompson@demo.app", user_number: "David Thompson (User #4205)" },
+        { id: "fictional-5", email: "emily.watson@demo.app", user_number: "Emily Watson (User #2674)" }
       ];
       setAllUsers(fictionalUsers);
     }

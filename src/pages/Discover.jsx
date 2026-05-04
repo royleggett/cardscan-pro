@@ -345,7 +345,7 @@ export default function Discover() {
                           )}
 
                           <div className="text-xs text-gray-400 mt-2">
-                            Posted by {userNumbers[place.created_by] || place.created_by}
+                            Posted by {userNumbers[place.phantom_created_by || place.created_by] || place.created_by}
                           </div>
                         </div>
                       </div>

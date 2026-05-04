@@ -21,11 +21,11 @@ Deno.serve(async (req) => {
       "emily.watson@demo.app": "fictional-user-2674"
     };
 
-    // Create the place as the specified user using service role
+    // Create the place using service role, storing the phantom identity in a dedicated field
+    // (created_by is controlled by the platform and cannot be overridden)
     const place = await base44.asServiceRole.entities.Place.create({
       ...placeData,
-      created_by: asUserEmail,
-      created_by_id: fictionalUserIds[asUserEmail] || asUserEmail
+      phantom_created_by: asUserEmail
     });
 
     return Response.json({ success: true, place });

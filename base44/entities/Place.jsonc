@@ -1,0 +1,86 @@
+{
+  "name": "Place",
+  "type": "object",
+  "properties": {
+    "exhibition_id": {
+      "type": "string",
+      "description": "ID of the exhibition this place belongs to"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the place/restaurant"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Restaurant",
+        "Tourist Attraction",
+        "Hotel",
+        "Supermarket",
+        "Bar",
+        "Bakery",
+        "Taxi Rank",
+        "Cafe",
+        "Shopping",
+        "Other"
+      ],
+      "default": "Restaurant",
+      "description": "Type of place"
+    },
+    "address": {
+      "type": "string",
+      "description": "Full address"
+    },
+    "website": {
+      "type": "string",
+      "description": "Website URL"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Personal notes about the place"
+    },
+    "rating": {
+      "type": "number",
+      "description": "Personal rating out of 5"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Photo of the place"
+    },
+    "is_public": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this place is shared with the community"
+    },
+    "attributes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Category-specific feature checkboxes e.g. Vegan options, Early check-in"
+    },
+    "community_upvotes": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of community thumbs up"
+    },
+    "community_downvotes": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of community thumbs down"
+    },
+    "is_flagged": {
+      "type": "boolean",
+      "default": false,
+      "description": "True if place has been flagged as spam/low quality"
+    },
+    "phantom_created_by": {
+      "type": "string",
+      "description": "Email of the phantom/fictional user this place was posted as (admin use only)"
+    }
+  },
+  "required": [
+    "exhibition_id",
+    "name"
+  ]
+}
