@@ -1,4 +1,3 @@
-
 export const CATEGORY_ATTRIBUTES = {
   Hotel: [
     "Early check-in",
@@ -11,6 +10,8 @@ export const CATEGORY_ATTRIBUTES = {
     "Airport shuttle",
     "Supermarket nearby",
     "Pharmacy nearby",
+    "Meeting rooms",
+    "Fuel/Charging nearby",
   ],
   Restaurant: [
     "Good for lunch meetings (quiet)",
