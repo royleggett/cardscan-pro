@@ -80,7 +80,7 @@ Deno.serve(async (req) => {
       }
 
       const fromName = senderName || user.full_name || "CardScan Pro";
-      const fromAddress = "rleggett@auroramultimedia.com";
+      const fromAddress = "noreply@cardscan-pro.com";
 
       const resendResponse = await fetch("https://api.resend.com/emails", {
         method: "POST",
