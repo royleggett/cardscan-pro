@@ -394,15 +394,20 @@ Phone: ${phoneData.phone_mobile || phoneData.phone_landline || "N/A"}`;
         }
         setExtractedData(extractedInfo);
       } else {
-        // Use LLM to intelligently extract from any format (URLs, LinkedIn, etc.)
+        // Detect LinkedIn URLs specifically
+        const isLinkedIn = data.toLowerCase().includes("linkedin.com");
+        const isUrl = data.startsWith("http://") || data.startsWith("https://") || data.includes("linkedin.com");
+
+        // Use LLM with web search to intelligently extract from any format
         const prompt = `You are extracting contact information from a QR code. The QR code contains: "${data}"
 
-This could be a LinkedIn URL, website URL, plain text, or any other format. Extract whatever contact information you can find or infer.
+${isLinkedIn ? `This is a LinkedIn profile URL. Search the web for this person's details. Try to find:
+- Their full name (from the LinkedIn profile or URL slug)
+- Their company/job title
+- Their location/country
+- Any publicly listed email address or phone number (check their company website, conference speaker profiles, public directories)
 
-If it's a URL (like LinkedIn, company website, etc.), extract:
-- The person's full name if visible in the URL or if you need to indicate it's from their profile
-- Note the URL type in the website field
-- Leave other fields empty unless the URL contains obvious contact info
+If you cannot find an email or phone number from public sources, leave those fields as empty strings — do NOT guess or fabricate contact details.` : `This could be a website URL, plain text, or any other format. Search the web and extract whatever contact information you can find.`}
 
 Return ONLY this JSON object (use empty string "" for fields you cannot determine):
 {
@@ -418,7 +423,7 @@ Return ONLY this JSON object (use empty string "" for fields you cannot determin
   "notes": ""
 }
 
-For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract the person's name from the URL if present.`;
+Always put the original URL in the website field.`;
 
         const result = await base44.integrations.Core.InvokeLLM({
           prompt,
@@ -439,6 +444,17 @@ For LinkedIn URLs, put the LinkedIn URL in the website field and try to extract 
             }
           }
         });
+
+        // Ensure the original URL is preserved in the website field
+        if (isUrl && !result.website) {
+          result.website = data;
+        }
+
+        // Open LinkedIn profile in a new tab so the user can check for contact info
+        if (isLinkedIn) {
+          const linkedInUrl = data.startsWith("http") ? data : `https://${data}`;
+          window.open(linkedInUrl, "_blank", "noopener,noreferrer");
+        }
 
         setExtractedData({
           ...result,

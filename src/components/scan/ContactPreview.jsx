@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Save } from "lucide-react";
+import { Save, AlertCircle, ExternalLink, Linkedin } from "lucide-react";
 import VoiceNoteButton from "@/components/contacts/VoiceNoteButton";
 
 export default function ContactPreview({ data, imageUrl, imageBackUrl, onSave, onCancel }) {
@@ -41,6 +41,35 @@ export default function ContactPreview({ data, imageUrl, imageBackUrl, onSave, o
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* No email found warning */}
+            {!(formData.email || "").trim() && (
+              <div className="bg-amber-50 border-2 border-amber-400 rounded-xl p-4 animate-pulse">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-amber-900">No email found</p>
+                    <p className="text-sm text-amber-800 mt-1">
+                      This contact's email couldn't be extracted automatically. Ask them for their email address and type it in below.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* LinkedIn profile link */}
+            {(formData.website || "").toLowerCase().includes("linkedin.com") && (
+              <a
+                href={formData.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 bg-[#0A66C2] hover:bg-[#004182] text-white rounded-lg py-2.5 px-4 text-sm font-medium transition-colors"
+              >
+                <Linkedin className="w-4 h-4" />
+                View LinkedIn Profile
+                <ExternalLink className="w-3.5 h-3.5 ml-1" />
+              </a>
+            )}
+
             <div>
               <Label>Full Name</Label>
               <Input value={formData.full_name || ""} onChange={(e) => setFormData({...formData, full_name: e.target.value})} />
