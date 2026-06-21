@@ -1,0 +1,27 @@
+{
+  "name": "PlaceRating",
+  "type": "object",
+  "properties": {
+    "place_id": {
+      "type": "string",
+      "description": "ID of the place being rated"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Email of the user who rated this place"
+    },
+    "rating": {
+      "type": "string",
+      "enum": [
+        "up",
+        "down"
+      ],
+      "description": "Thumbs up or down"
+    }
+  },
+  "required": [
+    "place_id",
+    "user_email",
+    "rating"
+  ]
+}

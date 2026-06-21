@@ -1,0 +1,51 @@
+{
+  "name": "Subscription",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of the subscribed user"
+    },
+    "stripe_customer_id": {
+      "type": "string",
+      "description": "Stripe customer ID"
+    },
+    "stripe_subscription_id": {
+      "type": "string",
+      "description": "Stripe subscription ID"
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "free",
+        "places",
+        "premium"
+      ],
+      "default": "free",
+      "description": "Subscription tier: free (10 cards), places (\u00a320/year), premium (\u00a359/year)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "cancelled",
+        "past_due"
+      ],
+      "default": "active",
+      "description": "Subscription status"
+    },
+    "current_period_end": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the current billing period ends"
+    },
+    "scanned_cards_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of business cards scanned by this user"
+    }
+  },
+  "required": [
+    "user_email"
+  ]
+}

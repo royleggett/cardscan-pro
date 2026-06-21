@@ -1,0 +1,13 @@
+{
+  "name": "BusinessCard",
+  "type": "object",
+  "properties": {
+    "card_image_url": {
+      "type": "string",
+      "description": "URL of the business card image"
+    }
+  },
+  "required": [
+    "card_image_url"
+  ]
+}

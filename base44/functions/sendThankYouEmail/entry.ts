@@ -72,22 +72,44 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-    // Use Base44's built-in email service
+    // Send via Resend directly (Base44's built-in service only allows sending to app users)
     try {
-      const emailResult = await base44.integrations.Core.SendEmail({
-        from_name: senderName || user.full_name,
-        to: contactEmail,
-        subject,
-        body: htmlBody
+      const resendApiKey = Deno.env.get("RESEND_API_KEY");
+      if (!resendApiKey) {
+        return Response.json({ error: "RESEND_API_KEY secret is not set" }, { status: 500 });
+      }
+
+      const fromName = senderName || user.full_name || "CardScan Pro";
+      const fromAddress = "rleggett@auroramultimedia.com";
+
+      const resendResponse = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${resendApiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          from: `${fromName} <${fromAddress}>`,
+          to: [contactEmail],
+          subject,
+          html: htmlBody
+        })
       });
 
-      console.log("Email sent successfully:", JSON.stringify(emailResult));
-      
+      const emailResult = await resendResponse.json();
+
+      if (!resendResponse.ok) {
+        console.error("Resend error:", JSON.stringify(emailResult));
+        return Response.json({ error: "Failed to send email", details: emailResult }, { status: 500 });
+      }
+
+      console.log("Email sent successfully via Resend:", JSON.stringify(emailResult));
+
       // Mark contact as having received thank you email
       if (contactId) {
         await base44.entities.Contact.update(contactId, { thank_you_sent: true });
       }
-      
+
       return Response.json({ success: true, details: emailResult });
     } catch (emailError) {
       console.error("Email send error:", emailError.message, JSON.stringify(emailError));

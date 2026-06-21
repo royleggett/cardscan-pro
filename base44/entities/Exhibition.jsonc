@@ -1,0 +1,44 @@
+{
+  "name": "Exhibition",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "from_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "to_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "hotel": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "team_code": {
+      "type": "string",
+      "description": "Unique join code for team members to join this exhibition"
+    },
+    "team_members": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of team member emails who have joined this exhibition"
+    },
+    "photo_url": {
+      "type": "string",
+      "description": "Cover photo URL for the exhibition card"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

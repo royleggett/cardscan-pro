@@ -1,0 +1,23 @@
+{
+  "name": "EmailTemplate",
+  "type": "object",
+  "properties": {
+    "template_key": {
+      "type": "string",
+      "description": "Unique identifier for the template"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Email subject line"
+    },
+    "body": {
+      "type": "string",
+      "description": "Email body text"
+    }
+  },
+  "required": [
+    "template_key",
+    "subject",
+    "body"
+  ]
+}

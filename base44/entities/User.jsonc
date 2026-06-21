@@ -1,0 +1,93 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "role": {
+      "type": "string",
+      "enum": [
+        "admin",
+        "user"
+      ],
+      "default": "user"
+    },
+    "user_number": {
+      "type": "string",
+      "description": "Unique user identifier (e.g. ABC123)"
+    },
+    "total_entries": {
+      "type": "number",
+      "default": 0,
+      "description": "Total count of places added + business cards scanned"
+    },
+    "discount_tier": {
+      "type": "number",
+      "default": 0,
+      "description": "Current discount percentage (0, 10, 20)"
+    },
+    "badges_earned": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "List of earned badge names"
+    },
+    "trust_score": {
+      "type": "number",
+      "default": 0,
+      "description": "Community trust score based on place recommendation ratings"
+    },
+    "resend_api_key": {
+      "type": "string",
+      "description": "User's personal Resend API key for sending emails"
+    },
+    "resend_from_email": {
+      "type": "string",
+      "description": "The verified from-address to use when sending emails"
+    },
+    "followup_remind_hot": {
+      "type": "boolean",
+      "default": true,
+      "description": "Send reminders for hot leads"
+    },
+    "followup_remind_warm": {
+      "type": "boolean",
+      "default": true,
+      "description": "Send reminders for warm leads"
+    },
+    "followup_remind_cool": {
+      "type": "boolean",
+      "default": false,
+      "description": "Send reminders for cool leads"
+    },
+    "followup_days_hot": {
+      "type": "number",
+      "default": 1,
+      "description": "Days after exhibition to remind for hot leads"
+    },
+    "followup_days_warm": {
+      "type": "number",
+      "default": 3,
+      "description": "Days after exhibition to remind for warm leads"
+    },
+    "followup_days_cool": {
+      "type": "number",
+      "default": 7,
+      "description": "Days after exhibition to remind for cool leads"
+    },
+    "subscription_tier": {
+      "type": "string",
+      "enum": [
+        "free",
+        "places",
+        "premium"
+      ],
+      "default": "free",
+      "description": "Current subscription tier"
+    }
+  },
+  "required": [
+    "resend_api_key",
+    "resend_from_email"
+  ]
+}
