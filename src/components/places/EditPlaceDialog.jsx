@@ -63,8 +63,32 @@ export default function EditPlaceDialog({ open, onOpenChange, place, onPlaceUpda
     setLocating(false);
   };
 
+  const geocodeAddress = async (address) => {
+    try {
+      const query = encodeURIComponent(address);
+      const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`, {
+        headers: { 'User-Agent': 'CardScanPro/1.0 (geocoding)' }
+      });
+      const data = await resp.json();
+      if (data && data.length > 0) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        if (!isNaN(lat) && !isNaN(lon)) return { latitude: lat, longitude: lon };
+      }
+    } catch (err) {
+      console.error("Geocoding error:", err);
+    }
+    return null;
+  };
+
   const handleSave = async () => {
-    await base44.entities.Place.update(place.id, placeData);
+    // Auto-geocode from address if coordinates are missing
+    let finalData = { ...placeData };
+    if (!finalData.latitude && finalData.address && finalData.address.trim()) {
+      const coords = await geocodeAddress(finalData.address);
+      if (coords) finalData = { ...finalData, ...coords };
+    }
+    await base44.entities.Place.update(place.id, finalData);
     onPlaceUpdated();
     onOpenChange(false);
   };

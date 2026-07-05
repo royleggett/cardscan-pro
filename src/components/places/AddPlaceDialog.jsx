@@ -95,13 +95,38 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
     setLocating(false);
   };
 
+  const geocodeAddress = async (address) => {
+    try {
+      const query = encodeURIComponent(address);
+      const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`, {
+        headers: { 'User-Agent': 'CardScanPro/1.0 (geocoding)' }
+      });
+      const data = await resp.json();
+      if (data && data.length > 0) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        if (!isNaN(lat) && !isNaN(lon)) return { latitude: lat, longitude: lon };
+      }
+    } catch (err) {
+      console.error("Geocoding error:", err);
+    }
+    return null;
+  };
+
   const handleSave = async () => {
     if (!placeData.name) return;
     setSaving(true);
     try {
+      // Auto-geocode from address if user didn't use Locate Me
+      let finalData = { ...placeData };
+      if (!finalData.latitude && finalData.address && finalData.address.trim()) {
+        const coords = await geocodeAddress(finalData.address);
+        if (coords) finalData = { ...finalData, ...coords };
+      }
+
       const createData = {
         exhibition_id: exhibitionId || "none",
-        ...placeData
+        ...finalData
       };
       
       const phantomEmails = [
