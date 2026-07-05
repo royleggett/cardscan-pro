@@ -31,6 +31,14 @@
       "type": "string",
       "description": "Full address"
     },
+    "latitude": {
+      "type": "number",
+      "description": "GPS latitude coordinate"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "GPS longitude coordinate"
+    },
     "website": {
       "type": "string",
       "description": "Website URL"

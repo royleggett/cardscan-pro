@@ -52,9 +52,9 @@ export default function EditPlaceDialog({ open, onOpenChange, place, onPlaceUpda
       const data = await response.json();
       
       if (data.display_name) {
-        setPlaceData({ ...placeData, address: data.display_name });
+        setPlaceData({ ...placeData, address: data.display_name, latitude, longitude });
       } else {
-        setPlaceData({ ...placeData, address: `${latitude}, ${longitude}` });
+        setPlaceData({ ...placeData, address: `${latitude}, ${longitude}`, latitude, longitude });
       }
     } catch (err) {
       console.error("Location error:", err);

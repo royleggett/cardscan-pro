@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { MapPin, Star, ExternalLink, Search, Filter, Navigation, ThumbsUp, ThumbsDown, Trash2, Pencil } from "lucide-react";
+import { MapPin, Star, ExternalLink, Search, Filter, Navigation, ThumbsUp, ThumbsDown, Trash2, Pencil, Locate } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,19 @@ import BookTaxiDialog from "@/components/taxi/BookTaxiDialog";
 import EditPlaceDialog from "@/components/places/EditPlaceDialog";
 
 const CATEGORIES = ["All", "Restaurant", "Bar", "Cafe", "Hotel", "Tourist Attraction", "Bakery", "Shopping", "Supermarket", "Taxi Rank", "Other"];
+
+const DISTANCE_OPTIONS = [5, 10, 25, 50];
+
+// Haversine formula — calculates distance between two GPS points in km
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Earth's radius in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 const categoryColors = {
   "Restaurant": "bg-orange-100 text-orange-800 border-orange-200",
@@ -55,6 +68,10 @@ export default function Discover() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editingPlace, setEditingPlace] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [nearMeActive, setNearMeActive] = useState(false);
+  const [locating, setLocating] = useState(false);
+  const [distanceFilter, setDistanceFilter] = useState(25);
 
   useEffect(() => {
     loadPlaces();
@@ -166,6 +183,24 @@ export default function Discover() {
     loadPlaces();
   };
 
+  const handleNearMe = async () => {
+    if (nearMeActive) {
+      setNearMeActive(false);
+      return;
+    }
+    setLocating(true);
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
+      });
+      setUserLocation({ lat: position.coords.latitude, lon: position.coords.longitude });
+      setNearMeActive(true);
+    } catch (err) {
+      alert("Could not get your location. Please enable location access in your browser.");
+    }
+    setLocating(false);
+  };
+
   const handleDelete = async (placeId) => {
     if (!confirm("Are you sure you want to delete this place?")) return;
     
@@ -186,6 +221,25 @@ export default function Discover() {
       (p.attributes || []).some(a => a.toLowerCase().includes(searchLower));
     const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;
     return matchesSearch && matchesCategory;
+  }).map(p => ({
+    ...p,
+    distance: (nearMeActive && userLocation && p.latitude && p.longitude)
+      ? calculateDistance(userLocation.lat, userLocation.lon, p.latitude, p.longitude)
+      : null
+  })).filter(p => {
+    // When Near me is active, exclude places without coordinates or outside the distance filter
+    if (nearMeActive) {
+      if (p.distance === null) return false;
+      if (p.distance > distanceFilter) return false;
+    }
+    return true;
+  }).sort((a, b) => {
+    if (nearMeActive && a.distance !== null && b.distance !== null) {
+      return a.distance - b.distance;
+    }
+    // Default: community score
+    if (b.communityScore !== a.communityScore) return b.communityScore - a.communityScore;
+    return (b.rating || 0) - (a.rating || 0);
   });
 
   return (
@@ -228,6 +282,37 @@ export default function Discover() {
               </button>
             ))}
           </div>
+
+          {/* Near me filter */}
+          <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+            <Button
+              variant={nearMeActive ? "default" : "outline"}
+              size="sm"
+              onClick={handleNearMe}
+              disabled={locating}
+              className={nearMeActive ? "bg-green-600 hover:bg-green-700" : ""}
+            >
+              {locating ? <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" /> : <Locate className="w-4 h-4" />}
+              <span className="ml-1.5">{nearMeActive ? "Near Me (on)" : "Near Me"}</span>
+            </Button>
+            {nearMeActive && (
+              <div className="flex gap-1.5">
+                {DISTANCE_OPTIONS.map(km => (
+                  <button
+                    key={km}
+                    onClick={() => setDistanceFilter(km)}
+                    className={`flex-shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold border transition-all ${
+                      distanceFilter === km
+                        ? "bg-green-600 text-white border-green-600"
+                        : "bg-white text-gray-600 border-gray-200 hover:border-green-300"
+                    }`}
+                  >
+                    {km}km
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -268,12 +353,24 @@ export default function Discover() {
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 text-gray-400">
             <div className="text-4xl mb-3">📍</div>
-            <p className="font-medium">No places match your search</p>
-            <p className="text-sm mt-1">Try a different search or category</p>
+            {nearMeActive ? (
+              <>
+                <p className="font-medium">No places found within {distanceFilter}km</p>
+                <p className="text-sm mt-1">Try increasing the distance or turn off Near Me</p>
+              </>
+            ) : (
+              <>
+                <p className="font-medium">No places match your search</p>
+                <p className="text-sm mt-1">Try a different search or category</p>
+              </>
+            )}
           </div>
         ) : (
           <div className="space-y-4">
-            <p className="text-sm text-gray-500 font-medium">{filtered.length} place{filtered.length !== 1 ? "s" : ""} found</p>
+            <p className="text-sm text-gray-500 font-medium">
+              {filtered.length} place{filtered.length !== 1 ? "s" : ""} found
+              {nearMeActive && " · sorted by distance"}
+            </p>
             {filtered.map((place, i) => {
               const exhibition = exhibitions[place.exhibition_id];
               const isExpanded = expandedPlaceId === place.id;
@@ -303,6 +400,12 @@ export default function Discover() {
                             {place.category && (
                               <Badge className={`text-xs ${categoryColors[place.category] || "bg-gray-100 text-gray-800"}`}>
                                 {place.category}
+                              </Badge>
+                            )}
+                            {place.distance !== null && (
+                              <Badge className="text-xs bg-green-100 text-green-800 border-green-200">
+                                <Navigation className="w-3 h-3 mr-0.5" />
+                                {place.distance < 1 ? `${Math.round(place.distance * 1000)}m` : `${place.distance.toFixed(1)}km`}
                               </Badge>
                             )}
                           </div>
