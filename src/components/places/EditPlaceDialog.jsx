@@ -63,20 +63,30 @@ export default function EditPlaceDialog({ open, onOpenChange, place, onPlaceUpda
     setLocating(false);
   };
 
-  const geocodeAddress = async (address) => {
-    try {
-      const query = encodeURIComponent(address);
-      const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`, {
-        headers: { 'User-Agent': 'CardScanPro/1.0 (geocoding)' }
-      });
-      const data = await resp.json();
-      if (data && data.length > 0) {
-        const lat = parseFloat(data[0].lat);
-        const lon = parseFloat(data[0].lon);
-        if (!isNaN(lat) && !isNaN(lon)) return { latitude: lat, longitude: lon };
+  const geocodeAddress = async (address, placeName) => {
+    const queries = [
+      address,
+      `${address}, UK`,
+      placeName ? `${placeName}, ${address}` : null,
+    ].filter(Boolean);
+    const postcodeMatch = address.match(/[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}/i);
+    if (postcodeMatch) queries.push(postcodeMatch[0]);
+
+    for (const q of queries) {
+      try {
+        const encoded = encodeURIComponent(q);
+        const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encoded}&limit=1&countrycodes=gb`, {
+          headers: { 'User-Agent': 'CardScanPro/1.0 (geocoding)' }
+        });
+        const data = await resp.json();
+        if (data && data.length > 0) {
+          const lat = parseFloat(data[0].lat);
+          const lon = parseFloat(data[0].lon);
+          if (!isNaN(lat) && !isNaN(lon)) return { latitude: lat, longitude: lon };
+        }
+      } catch (err) {
+        console.error("Geocoding error:", err);
       }
-    } catch (err) {
-      console.error("Geocoding error:", err);
     }
     return null;
   };
@@ -85,7 +95,7 @@ export default function EditPlaceDialog({ open, onOpenChange, place, onPlaceUpda
     // Auto-geocode from address if coordinates are missing
     let finalData = { ...placeData };
     if (!finalData.latitude && finalData.address && finalData.address.trim()) {
-      const coords = await geocodeAddress(finalData.address);
+      const coords = await geocodeAddress(finalData.address, finalData.name);
       if (coords) finalData = { ...finalData, ...coords };
     }
     await base44.entities.Place.update(place.id, finalData);

@@ -1,5 +1,68 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
+// Try multiple geocoding strategies for a given address + place name
+async function geocodeWithFallbacks(address, placeName) {
+  const queries = [
+    address,
+    `${address}, UK`,
+    placeName ? `${placeName}, ${address}` : null,
+    placeName ? `${placeName}, ${address}, UK` : null,
+  ].filter(Boolean);
+
+  // Try extracting a UK postcode (e.g. "NN17 3DY")
+  const postcodeMatch = address.match(/[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}/i);
+  if (postcodeMatch) {
+    queries.push(postcodeMatch[0]);
+    queries.push(`${postcodeMatch[0]}, UK`);
+  }
+
+  for (const q of queries) {
+    try {
+      const encoded = encodeURIComponent(q);
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encoded}&limit=1&countrycodes=gb`;
+      const resp = await fetch(url, {
+        headers: { 'User-Agent': 'CardScanPro/1.0 (geocoding)' }
+      });
+      const data = await resp.json();
+      if (data && data.length > 0) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        if (!isNaN(lat) && !isNaN(lon)) {
+          return { lat, lon, matchedQuery: q };
+        }
+      }
+      // Respect Nominatim rate limit between attempts
+      await new Promise(resolve => setTimeout(resolve, 1100));
+    } catch (err) {
+      // try next strategy
+    }
+  }
+
+  // Final fallback: try without country restriction
+  for (const q of [address, placeName ? `${placeName}, ${address}` : null].filter(Boolean)) {
+    try {
+      const encoded = encodeURIComponent(q);
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encoded}&limit=1`;
+      const resp = await fetch(url, {
+        headers: { 'User-Agent': 'CardScanPro/1.0 (geocoding)' }
+      });
+      const data = await resp.json();
+      if (data && data.length > 0) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        if (!isNaN(lat) && !isNaN(lon)) {
+          return { lat, lon, matchedQuery: q };
+        }
+      }
+      await new Promise(resolve => setTimeout(resolve, 1100));
+    } catch (err) {
+      // continue
+    }
+  }
+
+  return null;
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -7,7 +70,7 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
     if (user.role !== 'admin') return Response.json({ error: 'Forbidden — admin only' }, { status: 403 });
 
-    // Fetch all places using service role (community places from all users)
+    // Fetch all places
     let allPlaces = [];
     let hasMore = true;
     let offset = 0;
@@ -30,35 +93,14 @@ Deno.serve(async (req) => {
     const errors = [];
 
     for (const place of needsGeocoding) {
-      try {
-        // Nominatim requires a descriptive User-Agent header
-        const query = encodeURIComponent(place.address);
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`;
-        const resp = await fetch(url, {
-          headers: { 'User-Agent': 'CardScanPro/1.0 (geocoding)' }
-        });
-        const data = await resp.json();
+      const result = await geocodeWithFallbacks(place.address, place.name);
 
-        if (data && data.length > 0) {
-          const lat = parseFloat(data[0].lat);
-          const lon = parseFloat(data[0].lon);
-          if (!isNaN(lat) && !isNaN(lon)) {
-            await base44.asServiceRole.entities.Place.update(place.id, { latitude: lat, longitude: lon });
-            geocoded++;
-          } else {
-            failed++;
-            errors.push({ id: place.id, name: place.name, error: 'Invalid coordinates returned' });
-          }
-        } else {
-          failed++;
-          errors.push({ id: place.id, name: place.name, error: 'No match found for address' });
-        }
-
-        // Respect Nominatim rate limit (max 1 request per second)
-        await new Promise(resolve => setTimeout(resolve, 1100));
-      } catch (err) {
+      if (result) {
+        await base44.asServiceRole.entities.Place.update(place.id, { latitude: result.lat, longitude: result.lon });
+        geocoded++;
+      } else {
         failed++;
-        errors.push({ id: place.id, name: place.name, error: err.message });
+        errors.push({ id: place.id, name: place.name, address: place.address });
       }
     }
 
@@ -67,7 +109,7 @@ Deno.serve(async (req) => {
       needed_geocoding: needsGeocoding.length,
       geocoded,
       failed,
-      errors: errors.slice(0, 20) // cap error list
+      errors: errors.slice(0, 20)
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
