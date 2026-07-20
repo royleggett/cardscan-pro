@@ -397,7 +397,7 @@ export default function LandingPage() {
               Privacy Policy
             </Link>
             <span className="text-gray-300">|</span>
-            <a href="mailto:support@cardscanpro.com" className="text-blue-600 hover:underline">
+            <a href="mailto:support@cardscan-pro.com" className="text-blue-600 hover:underline">
               Contact Support
             </a>
           </div>
