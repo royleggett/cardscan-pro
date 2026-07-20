@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Camera, Users, MapPin, Settings2, Plus } from "lucide-react";
+import { ArrowLeft, Camera, Users, MapPin, Settings2, Plus, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 
 import ContactCard from "@/components/contacts/ContactCard";
+import ExportCsvDialog from "@/components/contacts/ExportCsvDialog";
 import EditExhibitionDialog from "@/components/exhibitions/EditExhibitionDialog";
 import TeamCodeDisplay from "@/components/exhibitions/TeamCodeDisplay";
 import AddPlaceDialog from "@/components/places/AddPlaceDialog";
@@ -26,6 +27,7 @@ export default function ExhibitionDetail() {
   const [activeTab, setActiveTab] = useState("contacts");
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showAddPlace, setShowAddPlace] = useState(false);
+  const [showExport, setShowExport] = useState(false);
   const [user, setUser] = useState(null);
   const [defaultTags, setDefaultTags] = useState([]);
 
@@ -170,16 +172,28 @@ export default function ExhibitionDetail() {
         </button>
       </div>
 
-      {/* Scan / Add button */}
-      <div className="mb-4">
+      {/* Scan / Add + Export buttons */}
+      <div className="mb-4 space-y-2">
         {activeTab === "contacts" ? (
-          <Button
-            className="w-full bg-blue-600 hover:bg-blue-700 h-14 text-base transition-all duration-150 active:scale-95 active:bg-blue-800"
-            onClick={() => navigate(createPageUrl(`ScanCard?exhibition_id=${exhibitionId}`))}
-          >
-            <Camera className="w-5 h-5 mr-2" />
-            Scan Business Card
-          </Button>
+          <>
+            <Button
+              className="w-full bg-blue-600 hover:bg-blue-700 h-14 text-base transition-all duration-150 active:scale-95 active:bg-blue-800"
+              onClick={() => navigate(createPageUrl(`ScanCard?exhibition_id=${exhibitionId}`))}
+            >
+              <Camera className="w-5 h-5 mr-2" />
+              Scan Business Card
+            </Button>
+            {contacts.length > 0 && (
+              <Button
+                variant="outline"
+                className="w-full h-11 transition-all duration-150 active:scale-95"
+                onClick={() => setShowExport(true)}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export {contacts.length} Contact{contacts.length !== 1 ? 's' : ''} (CSV)
+              </Button>
+            )}
+          </>
         ) : (
           <Button
             className="w-full bg-green-600 hover:bg-green-700 h-14 text-base transition-all duration-150 active:scale-95 active:bg-green-800"
@@ -249,6 +263,13 @@ export default function ExhibitionDetail() {
         onOpenChange={setShowAddPlace}
         exhibitionId={exhibitionId}
         onPlaceAdded={loadData}
+      />
+
+      <ExportCsvDialog
+        contacts={contacts}
+        open={showExport}
+        onOpenChange={setShowExport}
+        defaultFileName={exhibition?.name?.toLowerCase().replace(/\s+/g, '_') || 'exhibition_contacts'}
       />
     </div>
   );

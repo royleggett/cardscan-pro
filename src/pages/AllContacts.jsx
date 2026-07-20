@@ -7,16 +7,9 @@ import { Input } from "@/components/ui/input";
 import { ArrowLeft, Search, Download, Flame, Thermometer, Snowflake, Users, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 
 import ContactCard from "../components/contacts/ContactCard";
+import ExportCsvDialog from "../components/contacts/ExportCsvDialog";
 
 export default function AllContacts() {
   const navigate = useNavigate();
@@ -25,7 +18,6 @@ export default function AllContacts() {
   const [searchQuery, setSearchQuery] = useState("");
   const [leadFilter, setLeadFilter] = useState("all");
   const [showExport, setShowExport] = useState(false);
-  const [fileName, setFileName] = useState("all_contacts");
   const [defaultTags, setDefaultTags] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -57,46 +49,6 @@ export default function AllContacts() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const exportToExcel = async () => {
-    const exportData = contacts.map(contact => ({
-      'Exhibition': exhibitions[contact.exhibition_id] || '',
-      'Name': contact.full_name || '',
-      'Company': contact.company || '',
-      'Position': contact.position || '',
-      'Email': contact.email || '',
-      'Mobile': contact.phone_mobile || '',
-      'Landline': contact.phone_landline || '',
-      'Fax': contact.phone_fax || '',
-      'Other Phone': contact.phone_other || '',
-      'Country/Area': contact.country || '',
-      'Website': contact.website || '',
-      'Address': contact.address || '',
-      'Notes': contact.notes || '',
-      'Tags': (contact.tags || []).join(', '),
-      'Lead Temperature': contact.follow_up_type || ''
-    }));
-
-    const headers = Object.keys(exportData[0] || {});
-    const csvContent = [
-      headers.join(','),
-      ...exportData.map(row => headers.map(header => {
-        const value = String(row[header]).replace(/"/g, '""');
-        return `"${value}"`;
-      }).join(','))
-    ].join('\n');
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `${fileName || 'all_contacts'}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    setShowExport(false);
   };
 
   const filteredContacts = contacts.filter(contact => {
@@ -245,34 +197,13 @@ export default function AllContacts() {
         </div>
       )}
 
-      <Dialog open={showExport} onOpenChange={setShowExport}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Export to CSV</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div>
-              <Label htmlFor="filename">File Name</Label>
-              <Input
-                id="filename"
-                value={fileName}
-                onChange={(e) => setFileName(e.target.value)}
-                placeholder="Enter file name"
-              />
-              <p className="text-xs text-gray-500 mt-1">.csv will be added automatically</p>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowExport(false)}>
-              Cancel
-            </Button>
-            <Button onClick={exportToExcel} className="bg-blue-600 hover:bg-blue-700 transition-all duration-150 active:scale-95 active:bg-blue-800">
-              <Download className="w-4 h-4 mr-2" />
-              Export
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ExportCsvDialog
+        contacts={contacts}
+        open={showExport}
+        onOpenChange={setShowExport}
+        defaultFileName="all_contacts"
+        exhibitionMap={exhibitions}
+      />
     </div>
   );
 }
