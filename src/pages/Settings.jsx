@@ -5,10 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ArrowLeft, Save, RotateCcw, Flame, Thermometer, Snowflake, Plus, X } from "lucide-react";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { ArrowLeft, Save, RotateCcw, Flame, Thermometer, Snowflake, Plus, X, Trash2, AlertTriangle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Switch } from "@/components/ui/switch";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { isDemoUser, showDemoRestriction } from "@/lib/demoMode";
 
 const DEFAULT_SUBJECT = `Thank you for visiting us at {exhibition_name}`;
@@ -22,6 +28,11 @@ Warm regards,
 {sender_name}`;
 
 export default function Settings() {
+  const navigate = useNavigate();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState("");
+  const [deleteError, setDeleteError] = useState("");
   const [subject, setSubject] = useState(DEFAULT_SUBJECT);
   const [body, setBody] = useState(DEFAULT_BODY);
   const [displayName, setDisplayName] = useState("");
@@ -121,6 +132,27 @@ export default function Settings() {
     await base44.auth.updateMe({ default_tags: updated });
   };
 
+  const handleDeleteAccount = async () => {
+    if (deleteConfirm !== "DELETE") return;
+    setDeleting(true);
+    setDeleteError("");
+    try {
+      const user = await base44.auth.me();
+      const contacts = await base44.entities.Contact.filter({ created_by: user.email });
+      await Promise.all(contacts.map(c => base44.entities.Contact.delete(c.id)));
+      const exhibitions = await base44.entities.Exhibition.filter({ created_by: user.email });
+      await Promise.all(exhibitions.map(e => base44.entities.Exhibition.delete(e.id)));
+      const places = await base44.entities.Place.filter({ created_by: user.email });
+      await Promise.all(places.map(p => base44.entities.Place.delete(p.id)));
+      setDeleting(false);
+      setShowDeleteDialog(false);
+      base44.auth.logout();
+    } catch (err) {
+      setDeleting(false);
+      setDeleteError("Something went wrong. Please try again or contact support.");
+    }
+  };
+
   const LeadRow = ({ icon: Icon, iconColor, label, enabled, onToggle, days, onDaysChange }) => (
     <div className={`rounded-xl border-2 p-4 transition-all ${enabled ? "border-current opacity-100" : "border-gray-200 opacity-60"}`} style={{ borderColor: enabled ? undefined : undefined }}>
       <div className="flex items-center justify-between mb-3">
@@ -150,12 +182,10 @@ export default function Settings() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4 py-6">
       <div className="max-w-2xl mx-auto">
-        <Link to={createPageUrl("Home")}>
-          <Button variant="ghost" className="mb-6">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-        </Link>
+        <Button variant="ghost" className="mb-6" onClick={() => navigate(-1)}>
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back
+        </Button>
 
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Settings</h1>
 
@@ -309,7 +339,72 @@ export default function Settings() {
           <Save className="w-5 h-5" />
           {saved ? "Saved!" : saving ? "Saving..." : "Save All Settings"}
         </Button>
+
+        {/* Danger Zone */}
+        <Card className="mb-6 mt-6 border-red-200">
+          <CardHeader>
+            <CardTitle className="text-red-600 flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5" />
+              Delete Account
+            </CardTitle>
+            <CardDescription>
+              Permanently delete your account and all associated data (contacts, exhibitions, places). This action cannot be undone.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              variant="destructive"
+              onClick={() => setShowDeleteDialog(true)}
+              className="gap-2"
+            >
+              <Trash2 className="w-4 h-4" />
+              Delete My Account
+            </Button>
+          </CardContent>
+        </Card>
       </div>
+
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-red-600 flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5" />
+              Confirm Account Deletion
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-sm text-gray-600">
+              This will permanently delete all your contacts, exhibitions, and places. <strong>This cannot be undone.</strong>
+            </p>
+            <div>
+              <Label>Type "DELETE" to confirm</Label>
+              <Input
+                value={deleteConfirm}
+                onChange={(e) => setDeleteConfirm(e.target.value)}
+                placeholder="DELETE"
+                className="mt-1"
+              />
+            </div>
+            {deleteError && (
+              <p className="text-sm text-red-600">{deleteError}</p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteAccount}
+              disabled={deleting || deleteConfirm !== "DELETE"}
+              className="gap-2"
+            >
+              <Trash2 className="w-4 h-4" />
+              {deleting ? "Deleting..." : "Delete Everything"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

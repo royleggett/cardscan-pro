@@ -220,7 +220,7 @@ export default function MyCard() {
         <div className="flex justify-between items-center mb-6">
           <Button
             variant="ghost"
-            onClick={() => navigate(createPageUrl("Home"))}
+            onClick={() => navigate(-1)}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back

@@ -111,7 +111,7 @@ export default function ExhibitionDetail() {
   return (
     <div className="px-4 py-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-4">
-        <Button variant="ghost" onClick={() => navigate(createPageUrl("Exhibitions"))}>
+        <Button variant="ghost" onClick={() => navigate(-1)}>
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back
         </Button>

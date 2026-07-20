@@ -848,7 +848,7 @@ Always put the original URL in the website field.`;
     <div className="min-h-screen px-4 py-6">
       <Button
         variant="ghost"
-        onClick={() => navigate(createPageUrl(`ExhibitionDetail?id=${exhibitionId}`))}
+        onClick={() => navigate(-1)}
         className="mb-6"
       >
         <ArrowLeft className="w-4 h-4 mr-2" />

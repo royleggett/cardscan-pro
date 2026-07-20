@@ -56,7 +56,7 @@ export default function NewExhibition() {
     <div className="px-4 py-6 max-w-2xl mx-auto">
       <Button
         variant="ghost"
-        onClick={() => navigate(createPageUrl("Exhibitions"))}
+        onClick={() => navigate(-1)}
         className="mb-4"
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
@@ -159,7 +159,7 @@ export default function NewExhibition() {
             </div>
 
             <div className="flex gap-3 pt-2">
-              <Button type="button" variant="outline" onClick={() => navigate(createPageUrl("Exhibitions"))} className="flex-1">
+              <Button type="button" variant="outline" onClick={() => navigate(-1)} className="flex-1">
                 Cancel
               </Button>
               <Button type="submit" disabled={saving} className="flex-1 bg-blue-600 hover:bg-blue-700">

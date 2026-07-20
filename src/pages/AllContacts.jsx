@@ -79,7 +79,7 @@ export default function AllContacts() {
     <div className="px-4 py-6 max-w-7xl mx-auto">
       <Button
         variant="ghost"
-        onClick={() => navigate(createPageUrl("Home"))}
+        onClick={() => navigate(-1)}
         className="mb-4"
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
