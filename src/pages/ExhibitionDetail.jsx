@@ -36,7 +36,10 @@ export default function ExhibitionDetail() {
   }, [exhibitionId]);
 
   const loadData = async () => {
-    if (!exhibitionId) return;
+    if (!exhibitionId) {
+      setLoading(false);
+      return;
+    }
     try {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
