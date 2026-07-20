@@ -10,6 +10,7 @@ import { createPageUrl } from "@/utils";
 
 import ContactCard from "../components/contacts/ContactCard";
 import ExportCsvDialog from "../components/contacts/ExportCsvDialog";
+import PullToRefresh from "@/components/PullToRefresh";
 
 export default function AllContacts() {
   const navigate = useNavigate();
@@ -76,6 +77,7 @@ export default function AllContacts() {
   const isFreeUser = !isAdmin && (!user?.subscription_tier || user.subscription_tier === 'free');
 
   return (
+    <PullToRefresh onRefresh={loadData}>
     <div className="px-4 py-6 max-w-7xl mx-auto">
       <Button
         variant="ghost"
@@ -205,5 +207,6 @@ export default function AllContacts() {
         exhibitionMap={exhibitions}
       />
     </div>
+    </PullToRefresh>
   );
 }

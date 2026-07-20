@@ -7,6 +7,7 @@ import { createPageUrl } from "@/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import PullToRefresh from "@/components/PullToRefresh";
 
 export default function Exhibitions() {
   const navigate = useNavigate();
@@ -82,6 +83,7 @@ export default function Exhibitions() {
   }
 
   return (
+    <PullToRefresh onRefresh={loadExhibitions}>
     <div className="px-4 py-6 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div>
@@ -197,5 +199,6 @@ export default function Exhibitions() {
         onChange={handleFileChange}
       />
     </div>
+    </PullToRefresh>
   );
 }

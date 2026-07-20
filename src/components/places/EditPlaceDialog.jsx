@@ -21,6 +21,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import DrawerSelect from "@/components/ui/drawer-select";
+
+const PLACE_CATEGORIES = [
+  { value: "Restaurant", label: "Restaurant" },
+  { value: "Tourist Attraction", label: "Tourist Attraction" },
+  { value: "Hotel", label: "Hotel" },
+  { value: "Supermarket", label: "Supermarket" },
+  { value: "Bar", label: "Bar" },
+  { value: "Bakery", label: "Bakery" },
+  { value: "Taxi Rank", label: "Taxi Rank" },
+  { value: "Cafe", label: "Cafe" },
+  { value: "Shopping", label: "Shopping" },
+  { value: "Other", label: "Other" },
+];
 
 export default function EditPlaceDialog({ open, onOpenChange, place, onPlaceUpdated }) {
   const [placeData, setPlaceData] = useState(place || {
@@ -123,26 +137,13 @@ export default function EditPlaceDialog({ open, onOpenChange, place, onPlaceUpda
 
           <div>
             <Label>Category *</Label>
-            <Select
+            <DrawerSelect
               value={placeData.category}
               onValueChange={(value) => setPlaceData({ ...placeData, category: value })}
-            >
-              <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Restaurant">Restaurant</SelectItem>
-                <SelectItem value="Tourist Attraction">Tourist Attraction</SelectItem>
-                <SelectItem value="Hotel">Hotel</SelectItem>
-                <SelectItem value="Supermarket">Supermarket</SelectItem>
-                <SelectItem value="Bar">Bar</SelectItem>
-                <SelectItem value="Bakery">Bakery</SelectItem>
-                <SelectItem value="Taxi Rank">Taxi Rank</SelectItem>
-                <SelectItem value="Cafe">Cafe</SelectItem>
-                <SelectItem value="Shopping">Shopping</SelectItem>
-                <SelectItem value="Other">Other</SelectItem>
-              </SelectContent>
-            </Select>
+              options={PLACE_CATEGORIES}
+              placeholder="Select category"
+              className="mt-1"
+            />
           </div>
 
           <div>

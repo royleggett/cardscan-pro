@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import BookTaxiDialog from "@/components/taxi/BookTaxiDialog";
 import EditPlaceDialog from "@/components/places/EditPlaceDialog";
+import PullToRefresh from "@/components/PullToRefresh";
 
 const CATEGORIES = ["All", "Restaurant", "Bar", "Cafe", "Hotel", "Tourist Attraction", "Bakery", "Shopping", "Supermarket", "Taxi Rank", "Other"];
 
@@ -243,6 +244,7 @@ export default function Discover() {
   });
 
   return (
+    <PullToRefresh onRefresh={loadPlaces}>
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Hero Header */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 pt-8 pb-16">
@@ -582,5 +584,6 @@ export default function Discover() {
         onPlaceUpdated={loadPlaces}
       />
     </div>
+    </PullToRefresh>
   );
 }
