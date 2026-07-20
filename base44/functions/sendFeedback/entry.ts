@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
       },
       body: JSON.stringify({
         from: "CardScanner Pro <hello@cardscan-pro.com>",
-        to: ["support@cardscan-pro.com"],
+        to: ["royleggett@sky.com"],
         reply_to: user.email,
         subject: `[Feedback] ${categoryLabel} — ${stars || 'No rating'} from ${user.full_name}`,
         html: htmlBody

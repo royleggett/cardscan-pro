@@ -91,7 +91,6 @@ Deno.serve(async (req) => {
         body: JSON.stringify({
           from: `${fromName} <${fromAddress}>`,
           to: [contactEmail],
-          reply_to: "support@cardscan-pro.com",
           subject,
           html: htmlBody
         })
