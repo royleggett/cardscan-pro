@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Share, MoreVertical, Smartphone, Check } from "lucide-react";
 
 const IOS_VIDEO = "https://media.base44.com/videos/public/68e3b1d0b387a294f20142e9/3acc8029f_iphone-add-to-home.mp4";
-const ANDROID_VIDEO = "https://media.base44.com/videos/public/68e3b1d0b387a294f20142e9/efd8979fa_android-add-to-home.mp4";
+const ANDROID_VIDEO = "https://media.base44.com/videos/public/68e3b1d0b387a294f20142e9/9bf08b35f_android-add-to-home.mp4";
 
 export default function AddToHomeScreen() {
   const navigate = useNavigate();
