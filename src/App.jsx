@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Features from './pages/Features';
+import AddToHomeScreen from './pages/AddToHomeScreen';
 import PageTransition from "@/components/PageTransition";
 
 const { Pages, Layout, mainPage } = pagesConfig;
@@ -59,6 +60,11 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
+      <Route path="/AddToHomeScreen" element={
+        <LayoutWrapper currentPageName="AddToHomeScreen">
+          <AddToHomeScreen />
+        </LayoutWrapper>
+      } />
       <Route path="/PrivacyPolicy" element={<PrivacyPolicy />} />
       <Route path="/Features" element={
         <LayoutWrapper currentPageName="Features">

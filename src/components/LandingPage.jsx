@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Camera, Users, MapPin, Globe, Award, Zap, Shield, Smartphone, Image } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import InstallBanner from "@/components/InstallBanner";
 
 export default function LandingPage() {
   const [selectedFeature, setSelectedFeature] = useState(null);
@@ -387,6 +388,8 @@ export default function LandingPage() {
           <p className="text-sm text-gray-500 mt-4">No credit card required • Export to CRM • Your data stays private</p>
         </div>
       </div>
+
+      <InstallBanner bottomClass="bottom-4" />
 
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white/50 backdrop-blur-sm py-8">

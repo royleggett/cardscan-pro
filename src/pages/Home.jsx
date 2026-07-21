@@ -7,6 +7,7 @@ import { Plus, FolderOpen, Users, Upload, Settings, Flame, Thermometer, Snowflak
 import JoinExhibitionDialog from "@/components/exhibitions/JoinExhibitionDialog";
 import LandingPage from "@/components/LandingPage";
 import AddPlaceDialog from "@/components/places/AddPlaceDialog";
+import InstallBanner from "@/components/InstallBanner";
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -32,9 +33,14 @@ export default function Home() {
     }`;
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    // ?install=true sends mailshot visitors straight to the guide
+    if (params.get("install") === "true") {
+      window.location.href = createPageUrl("AddToHomeScreen");
+      return;
+    }
     loadUser();
     // Check for ?join=CODE in URL and auto-open join dialog
-    const params = new URLSearchParams(window.location.search);
     const joinCode = params.get("join");
     if (joinCode) {
       setAutoJoinCode(joinCode);
@@ -237,6 +243,7 @@ export default function Home() {
         onOpenChange={setShowAddPlace}
         onPlaceAdded={() => setShowAddPlace(false)}
       />
+      <InstallBanner bottomClass="bottom-24" />
     </div>
   );
 }
