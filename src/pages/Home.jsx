@@ -33,14 +33,9 @@ export default function Home() {
     }`;
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    // ?install=true sends mailshot visitors straight to the guide
-    if (params.get("install") === "true") {
-      window.location.href = createPageUrl("AddToHomeScreen");
-      return;
-    }
     loadUser();
     // Check for ?join=CODE in URL and auto-open join dialog
+    const params = new URLSearchParams(window.location.search);
     const joinCode = params.get("join");
     if (joinCode) {
       setAutoJoinCode(joinCode);
