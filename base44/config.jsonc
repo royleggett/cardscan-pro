@@ -1,5 +1,5 @@
 {
-  "name": "CardScan Pro",
+  "name": "CardScan-Pro",
   "site": {
     "installCommand": "npm install",
     "buildCommand": "npm run build",

@@ -95,13 +95,13 @@ Deno.serve(async (req) => {
         emailBody += "\n";
       }
 
-      emailBody += "Log in to CardScan Pro to follow up.\n\nGood luck!";
+      emailBody += "Log in to CardScan-Pro to follow up.\n\nGood luck!";
 
       const htmlBody = `<pre style="font-family:sans-serif;white-space:pre-wrap;">${emailBody}</pre>`;
 
       try {
         const emailResult = await base44.asServiceRole.integrations.Core.SendEmail({
-          from_name: "CardScan Pro",
+          from_name: "CardScan-Pro",
           to: user.email,
           subject: `📋 Follow-up reminder: ${dueContacts.length} lead${dueContacts.length !== 1 ? "s" : ""} due today`,
           body: htmlBody

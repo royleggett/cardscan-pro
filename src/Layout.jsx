@@ -93,8 +93,8 @@ export default function Layout({ children }) {
         >
           <div className="px-4 py-4 flex justify-between items-center">
             <img
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68e3b1d0b387a294f20142e9/bcdfcf951_CardScanPro_Icon.png"
-              alt="CardScanner Pro"
+              src="https://media.base44.com/images/public/68e3b1d0b387a294f20142e9/981a3062f_Logo.png"
+              alt="CardScan-Pro"
               className={`h-10 w-10 cursor-pointer select-none transition-all ${showAdminFlash ? "opacity-30 scale-95" : "opacity-100 hover:scale-105"}`}
               onClick={handleLogoTap}
             />

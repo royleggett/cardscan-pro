@@ -26,7 +26,7 @@ Deno.serve(async (req) => {
         <tr>
           <td style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);padding:36px 32px;text-align:center;">
             <div style="font-size:40px;margin-bottom:12px;">💬</div>
-            <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:700;">New Feedback from CardScanner Pro</h1>
+            <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:700;">New Feedback from CardScan-Pro</h1>
           </td>
         </tr>
         <tr>
@@ -48,7 +48,7 @@ Deno.serve(async (req) => {
         </tr>
         <tr>
           <td style="background:#f9fafb;padding:20px 32px;text-align:center;border-top:1px solid #eee;">
-            <p style="margin:0;color:#999;font-size:13px;">Sent via CardScanner Pro</p>
+            <p style="margin:0;color:#999;font-size:13px;">Sent via CardScan-Pro</p>
           </td>
         </tr>
       </table>
@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        from: "CardScanner Pro <hello@cardscan-pro.com>",
+        from: "CardScan-Pro <hello@cardscan-pro.com>",
         to: ["royleggett@sky.com"],
         reply_to: user.email,
         subject: `[Feedback] ${categoryLabel} — ${stars || 'No rating'} from ${user.full_name}`,

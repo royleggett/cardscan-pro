@@ -15,10 +15,10 @@ Deno.serve(async (req) => {
         // Send notification email to admin
         await base44.asServiceRole.integrations.Core.SendEmail({
             to: "admin@cardscan-pro.com",
-            from_name: "CardScan Pro",
+            from_name: "CardScan-Pro",
             subject: `New User Registration - ${newUser.full_name}`,
             body: `
-                <h2>New User Registered in CardScan Pro</h2>
+                <h2>New User Registered in CardScan-Pro</h2>
                 <p><strong>Name:</strong> ${newUser.full_name}</p>
                 <p><strong>Email:</strong> ${newUser.email}</p>
                 <p><strong>Role:</strong> ${newUser.role || 'user'}</p>
@@ -29,11 +29,11 @@ Deno.serve(async (req) => {
         // Send welcome email to the new user
         await base44.asServiceRole.integrations.Core.SendEmail({
             to: newUser.email,
-            from_name: "CardScan Pro",
-            subject: "Welcome to CardScan Pro!",
+            from_name: "CardScan-Pro",
+            subject: "Welcome to CardScan-Pro!",
             body: `
-                <h2>Welcome to CardScan Pro, ${newUser.full_name}!</h2>
-                <p>Thank you for joining CardScan Pro. We're excited to help you manage your business contacts and exhibition experiences.</p>
+                <h2>Welcome to CardScan-Pro, ${newUser.full_name}!</h2>
+                <p>Thank you for joining CardScan-Pro. We're excited to help you manage your business contacts and exhibition experiences.</p>
                 <h3>Getting Started:</h3>
                 <ul>
                     <li>Create your first exhibition</li>
@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
                     <li>Export your contacts to your CRM</li>
                 </ul>
                 <p>If you have any questions, feel free to reach out!</p>
-                <p>Best regards,<br>The CardScan Pro Team</p>
+                <p>Best regards,<br>The CardScan-Pro Team</p>
             `
         });
 

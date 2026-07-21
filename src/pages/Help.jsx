@@ -14,7 +14,7 @@ export default function Help() {
       <div className="text-center mb-8">
         <div className="text-5xl mb-3">💡</div>
         <h1 className="text-3xl font-bold text-gray-900">Help Centre</h1>
-        <p className="text-gray-500 mt-2">Everything you need to know about CardScan Pro — written in plain English, we promise!</p>
+        <p className="text-gray-500 mt-2">Everything you need to know about CardScan-Pro — written in plain English, we promise!</p>
       </div>
 
       {/* Tabs */}
@@ -68,7 +68,7 @@ export default function Help() {
           <HelpSection icon="📧" title="How do I send a Thank You email?">
             <p>After scanning a card, you'll be asked if you'd like to send the contact a friendly <strong>Thank You email</strong>. Just tick the box and it goes automatically!</p>
             <p className="mt-2">You can also customise the email template to match your own style. Go to <em>Settings → Email Templates</em> to personalise the message.</p>
-            <p className="mt-2">The email is sent from your CardScan Pro account and includes your name, so it feels personal — not automated!</p>
+            <p className="mt-2">The email is sent from your CardScan-Pro account and includes your name, so it feels personal — not automated!</p>
           </HelpSection>
 
           <HelpSection icon="👥" title="What is a Team Exhibition?">
@@ -106,9 +106,9 @@ export default function Help() {
       {tab === 1 && (
         <div className="space-y-3">
           <HelpSection icon="🧭" title="What is the Discover section?">
-            <p>The <strong>Discover</strong> section is the community side of CardScan Pro — completely separate from your private scanning.</p>
+            <p>The <strong>Discover</strong> section is the community side of CardScan-Pro — completely separate from your private scanning.</p>
             <p className="mt-2">When you're at an exhibition in an unfamiliar city, wouldn't it be great to know where the best restaurants, coffee shops, and hotels are? That's exactly what Discover is for.</p>
-            <p className="mt-2">Other CardScan Pro users share their favourite places, and you can browse and benefit from their recommendations!</p>
+            <p className="mt-2">Other CardScan-Pro users share their favourite places, and you can browse and benefit from their recommendations!</p>
           </HelpSection>
 
           <HelpSection icon="📍" title="How do I add a place?">
@@ -127,7 +127,7 @@ export default function Help() {
             <p>When adding a place, you'll see a <strong>"Share with community"</strong> toggle.</p>
             <ul className="list-disc pl-5 space-y-1 mt-2">
               <li><strong>Private (off)</strong> — Only you can see this place. It's just for your own notes.</li>
-              <li><strong>Public (on)</strong> — Your recommendation appears in the Discover section for all CardScan Pro users to benefit from.</li>
+              <li><strong>Public (on)</strong> — Your recommendation appears in the Discover section for all CardScan-Pro users to benefit from.</li>
             </ul>
             <p className="mt-2">You're in total control. If you're not sure, leave it private — you can always make it public later!</p>
           </HelpSection>
@@ -157,7 +157,7 @@ export default function Help() {
             <div className="text-4xl mb-2">💬</div>
             <h2 className="text-xl font-bold text-gray-800">We'd love to hear from you</h2>
             <p className="text-gray-500 text-sm mt-1">
-              Good, bad, or "I have no idea what I'm doing" — we want to know. Every piece of feedback helps make CardScan Pro better for everyone.
+              Good, bad, or "I have no idea what I'm doing" — we want to know. Every piece of feedback helps make CardScan-Pro better for everyone.
             </p>
           </div>
           <FeedbackForm />

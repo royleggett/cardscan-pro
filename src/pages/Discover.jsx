@@ -252,7 +252,7 @@ export default function Discover() {
           <div className="text-4xl mb-3">🌍</div>
           <h1 className="text-3xl font-bold mb-2">Community Discover</h1>
           <p className="text-blue-100 text-sm">
-            Rated places shared by the CardScan Pro community at exhibitions worldwide
+            Rated places shared by the CardScan-Pro community at exhibitions worldwide
           </p>
         </div>
       </div>
@@ -330,7 +330,7 @@ export default function Discover() {
             <div className="text-5xl mb-4">🌍</div>
             <p className="font-bold text-xl text-gray-800 mb-2">Welcome to Community Discover!</p>
             <p className="text-gray-600 mb-4 max-w-md mx-auto">
-              This is where the CardScan Pro community shares their favorite restaurants, hotels, and local spots from exhibitions around the world.
+              This is where the CardScan-Pro community shares their favorite restaurants, hotels, and local spots from exhibitions around the world.
             </p>
             <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-4 max-w-md mx-auto text-left mb-4">
               <p className="font-semibold text-amber-900 mb-2">⚙️ First Time Setup Required:</p>

@@ -79,7 +79,7 @@ export default function Leaderboard() {
             <Trophy className="w-16 h-16 mx-auto mb-4 text-yellow-500 opacity-70" />
             <p className="font-bold text-xl text-gray-800 mb-2">Welcome to the Leaderboard!</p>
             <p className="text-gray-600 mb-4 max-w-md mx-auto">
-              Track the top contributors in the CardScan Pro community who help others by sharing places and scanning cards.
+              Track the top contributors in the CardScan-Pro community who help others by sharing places and scanning cards.
             </p>
             <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-4 max-w-md mx-auto text-left mb-4">
               <p className="font-semibold text-amber-900 mb-2">⚙️ First Time Setup Required:</p>

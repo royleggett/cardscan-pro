@@ -226,7 +226,7 @@ export default function Features() {
             Everything You Need to Network Smarter
           </h1>
           <p className="text-xl text-blue-100 mb-8">
-            From smart card scanning to community recommendations, CardScan Pro is your complete networking companion
+            From smart card scanning to community recommendations, CardScan-Pro is your complete networking companion
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link to="/Pricing">
@@ -247,7 +247,7 @@ export default function Features() {
       <div className="max-w-6xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-3">Powerful Features, Real Benefits</h2>
-          <p className="text-gray-600 text-lg">See exactly how CardScan Pro makes networking effortless</p>
+          <p className="text-gray-600 text-lg">See exactly how CardScan-Pro makes networking effortless</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
@@ -367,7 +367,7 @@ export default function Features() {
             Ready to Transform Your Networking?
           </h2>
           <p className="text-xl text-blue-100 mb-8">
-            Join hundreds of professionals who've digitized thousands of business cards with CardScan Pro
+            Join hundreds of professionals who've digitized thousands of business cards with CardScan-Pro
           </p>
           <Link to="/Home">
             <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50">

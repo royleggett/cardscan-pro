@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
         <!-- Footer -->
         <tr>
           <td style="background:#f9fafb;padding:20px 32px;text-align:center;border-top:1px solid #eee;">
-            <p style="margin:0;color:#999;font-size:13px;">Sent via CardScan Pro</p>
+            <p style="margin:0;color:#999;font-size:13px;">Sent via CardScan-Pro</p>
           </td>
         </tr>
 
@@ -79,7 +79,7 @@ Deno.serve(async (req) => {
         return Response.json({ error: "RESEND_API_KEY secret is not set" }, { status: 500 });
       }
 
-      const fromName = senderName || user.full_name || "CardScan Pro";
+      const fromName = senderName || user.full_name || "CardScan-Pro";
       const fromAddress = "noreply@cardscan-pro.com";
 
       const resendResponse = await fetch("https://api.resend.com/emails", {

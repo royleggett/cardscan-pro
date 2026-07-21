@@ -54,7 +54,7 @@ const buildHtmlEmail = (name, entries, nextMilestone, potentialRewards) => {
           <td style="padding:32px;">
             <p style="margin:0 0 20px;color:#333;font-size:16px;line-height:1.6;">Hi <strong>${name}</strong>,</p>
             <p style="margin:0 0 24px;color:#555;font-size:15px;line-height:1.7;">
-              It's nearly been a year since you joined CardScan Pro — and what a journey it's been! You've made
+              It's nearly been a year since you joined CardScan-Pro — and what a journey it's been! You've made
               <strong>${entries} contributions</strong> so far, and you're so close to your next reward.
             </p>
 
@@ -83,7 +83,7 @@ const buildHtmlEmail = (name, entries, nextMilestone, potentialRewards) => {
 
             <!-- CTA Button -->
             <div style="text-align:center;margin-bottom:8px;">
-              <a href="https://cardscan-pro.com" style="display:inline-block;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#ffffff;font-size:16px;font-weight:600;padding:14px 36px;border-radius:99px;text-decoration:none;">Open CardScan Pro →</a>
+              <a href="https://cardscan-pro.com" style="display:inline-block;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#ffffff;font-size:16px;font-weight:600;padding:14px 36px;border-radius:99px;text-decoration:none;">Open CardScan-Pro →</a>
             </div>
           </td>
         </tr>
@@ -91,8 +91,8 @@ const buildHtmlEmail = (name, entries, nextMilestone, potentialRewards) => {
         <!-- Footer -->
         <tr>
           <td style="background:#f9fafb;padding:20px 32px;text-align:center;border-top:1px solid #eee;">
-            <p style="margin:0;color:#999;font-size:13px;">You're receiving this because you're a CardScan Pro member.</p>
-            <p style="margin:6px 0 0;color:#999;font-size:13px;">© 2025 CardScan Pro. All rights reserved.</p>
+            <p style="margin:0;color:#999;font-size:13px;">You're receiving this because you're a CardScan-Pro member.</p>
+            <p style="margin:6px 0 0;color:#999;font-size:13px;">© 2025 CardScan-Pro. All rights reserved.</p>
           </td>
         </tr>
 
@@ -134,7 +134,7 @@ Deno.serve(async (req) => {
 
           try {
             await base44.asServiceRole.integrations.Core.SendEmail({
-              from_name: "CardScan Pro Rewards",
+              from_name: "CardScan-Pro Rewards",
               to: userRecord.email,
               subject: "🏆 You're So Close to Your Next Reward!",
               body: html

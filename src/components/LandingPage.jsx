@@ -108,8 +108,8 @@ export default function LandingPage() {
       <div className="container mx-auto px-4 py-8 md:py-16">
         <div className="text-center max-w-4xl mx-auto mb-16">
           <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68e3b1d0b387a294f20142e9/bcdfcf951_CardScanPro_Icon.png" 
-            alt="CardScanner Pro" 
+            src="https://media.base44.com/images/public/68e3b1d0b387a294f20142e9/981a3062f_Logo.png" 
+            alt="CardScan-Pro" 
             className="h-32 w-32 mx-auto mb-8"
           />
           <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
@@ -190,7 +190,7 @@ export default function LandingPage() {
             </DialogHeader>
             <div className="space-y-4 py-4">
               <p className="text-gray-600">
-                Use these credentials to explore CardScan Pro with pre-loaded test data:
+                Use these credentials to explore CardScan-Pro with pre-loaded test data:
               </p>
               
               <div className="bg-gray-50 rounded-lg p-4 space-y-3">
@@ -329,7 +329,7 @@ export default function LandingPage() {
             Earn Rewards While You Network
           </div>
           <h2 className="text-4xl font-bold text-gray-900 mb-4">Network More. <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">Win More.</span></h2>
-          <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">CardScan Pro isn't just about organising contacts — it rewards you for doing it. Every card you scan, every exhibition you attend, every connection you make earns you points towards exclusive achievements.</p>
+          <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">CardScan-Pro isn't just about organising contacts — it rewards you for doing it. Every card you scan, every exhibition you attend, every connection you make earns you points towards exclusive achievements.</p>
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             <div className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-2xl p-6 text-center hover:shadow-lg transition-all">
               <div className="text-4xl mb-3">🏆</div>
@@ -352,7 +352,7 @@ export default function LandingPage() {
         {/* Benefits Section */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 text-white mb-16">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold mb-8 text-center">Why CardScan Pro?</h2>
+            <h2 className="text-4xl font-bold mb-8 text-center">Why CardScan-Pro?</h2>
             <div className="grid md:grid-cols-3 gap-8">
               <div className="text-center">
                 <Shield className="w-12 h-12 mx-auto mb-4" />
@@ -391,7 +391,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-gray-200 bg-white/50 backdrop-blur-sm py-8">
         <div className="container mx-auto px-4 text-center text-gray-600">
-          <p>&copy; 2026 CardScan Pro. All rights reserved.</p>
+          <p>&copy; 2026 CardScan-Pro. All rights reserved.</p>
           <div className="mt-3 flex gap-4 justify-center text-sm">
             <Link to="/PrivacyPolicy" className="text-blue-600 hover:underline">
               Privacy Policy
