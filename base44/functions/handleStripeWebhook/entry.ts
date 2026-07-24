@@ -19,8 +19,8 @@ Deno.serve(async (req) => {
     );
 
     const base44 = createClientFromRequest(req);
-    const subscriptions = base44.entities.Subscription;
-    const users = base44.entities.User;
+    const subscriptions = base44.asServiceRole.entities.Subscription;
+    const users = base44.asServiceRole.entities.User;
 
     switch (event.type) {
       case 'customer.subscription.created':

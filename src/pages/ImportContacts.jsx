@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Upload, FileSpreadsheet, CheckCircle2, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { base44 } from "@/api/base44Client";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Select,
@@ -107,14 +108,16 @@ export default function ImportContacts() {
     setError(null);
 
     try {
+      const currentUser = await base44.auth.me();
       const exhibitionMap = {};
 
       for (const [csvExName, mapping] of Object.entries(exhibitionMappings)) {
         if (mapping.action === 'existing') {
-          exhibitionMap[csvExName] = mapping.existingId;
+          const exList = await Exhibition.filter({ id: mapping.existingId });
+          exhibitionMap[csvExName] = { id: mapping.existingId, team_members: exList[0]?.team_members || [] };
         } else if (mapping.action === 'new') {
-          const newEx = await Exhibition.create({ name: mapping.newName });
-          exhibitionMap[csvExName] = newEx.id;
+          const newEx = await Exhibition.create({ name: mapping.newName, team_members: [currentUser?.email] });
+          exhibitionMap[csvExName] = { id: newEx.id, team_members: [currentUser?.email] };
         }
       }
 
@@ -124,7 +127,9 @@ export default function ImportContacts() {
 
       for (let i = 0; i < parsedData.length; i++) {
         const contact = parsedData[i];
-        const exhibition_id = exhibitionMap[contact.exhibition_name];
+        const exInfo = exhibitionMap[contact.exhibition_name];
+        const exhibition_id = exInfo?.id;
+        const team_members = exInfo?.team_members || [];
         
         if (!exhibition_id) {
           failed++;
@@ -152,7 +157,8 @@ export default function ImportContacts() {
             country: contact.country || "",
             website: contact.website || "",
             address: contact.address || "",
-            notes: contact.notes || ""
+            notes: contact.notes || "",
+            team_members
           });
           imported++;
         } catch (err) {
