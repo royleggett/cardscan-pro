@@ -164,7 +164,7 @@ Deno.serve(async (req) => {
           },
           body: JSON.stringify({
             from: "CardScan-Pro <noreply@cardscan-pro.com>",
-            to: ["cespinoza@auroramultimedia.com"],
+            to: [user.email],
             subject: `📋 Follow-up reminder: ${dueContacts.length} lead${dueContacts.length !== 1 ? "s" : ""} due today`,
             html: fullHtml
           })
