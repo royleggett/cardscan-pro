@@ -34,6 +34,15 @@ const AuthenticatedApp = () => {
     }
   }, [navigate]);
 
+  // FollowUpResponse is accessed from email links without auth — skip auth loading
+  if (window.location.pathname === '/FollowUpResponse') {
+    return (
+      <Routes>
+        <Route path="/FollowUpResponse" element={<FollowUpResponse />} />
+      </Routes>
+    );
+  }
+
   // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
