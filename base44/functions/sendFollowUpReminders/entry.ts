@@ -120,12 +120,6 @@ Deno.serve(async (req) => {
       htmlBody += `<p style="margin-top:24px;color:#6b7280;font-size:14px;">Log in to CardScan-Pro to manage your contacts.</p></div>`;
 
       try {
-        const resendApiKey = Deno.env.get("RESEND_API_KEY");
-        if (!resendApiKey) {
-          console.error("RESEND_API_KEY secret is not set");
-          continue;
-        }
-
         const fullHtml = `<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
@@ -154,28 +148,14 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-        const resendResponse = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${resendApiKey}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            from: "CardScan-Pro <noreply@cardscan-pro.com>",
-            to: ["cespinoza@auroramultimedia.com"],
-            subject: `📋 Follow-up reminder: ${dueContacts.length} lead${dueContacts.length !== 1 ? "s" : ""} due today`,
-            html: fullHtml
-          })
+        await base44.asServiceRole.integrations.Core.SendEmail({
+          to: "cespinoza@auroramultimedia.com",
+          from_name: "CardScan-Pro",
+          subject: `📋 Follow-up reminder: ${dueContacts.length} lead${dueContacts.length !== 1 ? "s" : ""} due today`,
+          body: fullHtml
         });
 
-        const emailResult = await resendResponse.json();
-
-        if (!resendResponse.ok) {
-          console.error(`Resend error for ${user.email}:`, JSON.stringify(emailResult));
-          continue;
-        }
-
-        console.log(`Email sent to ${user.email} via Resend:`, JSON.stringify(emailResult));
+        console.log(`Email sent to ${user.email} via Base44 SendEmail`);
 
         // Mark contacts as reminded so we don't re-send
         for (const { contact } of dueContacts) {
