@@ -5,6 +5,13 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const appUrl = Deno.env.get("BASE44_APP_URL") || new URL(req.url).origin;
 
+    // Allow overriding the recipient email for testing
+    let testEmailOverride = null;
+    try {
+      const body = await req.json();
+      testEmailOverride = body.test_email || null;
+    } catch {}
+
     // This runs as a scheduled job via service role
     const allUsers = await base44.asServiceRole.entities.User.list();
     const today = new Date();
@@ -162,7 +169,7 @@ Deno.serve(async (req) => {
           },
           body: JSON.stringify({
             from: "CardScan-Pro <noreply@cardscan-pro.com>",
-            to: [user.email],
+            to: [testEmailOverride || user.email],
             subject: `📋 Follow-up reminder: ${dueContacts.length} lead${dueContacts.length !== 1 ? "s" : ""} due today`,
             html: fullHtml
           })
