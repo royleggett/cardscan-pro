@@ -21,26 +21,19 @@ export default function FollowUpResponse() {
       }
 
       try {
-        // Always use the backend function (works with or without login)
         const res = await base44.functions.invoke("updateFollowUpStatus", {
           contact_id: contactId,
           action
         });
-        if (res?.data?.success) {
+        // Handle both wrapped ({data:{success}}) and unwrapped ({success}) responses
+        const success = res?.data?.success || res?.success;
+        if (success) {
           setStatus(action === "yes" ? "success" : "no-action");
         } else {
           setStatus("error");
         }
       } catch (err) {
-        // Fallback: try direct update if function fails (works if logged in)
-        try {
-          if (action === "yes") {
-            await base44.entities.Contact.update(contactId, { follow_up_contacted: true });
-          }
-          setStatus(action === "yes" ? "success" : "no-action");
-        } catch (err2) {
-          setStatus("error");
-        }
+        setStatus("error");
       }
     };
     handleResponse();
