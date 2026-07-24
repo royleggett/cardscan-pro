@@ -44,30 +44,30 @@ Deno.serve(async (req) => {
 
       console.log(`User ${user.email}: ${contacts.length} contacts, ${Object.keys(exhibitionMap).length} exhibitions`);
 
-      // Find contacts due for follow-up today
+      // Find contacts due for follow-up (based on lead scan date + N days)
       const dueContacts = [];
 
       for (const contact of contacts) {
         if (!contact.follow_up_type || contact.follow_up_type === "none") continue;
+        if (contact.follow_up_reminder_sent) continue;
 
         const matchingRule = leadTypes.find(lt => lt.type === contact.follow_up_type);
         if (!matchingRule) continue;
 
-        const exhibition = exhibitionMap[contact.exhibition_id];
-        if (!exhibition?.to_date) continue;
+        if (!contact.created_date) continue;
 
-        const exhibitionEnd = new Date(exhibition.to_date);
-        exhibitionEnd.setHours(0, 0, 0, 0);
+        const scanDate = new Date(contact.created_date);
+        scanDate.setHours(0, 0, 0, 0);
 
-        const reminderDate = new Date(exhibitionEnd);
+        const reminderDate = new Date(scanDate);
         reminderDate.setDate(reminderDate.getDate() + matchingRule.days);
 
-        console.log(`Contact ${contact.full_name}: type=${contact.follow_up_type}, exhibition end=${exhibitionEnd.toISOString()}, reminder date=${reminderDate.toISOString()}, matches today=${reminderDate.getTime() === today.getTime()}`);
+        console.log(`Contact ${contact.full_name}: type=${contact.follow_up_type}, scan date=${scanDate.toISOString()}, reminder date=${reminderDate.toISOString()}, due=${reminderDate.getTime() <= today.getTime()}`);
 
-        if (reminderDate.getTime() === today.getTime()) {
+        if (reminderDate.getTime() <= today.getTime()) {
           dueContacts.push({
             contact,
-            exhibition,
+            exhibition: exhibitionMap[contact.exhibition_id],
             label: matchingRule.label
           });
         }
@@ -113,6 +113,12 @@ Deno.serve(async (req) => {
           body: htmlBody
         });
         console.log(`Email sent to ${user.email}:`, JSON.stringify(emailResult));
+
+        // Mark contacts as reminded so we don't re-send
+        for (const { contact } of dueContacts) {
+          await base44.asServiceRole.entities.Contact.update(contact.id, { follow_up_reminder_sent: true });
+        }
+
         totalSent++;
       } catch (err) {
         console.error(`Failed to send to ${user.email}:`, err.message, JSON.stringify(err));

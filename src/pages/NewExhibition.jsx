@@ -92,19 +92,21 @@ export default function NewExhibition() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="from_date">Start Date</Label>
+                <Label htmlFor="from_date">Start Date *</Label>
                 <Input
                   id="from_date"
                   type="date"
+                  required
                   value={formData.from_date}
                   onChange={(e) => setFormData({ ...formData, from_date: e.target.value })}
                 />
               </div>
               <div>
-                <Label htmlFor="to_date">End Date</Label>
+                <Label htmlFor="to_date">End Date *</Label>
                 <Input
                   id="to_date"
                   type="date"
+                  required
                   value={formData.to_date}
                   onChange={(e) => setFormData({ ...formData, to_date: e.target.value })}
                 />

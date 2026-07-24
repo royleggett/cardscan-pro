@@ -67,6 +67,11 @@
       "default": false,
       "description": "Whether a thank you email has been sent"
     },
+    "follow_up_reminder_sent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the automated follow-up reminder has been sent"
+    },
     "tags": {
       "type": "array",
       "items": {
