@@ -20,32 +20,27 @@ export default function FollowUpResponse() {
         return;
       }
 
-      // Check if authenticated — if so, update directly; if not, use the backend function
-      const authenticated = await base44.auth.isAuthenticated().catch(() => false);
-
       try {
-        if (authenticated) {
-          if (action === "yes") {
-            await base44.entities.Contact.update(contactId, { follow_up_contacted: true });
-            setStatus("success");
-          } else {
-            setStatus("no-action");
-          }
+        // Always use the backend function (works with or without login)
+        const res = await base44.functions.invoke("updateFollowUpStatus", {
+          contact_id: contactId,
+          action
+        });
+        if (res?.data?.success) {
+          setStatus(action === "yes" ? "success" : "no-action");
         } else {
-          // Not logged in — use backend function with service role
-          const res = await fetch(`/api/functions/updateFollowUpStatus`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contact_id: contactId, action })
-          });
-          if (res.ok) {
-            setStatus(action === "yes" ? "success" : "no-action");
-          } else {
-            setStatus("error");
-          }
+          setStatus("error");
         }
       } catch (err) {
-        setStatus("error");
+        // Fallback: try direct update if function fails (works if logged in)
+        try {
+          if (action === "yes") {
+            await base44.entities.Contact.update(contactId, { follow_up_contacted: true });
+          }
+          setStatus(action === "yes" ? "success" : "no-action");
+        } catch (err2) {
+          setStatus("error");
+        }
       }
     };
     handleResponse();

@@ -71,11 +71,7 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
-      <Route path="/FollowUpResponse" element={
-        <LayoutWrapper currentPageName="FollowUpResponse">
-          <FollowUpResponse />
-        </LayoutWrapper>
-      } />
+      <Route path="/FollowUpResponse" element={<FollowUpResponse />} />
       <Route path="/AddToHomeScreen" element={
         <LayoutWrapper currentPageName="AddToHomeScreen">
           <AddToHomeScreen />
