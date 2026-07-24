@@ -120,13 +120,62 @@ Deno.serve(async (req) => {
       htmlBody += `<p style="margin-top:24px;color:#6b7280;font-size:14px;">Log in to CardScan-Pro to manage your contacts.</p></div>`;
 
       try {
-        const emailResult = await base44.asServiceRole.integrations.Core.SendEmail({
-          from_name: "CardScan-Pro",
-          to: user.email,
-          subject: `📋 Follow-up reminder: ${dueContacts.length} lead${dueContacts.length !== 1 ? "s" : ""} due today`,
-          body: htmlBody
+        const resendApiKey = Deno.env.get("RESEND_API_KEY");
+        if (!resendApiKey) {
+          console.error("RESEND_API_KEY secret is not set");
+          continue;
+        }
+
+        const fullHtml = `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f5f7fa;font-family:Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f7fa;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+        <tr>
+          <td style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);padding:28px 32px;text-align:center;">
+            <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:700;">📋 Follow-up Reminder</h1>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:28px 32px;">
+            ${htmlBody}
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#f9fafb;padding:16px 32px;text-align:center;border-top:1px solid #eee;">
+            <p style="margin:0;color:#999;font-size:13px;">Sent via CardScan-Pro</p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+        const resendResponse = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${resendApiKey}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            from: "CardScan-Pro <noreply@cardscan-pro.com>",
+            to: [user.email],
+            subject: `📋 Follow-up reminder: ${dueContacts.length} lead${dueContacts.length !== 1 ? "s" : ""} due today`,
+            html: fullHtml
+          })
         });
-        console.log(`Email sent to ${user.email}:`, JSON.stringify(emailResult));
+
+        const emailResult = await resendResponse.json();
+
+        if (!resendResponse.ok) {
+          console.error(`Resend error for ${user.email}:`, JSON.stringify(emailResult));
+          continue;
+        }
+
+        console.log(`Email sent to ${user.email} via Resend:`, JSON.stringify(emailResult));
 
         // Mark contacts as reminded so we don't re-send
         for (const { contact } of dueContacts) {
