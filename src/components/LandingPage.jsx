@@ -9,18 +9,9 @@ import InstallBanner from "@/components/InstallBanner";
 
 export default function LandingPage() {
   const [selectedFeature, setSelectedFeature] = useState(null);
-  const [showDemoDialog, setShowDemoDialog] = useState(false);
 
   const handleGetStarted = () => {
     base44.auth.redirectToLogin(window.location.href);
-  };
-
-  const handleDemoMode = () => {
-    setShowDemoDialog(true);
-  };
-
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
   };
 
   const features = [
@@ -134,14 +125,6 @@ export default function LandingPage() {
               Get Started Free
             </Button>
             <Button 
-              onClick={handleDemoMode}
-              size="lg"
-              variant="outline"
-              className="text-lg px-8 py-6 border-2 border-green-500 text-green-600 hover:bg-green-50 transition-all duration-150 active:scale-95"
-            >
-              🎯 Try Demo Mode
-            </Button>
-            <Button 
               variant="outline" 
               size="lg"
               className="text-lg px-8 py-6 border-2 transition-all duration-150 active:scale-95"
@@ -150,12 +133,6 @@ export default function LandingPage() {
               Learn More
             </Button>
           </div>
-          <p className="text-sm text-gray-500 mt-4">
-            <span className="inline-flex items-center gap-2">
-              <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-              Demo Mode: Explore the app instantly with pre-loaded test data
-            </span>
-          </p>
         </div>
 
         {/* Feature Grid */}
@@ -182,67 +159,6 @@ export default function LandingPage() {
             );
           })}
         </div>
-
-        {/* Demo Mode Dialog */}
-        <Dialog open={showDemoDialog} onOpenChange={setShowDemoDialog}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-2xl">🎯 Demo Mode Credentials</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <p className="text-gray-600">
-                Use these credentials to explore CardScan-Pro with pre-loaded test data:
-              </p>
-              
-              <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-                <div>
-                  <label className="text-xs font-semibold text-gray-500 uppercase">Email</label>
-                  <div className="flex items-center gap-2 mt-1">
-                    <code className="flex-1 bg-white px-3 py-2 rounded border text-sm">demo.cardscanpro@gmail.com</code>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => copyToClipboard("demo.cardscanpro@gmail.com")}
-                    >
-                      Copy
-                    </Button>
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="text-xs font-semibold text-gray-500 uppercase">Password</label>
-                  <div className="flex items-center gap-2 mt-1">
-                    <code className="flex-1 bg-white px-3 py-2 rounded border text-sm">DemoTester2026!</code>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => copyToClipboard("DemoTester2026!")}
-                    >
-                      Copy
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-sm text-blue-800">
-                  💡 Click the credentials to copy them, then paste into the login screen.
-                </p>
-              </div>
-
-              <Button 
-                onClick={() => {
-                  setShowDemoDialog(false);
-                  base44.auth.redirectToLogin(window.location.href);
-                }}
-                className="w-full bg-blue-600 hover:bg-blue-700"
-                size="lg"
-              >
-                Go to Login Screen
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
 
         {/* Feature Detail Dialog */}
         <Dialog open={!!selectedFeature} onOpenChange={() => setSelectedFeature(null)}>
