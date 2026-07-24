@@ -103,8 +103,10 @@ Deno.serve(async (req) => {
             contact.phone_mobile || null
           ].filter(Boolean).join(" · ");
 
-          const yesUrl = `${appUrl}/FollowUpResponse?contact_id=${contact.id}&action=yes`;
-          const noUrl = `${appUrl}/FollowUpResponse?contact_id=${contact.id}&action=no`;
+          const reqUrl = new URL(req.url);
+          const funcUrl = `${reqUrl.origin}${reqUrl.pathname.replace("sendFollowUpReminders", "updateFollowUpStatus")}`;
+          const yesUrl = `${funcUrl}?contact_id=${contact.id}&action=yes`;
+          const noUrl = `${funcUrl}?contact_id=${contact.id}&action=no`;
 
           htmlBody += `<div style="border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin-bottom:12px;">
             <p style="margin:0 0 4px 0;font-weight:bold;">${contact.full_name}</p>
