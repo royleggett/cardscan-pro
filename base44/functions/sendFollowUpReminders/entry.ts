@@ -148,14 +148,14 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-        await base44.asServiceRole.integrations.Core.SendEmail({
-          to: "cespinoza@auroramultimedia.com",
-          from_name: "CardScan-Pro",
+        const emailResult = await base44.integrations.Core.SendEmail({
+          to: user.email,
           subject: `📋 Follow-up reminder: ${dueContacts.length} lead${dueContacts.length !== 1 ? "s" : ""} due today`,
-          body: fullHtml
+          body: fullHtml,
+          from_name: "CardScan-Pro"
         });
 
-        console.log(`Email sent to ${user.email} via Base44 SendEmail`);
+        console.log(`Email sent to ${user.email} via Base44 SendEmail:`, JSON.stringify(emailResult));
 
         // Mark contacts as reminded so we don't re-send
         for (const { contact } of dueContacts) {
