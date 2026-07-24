@@ -47,7 +47,7 @@ export default function NewExhibition() {
     setSaving(true);
     const exhibition = await base44.entities.Exhibition.create({
       ...formData,
-      ...(isTeam ? { team_code: generateTeamCode(), team_members: [] } : {})
+      ...(isTeam ? { team_code: generateTeamCode(), team_members: [user?.email] } : {})
     });
     navigate(createPageUrl(`ExhibitionDetail?id=${exhibition.id}`));
   };

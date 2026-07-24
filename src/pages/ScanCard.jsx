@@ -39,6 +39,7 @@ export default function ScanCard() {
   const [duplicateExhibitionName, setDuplicateExhibitionName] = useState("");
   const [pendingContact, setPendingContact] = useState(null);
   const [exhibitionName, setExhibitionName] = useState("");
+  const [exhibitionTeamMembers, setExhibitionTeamMembers] = useState([]);
   const [user, setUser] = useState(null);
   const [cardCount, setCardCount] = useState(0);
   const [loadingData, setLoadingData] = useState(true);
@@ -71,7 +72,10 @@ export default function ScanCard() {
 
   React.useEffect(() => {
     if (exhibitionId) {
-      Exhibition.filter({ id: exhibitionId }).then(list => setExhibitionName(list[0]?.name || "")).catch(() => {});
+      Exhibition.filter({ id: exhibitionId }).then(list => {
+        setExhibitionName(list[0]?.name || "");
+        setExhibitionTeamMembers(list[0]?.team_members || []);
+      }).catch(() => {});
     }
   }, [exhibitionId]);
 
@@ -521,7 +525,8 @@ Always put the original URL in the website field.`;
       ...pendingContact,
       follow_up_type,
       follow_up_date: follow_up_date || undefined,
-      thank_you_sent: false
+      thank_you_sent: false,
+      team_members: exhibitionTeamMembers
     };
 
     const savedContact = await Contact.create(contactToSave);
@@ -640,7 +645,7 @@ Always put the original URL in the website field.`;
     const results = [];
     for (const { contact, sendThankYou } of payload) {
       try {
-        const savedContact = await Contact.create({ ...contact, exhibition_id: exhibitionId });
+        const savedContact = await Contact.create({ ...contact, exhibition_id: exhibitionId, team_members: exhibitionTeamMembers });
         results.push({ status: "saved", name: contact.full_name, company: contact.company });
         if (sendThankYou && contact.email) {
           try {

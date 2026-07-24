@@ -53,14 +53,20 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
   const [isAdmin, setIsAdmin] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
   const [selectedUserEmail, setSelectedUserEmail] = useState(null);
+  const [teamMembers, setTeamMembers] = useState([]);
 
   useEffect(() => {
     if (open) {
       checkAdmin();
       // Reset form state when dialog opens
       setPlaceData({ name: "", category: "Restaurant", address: "", website: "", notes: "", rating: 0, is_public: false, attributes: [] });
+      if (exhibitionId && exhibitionId !== "none") {
+        base44.entities.Exhibition.filter({ id: exhibitionId }).then(list => {
+          setTeamMembers(list[0]?.team_members || []);
+        }).catch(() => {});
+      }
     }
-  }, [open]);
+  }, [open, exhibitionId]);
 
   const checkAdmin = async () => {
     const user = await base44.auth.me();
@@ -150,7 +156,8 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
 
       const createData = {
         exhibition_id: exhibitionId || "none",
-        ...finalData
+        ...finalData,
+        team_members: teamMembers
       };
       
       const phantomEmails = [

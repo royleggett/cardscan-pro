@@ -17,37 +17,23 @@ export default function JoinExhibitionDialog({ open, onOpenChange, onJoined, ini
     setLoading(true);
     setError("");
 
-    const matches = await base44.entities.Exhibition.filter({ team_code: trimmed });
-    if (matches.length === 0) {
-      setError("Code not found. Please check and try again.");
+    try {
+      const res = await base44.functions.invoke("joinExhibition", { teamCode: trimmed });
+      const result = res.data;
+      if (result?.error) {
+        setError(result.error);
+        setLoading(false);
+        return;
+      }
+
+      setCode("");
       setLoading(false);
-      return;
-    }
-
-    const exhibition = matches[0];
-    const user = await base44.auth.me();
-
-    if (exhibition.created_by === user.email) {
-      setError("You created this exhibition — you're already the owner!");
+      onOpenChange(false);
+      if (onJoined) onJoined();
+    } catch (err) {
+      setError("Failed to join. Please try again.");
       setLoading(false);
-      return;
     }
-
-    const currentMembers = exhibition.team_members || [];
-    if (currentMembers.includes(user.email)) {
-      setError("You've already joined this exhibition.");
-      setLoading(false);
-      return;
-    }
-
-    await base44.entities.Exhibition.update(exhibition.id, {
-      team_members: [...currentMembers, user.email]
-    });
-
-    setCode("");
-    setLoading(false);
-    onOpenChange(false);
-    if (onJoined) onJoined();
   };
 
   return (

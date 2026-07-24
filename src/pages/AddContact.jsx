@@ -18,6 +18,7 @@ export default function AddContact() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [user, setUser] = useState(null);
+  const [teamMembers, setTeamMembers] = useState([]);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -26,6 +27,14 @@ export default function AddContact() {
     };
     loadUser();
   }, []);
+
+  useEffect(() => {
+    if (exhibitionId) {
+      base44.entities.Exhibition.filter({ id: exhibitionId }).then(list => {
+        setTeamMembers(list[0]?.team_members || []);
+      }).catch(() => {});
+    }
+  }, [exhibitionId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,7 +47,8 @@ export default function AddContact() {
       full_name: fullName,
       company,
       email,
-      phone
+      phone,
+      team_members: teamMembers
     });
     navigate(createPageUrl(`ExhibitionDetail?id=${exhibitionId}`));
   };

@@ -147,41 +147,20 @@ export default function Discover() {
   };
 
   const handleRating = async (placeId, newRating) => {
-    const existingRatings = await base44.entities.PlaceRating.filter({ place_id: placeId, user_email: currentUserEmail });
-    
-    if (existingRatings.length > 0) {
-      const existing = existingRatings[0];
-      if (existing.rating === newRating) {
-        // Remove rating if clicking same button
-        await base44.entities.PlaceRating.delete(existing.id);
-        setUserRatings({ ...userRatings, [placeId]: null });
-      } else {
-        // Update to opposite rating
-        await base44.entities.PlaceRating.update(existing.id, { rating: newRating });
-        setUserRatings({ ...userRatings, [placeId]: newRating });
+    try {
+      const res = await base44.functions.invoke("castPlaceVote", { placeId, rating: newRating });
+      const result = res.data;
+      if (result?.success) {
+        setUserRatings({ ...userRatings, [placeId]: result.userRating });
+        setPlaces(prev => prev.map(p =>
+          p.id === placeId
+            ? { ...p, community_upvotes: result.community_upvotes, community_downvotes: result.community_downvotes }
+            : p
+        ));
       }
-    } else {
-      // Create new rating
-      await base44.entities.PlaceRating.create({ place_id: placeId, user_email: currentUserEmail, rating: newRating });
-      setUserRatings({ ...userRatings, [placeId]: newRating });
+    } catch (error) {
+      console.error("Error casting vote:", error);
     }
-
-    // Recalculate place votes
-    const allRatings = await base44.entities.PlaceRating.filter({ place_id: placeId });
-    const upvotes = allRatings.filter(r => r.rating === "up").length;
-    const downvotes = allRatings.filter(r => r.rating === "down").length;
-    
-    // Auto-flag if downvotes exceed threshold
-    const shouldFlag = downvotes >= 5 && downvotes > upvotes * 2;
-    
-    await base44.entities.Place.update(placeId, {
-      community_upvotes: upvotes,
-      community_downvotes: downvotes,
-      is_flagged: shouldFlag
-    });
-
-    // Reload places to reflect changes
-    loadPlaces();
   };
 
   const handleNearMe = async () => {
