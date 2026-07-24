@@ -29,14 +29,20 @@ Deno.serve(async (req) => {
         continue;
       }
 
-      // Get all contacts for this user
-      const contacts = await base44.asServiceRole.entities.Contact.filter({ created_by: user.email });
-      // Get all exhibitions for this user
-      const exhibitions = await base44.asServiceRole.entities.Exhibition.filter({ created_by: user.email });
-      const exhibitionMap = {};
-      exhibitions.forEach(ex => { exhibitionMap[ex.id] = ex; });
+      // Get all contacts for this user (owned + team)
+      const ownedContacts = await base44.asServiceRole.entities.Contact.filter({ created_by_id: user.id });
+      const teamContacts = await base44.asServiceRole.entities.Contact.filter({ team_members: user.email });
+      const contactMap = {};
+      [...ownedContacts, ...teamContacts].forEach(c => { contactMap[c.id] = c; });
+      const contacts = Object.values(contactMap);
 
-      console.log(`User ${user.email}: ${contacts.length} contacts, ${exhibitions.length} exhibitions`);
+      // Get all exhibitions for this user (owned + team)
+      const ownedExhibitions = await base44.asServiceRole.entities.Exhibition.filter({ created_by_id: user.id });
+      const teamExhibitions = await base44.asServiceRole.entities.Exhibition.filter({ team_members: user.email });
+      const exhibitionMap = {};
+      [...ownedExhibitions, ...teamExhibitions].forEach(ex => { exhibitionMap[ex.id] = ex; });
+
+      console.log(`User ${user.email}: ${contacts.length} contacts, ${Object.keys(exhibitionMap).length} exhibitions`);
 
       // Find contacts due for follow-up today
       const dueContacts = [];
