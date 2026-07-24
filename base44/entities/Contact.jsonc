@@ -72,6 +72,11 @@
       "default": false,
       "description": "Whether the automated follow-up reminder has been sent"
     },
+    "follow_up_contacted": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the user has contacted this lead"
+    },
     "tags": {
       "type": "array",
       "items": {

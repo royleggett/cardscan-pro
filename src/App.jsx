@@ -12,6 +12,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import Features from './pages/Features';
 import AddToHomeScreen from './pages/AddToHomeScreen';
 import PageTransition from "@/components/PageTransition";
+import FollowUpResponse from './pages/FollowUpResponse';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -70,6 +71,11 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
+      <Route path="/FollowUpResponse" element={
+        <LayoutWrapper currentPageName="FollowUpResponse">
+          <FollowUpResponse />
+        </LayoutWrapper>
+      } />
       <Route path="/AddToHomeScreen" element={
         <LayoutWrapper currentPageName="AddToHomeScreen">
           <AddToHomeScreen />

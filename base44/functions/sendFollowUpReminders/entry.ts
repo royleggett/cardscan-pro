@@ -3,6 +3,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const appUrl = Deno.env.get("BASE44_APP_URL") || new URL(req.url).origin;
 
     // This runs as a scheduled job via service role
     const allUsers = await base44.asServiceRole.entities.User.list();
@@ -87,23 +88,36 @@ Deno.serve(async (req) => {
         grouped[item.label].push(item);
       }
 
-      // Build email body
-      let emailBody = `Hi,\n\nYou have ${dueContacts.length} contact${dueContacts.length !== 1 ? "s" : ""} due for follow-up today:\n\n`;
+      // Build HTML email body with YES/NO follow-up buttons
+      let htmlBody = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
+        <h2 style="margin-bottom:8px;">📋 Follow-up Reminder</h2>
+        <p style="color:#6b7280;margin-bottom:24px;">You have ${dueContacts.length} contact${dueContacts.length !== 1 ? "s" : ""} due for follow-up:</p>`;
 
       for (const [label, items] of Object.entries(grouped)) {
-        emailBody += `${label} Leads:\n`;
+        htmlBody += `<h3 style="margin:16px 0 8px 0;">${label} Leads</h3>`;
         for (const { contact, exhibition } of items) {
-          emailBody += `  • ${contact.full_name}${contact.company ? ` (${contact.company})` : ""} — ${exhibition.name}`;
-          if (contact.email) emailBody += ` — ${contact.email}`;
-          if (contact.phone_mobile) emailBody += ` — ${contact.phone_mobile}`;
-          emailBody += "\n";
+          const contactInfo = [
+            contact.company || null,
+            exhibition?.name || null,
+            contact.email || null,
+            contact.phone_mobile || null
+          ].filter(Boolean).join(" · ");
+
+          const yesUrl = `${appUrl}/FollowUpResponse?contact_id=${contact.id}&action=yes`;
+          const noUrl = `${appUrl}/FollowUpResponse?contact_id=${contact.id}&action=no`;
+
+          htmlBody += `<div style="border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin-bottom:12px;">
+            <p style="margin:0 0 4px 0;font-weight:bold;">${contact.full_name}</p>
+            <p style="margin:0 0 12px 0;color:#6b7280;font-size:14px;">${contactInfo}</p>
+            <p style="margin:0;font-size:14px;">Have you contacted them?
+              <a href="${yesUrl}" style="background:#16a34a;color:white;padding:6px 16px;text-decoration:none;border-radius:6px;margin-left:8px;font-weight:bold;">YES</a>
+              <a href="${noUrl}" style="background:#d1d5db;color:#374151;padding:6px 16px;text-decoration:none;border-radius:6px;margin-left:4px;font-weight:bold;">NO</a>
+            </p>
+          </div>`;
         }
-        emailBody += "\n";
       }
 
-      emailBody += "Log in to CardScan-Pro to follow up.\n\nGood luck!";
-
-      const htmlBody = `<pre style="font-family:sans-serif;white-space:pre-wrap;">${emailBody}</pre>`;
+      htmlBody += `<p style="margin-top:24px;color:#6b7280;font-size:14px;">Log in to CardScan-Pro to manage your contacts.</p></div>`;
 
       try {
         const emailResult = await base44.asServiceRole.integrations.Core.SendEmail({
