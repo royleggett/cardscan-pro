@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
+import { sendGmail } from '../../shared/gmail.js';
 
 Deno.serve(async (req) => {
     try {
@@ -13,11 +14,10 @@ Deno.serve(async (req) => {
         }
 
         // Send notification email to admin
-        await base44.asServiceRole.integrations.Core.SendEmail({
+        await sendGmail(base44, {
             to: "admin@cardscan-pro.com",
-            from_name: "CardScan-Pro",
             subject: `New User Registration - ${newUser.full_name}`,
-            body: `
+            html: `
                 <h2>New User Registered in CardScan-Pro</h2>
                 <p><strong>Name:</strong> ${newUser.full_name}</p>
                 <p><strong>Email:</strong> ${newUser.email}</p>
@@ -27,11 +27,10 @@ Deno.serve(async (req) => {
         });
 
         // Send welcome email to the new user
-        await base44.asServiceRole.integrations.Core.SendEmail({
+        await sendGmail(base44, {
             to: newUser.email,
-            from_name: "CardScan-Pro",
             subject: "Welcome to CardScan-Pro!",
-            body: `
+            html: `
                 <h2>Welcome to CardScan-Pro, ${newUser.full_name}!</h2>
                 <p>Thank you for joining CardScan-Pro. We're excited to help you manage your business contacts and exhibition experiences.</p>
                 <h3>Getting Started:</h3>

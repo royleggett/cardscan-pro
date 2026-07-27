@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
+import { sendGmail } from '../../shared/gmail.js';
 
 Deno.serve(async (req) => {
   try {
@@ -148,14 +149,14 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-        const emailResult = await base44.integrations.Core.SendEmail({
+        const emailResult = await sendGmail(base44, {
           to: user.email,
           subject: `📋 Follow-up reminder: ${dueContacts.length} lead${dueContacts.length !== 1 ? "s" : ""} due today`,
-          body: fullHtml,
-          from_name: "CardScan-Pro"
+          html: fullHtml,
+          fromName: "CardScan-Pro"
         });
 
-        console.log(`Email sent to ${user.email} via Base44 SendEmail:`, JSON.stringify(emailResult));
+        console.log(`Email sent to ${user.email} via Gmail:`, JSON.stringify(emailResult));
 
         // Mark contacts as reminded so we don't re-send
         for (const { contact } of dueContacts) {

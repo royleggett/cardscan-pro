@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
+import { sendGmail } from '../../shared/gmail.js';
 
 const MILESTONES = [
   { entries: 25, badge: "Starter" },
@@ -133,11 +134,11 @@ Deno.serve(async (req) => {
           const html = buildHtmlEmail(name, entries, nextMilestone, potentialRewards);
 
           try {
-            await base44.asServiceRole.integrations.Core.SendEmail({
-              from_name: "CardScan-Pro Rewards",
+            await sendGmail(base44.asServiceRole || base44, {
               to: userRecord.email,
               subject: "🏆 You're So Close to Your Next Reward!",
-              body: html
+              html: html,
+              fromName: "CardScan-Pro Rewards"
             });
             emailsSent.push(userRecord.email);
           } catch (err) {

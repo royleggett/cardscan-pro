@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.21';
+import { sendGmail } from '../../shared/gmail.js';
 
 const DEFAULT_SUBJECT = `Thank you for visiting us at {exhibition_name}`;
 const DEFAULT_BODY = `Dear {contact_name},
@@ -72,38 +73,17 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-    // Send via Resend directly (Base44's built-in service only allows sending to app users)
     try {
-      const resendApiKey = Deno.env.get("RESEND_API_KEY");
-      if (!resendApiKey) {
-        return Response.json({ error: "RESEND_API_KEY secret is not set" }, { status: 500 });
-      }
-
       const fromName = senderName || user.full_name || "CardScan-Pro";
-      const fromAddress = "noreply@cardscan-pro.com";
 
-      const resendResponse = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${resendApiKey}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          from: `${fromName} <${fromAddress}>`,
-          to: [contactEmail],
-          subject,
-          html: htmlBody
-        })
+      const emailResult = await sendGmail(base44, {
+        to: contactEmail,
+        subject,
+        html: htmlBody,
+        fromName
       });
 
-      const emailResult = await resendResponse.json();
-
-      if (!resendResponse.ok) {
-        console.error("Resend error:", JSON.stringify(emailResult));
-        return Response.json({ error: "Failed to send email", details: emailResult }, { status: 500 });
-      }
-
-      console.log("Email sent successfully via Resend:", JSON.stringify(emailResult));
+      console.log("Email sent successfully via Gmail:", JSON.stringify(emailResult));
 
       // Mark contact as having received thank you email
       if (contactId) {
