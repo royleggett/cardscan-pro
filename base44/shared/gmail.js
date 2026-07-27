@@ -22,17 +22,55 @@ function encodeHeader(str) {
   return `=?utf-8?B?${btoa(binary)}?=`;
 }
 
+/**
+ * Strips HTML tags to produce a plain-text fallback.
+ * Removes script/style blocks, converts <br>/<p>/<div> to newlines, strips remaining tags,
+ * collapses whitespace, and unescapes HTML entities.
+ */
+function htmlToPlainText(html) {
+  let text = html
+    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+    .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n\n')
+    .replace(/<\/div>/gi, '\n')
+    .replace(/<li[^>]*>/gi, '\n• ')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+  return text.replace(/\n{3,}/g, '\n\n').trim();
+}
+
 export async function sendGmail(base44, { to, subject, html, fromName = "CardScan-Pro" }) {
   const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
+
+  const textFallback = htmlToPlainText(html);
+  const boundary = 'cardscan_boundary_' + Math.random().toString(36).slice(2);
 
   const rawMessage = [
     `From: ${encodeHeader(fromName)} <hello@cardscan-pro.com>`,
     `To: ${to}`,
     `Subject: ${encodeHeader(subject)}`,
-    `Content-Type: text/html; charset=utf-8`,
     `MIME-Version: 1.0`,
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
     ``,
-    html
+    `--${boundary}`,
+    `Content-Type: text/plain; charset=utf-8`,
+    `Content-Transfer-Encoding: 8bit`,
+    ``,
+    textFallback,
+    ``,
+    `--${boundary}`,
+    `Content-Type: text/html; charset=utf-8`,
+    `Content-Transfer-Encoding: 8bit`,
+    ``,
+    html,
+    ``,
+    `--${boundary}--`
   ].join('\r\n');
 
   // Encode UTF-8 to base64url (Gmail API requirement)
