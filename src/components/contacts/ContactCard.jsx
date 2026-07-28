@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Building2, Mail, Phone, Globe, MapPin, Trash2, ChevronDown, ChevronUp, Flag, Pencil, Flame, Thermometer, Snowflake, X, Plus, UserPlus } from "lucide-react";
+import { Building2, Mail, Phone, Globe, MapPin, Trash2, ChevronDown, ChevronUp, Flag, Pencil, Flame, Thermometer, Snowflake, X, Plus, UserPlus, CheckCircle2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   AlertDialog,
@@ -144,6 +144,12 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [], isOwn
                     </Badge>
                   );
                 })()}
+                {contact.follow_up_contacted && (
+                  <Badge variant="secondary" className="bg-green-100 text-green-800 px-3 py-1">
+                    <CheckCircle2 className="w-3 h-3 mr-1" />
+                    Contacted
+                  </Badge>
+                )}
               </div>
             </div>
             <div className="flex gap-2">
