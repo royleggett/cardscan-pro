@@ -4,7 +4,7 @@ import { sendGmail } from '../../shared/gmail.js';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const appUrl = Deno.env.get("BASE44_APP_URL") || new URL(req.url).origin;
+    const appUrl = (Deno.env.get("BASE44_APP_URL") || new URL(req.url).origin).replace(/\/+$/, '');
 
     // This runs as a scheduled job via service role
     const allUsers = await base44.asServiceRole.entities.User.list();
