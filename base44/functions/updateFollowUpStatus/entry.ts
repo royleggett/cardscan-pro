@@ -38,7 +38,7 @@ Deno.serve(async (req) => {
   </div>
   <h1 style="margin:0 0 8px 0;font-size:22px;color:#16a34a;">Marked as Contacted</h1>
   <p style="color:#6b7280;font-size:15px;margin:0;">Great work following up on this lead!</p>
-  <p style="color:#9ca3af;font-size:13px;margin-top:24px;">You can close this page and return to CardScan-Pro to see your updated contacts.</p>
+  <a href="https://cardscan-pro.com" style="display:inline-block;margin-top:24px;padding:14px 32px;background:#2563eb;color:#fff;text-decoration:none;font-size:16px;font-weight:bold;border-radius:12px;">Launch CardScan-Pro</a>
 </div></body></html>`
         : `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head><body style="margin:0;padding:0;background:#f5f7fa;font-family:Arial,sans-serif;">
 <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;text-align:center;">
@@ -47,7 +47,7 @@ Deno.serve(async (req) => {
   </div>
   <h1 style="margin:0 0 8px 0;font-size:22px;color:#374151;">Noted</h1>
   <p style="color:#6b7280;font-size:15px;margin:0;">We'll leave this lead as-is for now.</p>
-  <p style="color:#9ca3af;font-size:13px;margin-top:24px;">You can close this page and return to CardScan-Pro anytime.</p>
+  <a href="https://cardscan-pro.com" style="display:inline-block;margin-top:24px;padding:14px 32px;background:#2563eb;color:#fff;text-decoration:none;font-size:16px;font-weight:bold;border-radius:12px;">Launch CardScan-Pro</a>
 </div></body></html>`;
 
       return new Response(html, {
