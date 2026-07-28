@@ -98,12 +98,18 @@ export default function AllContacts() {
         
         <Button
           variant="outline"
-          onClick={() => setShowExport(true)}
+          onClick={() => {
+            if (isFreeUser) {
+              navigate(createPageUrl("Pricing"));
+            } else {
+              setShowExport(true);
+            }
+          }}
           disabled={contacts.length === 0}
           className="transition-all duration-150 active:scale-95"
         >
-          <Download className="w-4 h-4 mr-2" />
-          Export CSV
+          {isFreeUser ? <Lock className="w-4 h-4 mr-2" /> : <Download className="w-4 h-4 mr-2" />}
+          {isFreeUser ? "Upgrade to Export" : "Export CSV"}
         </Button>
       </div>
 

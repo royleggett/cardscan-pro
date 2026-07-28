@@ -52,10 +52,13 @@ Deno.serve(async (req) => {
             });
           }
 
-          // Update user subscription tier
-          await base44.asServiceRole.auth.updateMe({
-            subscription_tier: tier
-          });
+          // Update user's subscription tier via entities API (auth.updateMe won't work in webhook context)
+          const userRecords = await users.filter({ email: userEmail });
+          if (userRecords.length > 0) {
+            await users.update(userRecords[0].id, {
+              subscription_tier: tier
+            });
+          }
         }
         break;
       }
@@ -72,9 +75,13 @@ Deno.serve(async (req) => {
             });
           }
 
-          // Revert to free tier
-          // Note: We can't update the user directly from webhook, so we'll mark subscription as cancelled
-          // The frontend will check subscription status and update accordingly
+          // Revert user to free tier
+          const userRecords = await users.filter({ email: userEmail });
+          if (userRecords.length > 0) {
+            await users.update(userRecords[0].id, {
+              subscription_tier: 'free'
+            });
+          }
         }
         break;
       }

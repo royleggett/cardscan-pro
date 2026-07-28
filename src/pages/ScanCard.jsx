@@ -689,9 +689,10 @@ Always put the original URL in the website field.`;
     );
   }
 
-  const isFreeTier = user?.subscription_tier === 'free' || !user?.subscription_tier;
-  const isAdmin = user?.role === 'admin';
-  const hasReachedCardLimit = isFreeTier && cardCount >= 10 && !isAdmin;
+  // Only premium tier (or admin) gets unlimited card scanning.
+  // Free and Places tiers are both limited to 10 cards.
+  const hasUnlimitedScanning = user?.subscription_tier === 'premium' || user?.role === 'admin';
+  const hasReachedCardLimit = !hasUnlimitedScanning && cardCount >= 10;
 
   if (hasReachedCardLimit) {
     return (
@@ -863,7 +864,7 @@ Always put the original URL in the website field.`;
       <div className="max-w-2xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold">Scan Business Card</h1>
-          {isFreeTier && (
+          {!hasUnlimitedScanning && (
             <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-sm">
               <p className="text-amber-900 font-semibold">{cardCount}/10 cards used</p>
             </div>

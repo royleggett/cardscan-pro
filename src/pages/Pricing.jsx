@@ -40,7 +40,7 @@ const plans = [
   {
     tier: "premium",
     name: "Premium",
-    price: "£49",
+    price: "£59",
     period: "per year",
     description: "For networkers",
     features: [
