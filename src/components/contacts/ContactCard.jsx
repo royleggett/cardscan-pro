@@ -77,6 +77,12 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [], isOwn
     onUpdate();
   };
 
+  const handleContactedToggle = async () => {
+    if (!canEdit) return;
+    await base44.entities.Contact.update(contact.id, { follow_up_contacted: !contact.follow_up_contacted });
+    onUpdate();
+  };
+
   const handleTagToggle = async (tag) => {
     if (!canEdit) return;
     setSavingTag(true);
@@ -332,6 +338,21 @@ export default function ContactCard({ contact, onUpdate, defaultTags = [], isOwn
                     );
                   })()}
                 </div>
+              )}
+
+              {canEdit && (
+                <Button
+                  variant="outline"
+                  className={`w-full ${
+                    contact.follow_up_contacted
+                      ? "bg-green-50 text-green-700 hover:bg-green-100 hover:text-green-800 hover:border-green-300 border-green-200"
+                      : "text-gray-600 hover:bg-green-50 hover:text-green-700 hover:border-green-300"
+                  }`}
+                  onClick={handleContactedToggle}
+                >
+                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                  {contact.follow_up_contacted ? "Marked as Contacted ✓ (undo)" : "Mark as Contacted"}
+                </Button>
               )}
 
               <Button
