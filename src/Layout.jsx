@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
-import { Home, FolderOpen, Users, LogOut, Compass, HelpCircle, Menu, Trophy, CreditCard } from "lucide-react";
+import { Home, FolderOpen, Users, LogOut, Compass, HelpCircle, Menu, Trophy, CreditCard, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import InstallBanner from "@/components/InstallBanner";
+import InviteDialog from "@/components/InviteDialog";
 import {
   Sheet,
   SheetContent,
@@ -20,6 +21,7 @@ export default function Layout({ children }) {
   const [showAdminFlash, setShowAdminFlash] = useState(false);
   const [loading, setLoading] = useState(true);
   const [moreSheetOpen, setMoreSheetOpen] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
   const tapTimerRef = useRef(null);
 
   // Auto-detect system dark mode
@@ -205,6 +207,16 @@ export default function Layout({ children }) {
             <SheetTitle>More</SheetTitle>
           </SheetHeader>
           <div className="mt-6 space-y-2">
+            <button
+              onClick={() => {
+                setMoreSheetOpen(false);
+                setInviteOpen(true);
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all select-none text-white bg-blue-600 hover:bg-blue-700"
+            >
+              <UserPlus className="w-5 h-5" />
+              <span className="font-medium">Invite Friends</span>
+            </button>
             {moreItems.map(({ label, icon: Icon, path }) => (
               <Link
                 key={path}
@@ -223,6 +235,8 @@ export default function Layout({ children }) {
           </div>
         </SheetContent>
       </Sheet>
+
+      <InviteDialog open={inviteOpen} onOpenChange={setInviteOpen} />
     </div>
   );
 }
