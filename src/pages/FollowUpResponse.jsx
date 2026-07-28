@@ -21,12 +21,13 @@ export default function FollowUpResponse() {
       }
 
       try {
-        const res = await base44.functions.invoke("updateFollowUpStatus", {
-          contact_id: contactId,
-          action
+        const res = await fetch("/api/functions/updateFollowUpStatus", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contact_id: contactId, action })
         });
-        // Handle both wrapped ({data:{success}}) and unwrapped ({success}) responses
-        const success = res?.data?.success || res?.success;
+        const data = await res.json();
+        const success = data?.success || data?.data?.success;
         if (success) {
           setStatus(action === "yes" ? "success" : "no-action");
         } else {
