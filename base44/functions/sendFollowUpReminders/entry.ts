@@ -89,70 +89,37 @@ Deno.serve(async (req) => {
         grouped[item.label].push(item);
       }
 
-      // Build HTML email body with YES/NO follow-up buttons
-      let htmlBody = `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
-        <h2 style="margin-bottom:8px;">📋 Follow-up Reminder</h2>
-        <p style="color:#6b7280;margin-bottom:24px;">You have ${dueContacts.length} contact${dueContacts.length !== 1 ? "s" : ""} due for follow-up:</p>`;
+      // Build plain-text email body (plain text for best deliverability with Sky/Yahoo)
+      let textBody = `Follow-up Reminder\n\nYou have ${dueContacts.length} contact${dueContacts.length !== 1 ? "s" : ""} due for follow-up:\n`;
 
       for (const [label, items] of Object.entries(grouped)) {
-        htmlBody += `<h3 style="margin:16px 0 8px 0;">${label} Leads</h3>`;
+        textBody += `\n${label} Leads\n`;
         for (const { contact, exhibition } of items) {
           const contactInfo = [
             contact.company || null,
             exhibition?.name || null,
             contact.email || null,
             contact.phone_mobile || null
-          ].filter(Boolean).join(" · ");
+          ].filter(Boolean).join(" | ");
 
           const yesUrl = `${appUrl}/FollowUpResponse?contact_id=${contact.id}&action=yes`;
           const noUrl = `${appUrl}/FollowUpResponse?contact_id=${contact.id}&action=no`;
 
-          htmlBody += `<div style="border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin-bottom:12px;">
-            <p style="margin:0 0 4px 0;font-weight:bold;">${contact.full_name}</p>
-            <p style="margin:0 0 12px 0;color:#6b7280;font-size:14px;">${contactInfo}</p>
-            <p style="margin:0;font-size:14px;">Have you contacted them?
-              <a href="${yesUrl}" style="background:#16a34a;color:white;padding:6px 16px;text-decoration:none;border-radius:6px;margin-left:8px;font-weight:bold;">YES</a>
-              <a href="${noUrl}" style="background:#d1d5db;color:#374151;padding:6px 16px;text-decoration:none;border-radius:6px;margin-left:4px;font-weight:bold;">NO</a>
-            </p>
-          </div>`;
+          textBody += `\n- ${contact.full_name}`;
+          if (contactInfo) textBody += `\n  ${contactInfo}`;
+          textBody += `\n  Have you contacted them?`;
+          textBody += `\n  YES: ${yesUrl}`;
+          textBody += `\n  NO:  ${noUrl}\n`;
         }
       }
 
-      htmlBody += `<p style="margin-top:24px;color:#6b7280;font-size:14px;">Log in to CardScan-Pro to manage your contacts.</p></div>`;
+      textBody += `\nLog in to CardScan-Pro to manage your contacts.`;
 
       try {
-        const fullHtml = `<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#f5f7fa;font-family:Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f7fa;padding:40px 20px;">
-    <tr><td align="center">
-      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
-        <tr>
-          <td style="background:linear-gradient(135deg,#3b82f6,#8b5cf6);padding:28px 32px;text-align:center;">
-            <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:700;">📋 Follow-up Reminder</h1>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding:28px 32px;">
-            ${htmlBody}
-          </td>
-        </tr>
-        <tr>
-          <td style="background:#f9fafb;padding:16px 32px;text-align:center;border-top:1px solid #eee;">
-            <p style="margin:0;color:#999;font-size:13px;">Sent via CardScan-Pro</p>
-          </td>
-        </tr>
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
-
         const emailResult = await sendGmail(base44, {
           to: user.email,
-          subject: `📋 Follow-up reminder: ${dueContacts.length} lead${dueContacts.length !== 1 ? "s" : ""} due today`,
-          html: fullHtml,
+          subject: `Follow-up reminder: ${dueContacts.length} lead${dueContacts.length !== 1 ? "s" : ""} due today`,
+          text: textBody,
           fromName: "CardScan-Pro"
         });
 

@@ -45,33 +45,53 @@ function htmlToPlainText(html) {
   return text.replace(/\n{3,}/g, '\n\n').trim();
 }
 
-export async function sendGmail(base44, { to, subject, html, fromName = "CardScan-Pro" }) {
+export async function sendGmail(base44, { to, subject, html, text, fromName = "CardScan-Pro" }) {
   const { accessToken } = await base44.asServiceRole.connectors.getConnection('gmail');
 
-  const textFallback = htmlToPlainText(html);
-  const boundary = 'cardscan_boundary_' + Math.random().toString(36).slice(2);
+  const fromHeader = `From: ${encodeHeader(fromName)} <hello@cardscan-pro.com>`;
+  const toHeader = `To: ${to}`;
+  const subjectHeader = `Subject: ${encodeHeader(subject)}`;
+  const mimeHeader = `MIME-Version: 1.0`;
 
-  const rawMessage = [
-    `From: ${encodeHeader(fromName)} <hello@cardscan-pro.com>`,
-    `To: ${to}`,
-    `Subject: ${encodeHeader(subject)}`,
-    `MIME-Version: 1.0`,
-    `Content-Type: multipart/alternative; boundary="${boundary}"`,
-    ``,
-    `--${boundary}`,
-    `Content-Type: text/plain; charset=utf-8`,
-    `Content-Transfer-Encoding: 8bit`,
-    ``,
-    textFallback,
-    ``,
-    `--${boundary}`,
-    `Content-Type: text/html; charset=utf-8`,
-    `Content-Transfer-Encoding: 8bit`,
-    ``,
-    html,
-    ``,
-    `--${boundary}--`
-  ].join('\r\n');
+  let rawMessage;
+
+  if (text && !html) {
+    // Plain-text-only email (best deliverability with strict filters like Sky/Yahoo)
+    rawMessage = [
+      fromHeader,
+      toHeader,
+      subjectHeader,
+      mimeHeader,
+      `Content-Type: text/plain; charset=utf-8`,
+      `Content-Transfer-Encoding: 8bit`,
+      ``,
+      text
+    ].join('\r\n');
+  } else {
+    const textFallback = html ? htmlToPlainText(html) : text;
+    const boundary = 'cardscan_boundary_' + Math.random().toString(36).slice(2);
+    rawMessage = [
+      fromHeader,
+      toHeader,
+      subjectHeader,
+      mimeHeader,
+      `Content-Type: multipart/alternative; boundary="${boundary}"`,
+      ``,
+      `--${boundary}`,
+      `Content-Type: text/plain; charset=utf-8`,
+      `Content-Transfer-Encoding: 8bit`,
+      ``,
+      textFallback,
+      ``,
+      `--${boundary}`,
+      `Content-Type: text/html; charset=utf-8`,
+      `Content-Transfer-Encoding: 8bit`,
+      ``,
+      html,
+      ``,
+      `--${boundary}--`
+    ].join('\r\n');
+  }
 
   // Encode UTF-8 to base64url (Gmail API requirement)
   const bytes = new TextEncoder().encode(rawMessage);
