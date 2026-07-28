@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Trash2, Mail, Shield, User, ArrowLeft, UserPlus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Trash2, Mail, Shield, User, ArrowLeft, UserPlus, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
@@ -18,6 +19,8 @@ export default function AdminUsers() {
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState("admin");
   const [inviting, setInviting] = useState(false);
+  const [inviteStatus, setInviteStatus] = useState("idle"); // idle | sent | error
+  const [inviteError, setInviteError] = useState("");
 
   useEffect(() => {
     loadData();
@@ -49,18 +52,36 @@ export default function AdminUsers() {
   };
 
   const handleInvite = async () => {
+    const email = inviteEmail.trim();
+    if (!email) return;
     setInviting(true);
+    setInviteError("");
     try {
-      await base44.users.inviteUser(inviteEmail.trim(), inviteRole);
-      setInviteOpen(false);
-      setInviteEmail("");
-      alert(`Invitation sent to ${inviteEmail} as ${inviteRole}. They'll receive an email to set up their account.`);
-      loadData();
+      await base44.users.inviteUser(email, inviteRole);
+      setInviteStatus("sent");
+      setInviting(false);
+      setTimeout(() => {
+        setInviteOpen(false);
+        setInviteStatus("idle");
+        setInviteEmail("");
+        setInviteRole("admin");
+        loadData();
+      }, 2000);
     } catch (err) {
-      alert("Failed to send invite: " + (err?.message || "Unknown error"));
-    } finally {
+      setInviteStatus("error");
+      setInviteError(err?.message || "Unknown error");
       setInviting(false);
     }
+  };
+
+  const closeInvite = (v) => {
+    if (!v) {
+      setInviteStatus("idle");
+      setInviteEmail("");
+      setInviteRole("admin");
+      setInviteError("");
+    }
+    setInviteOpen(v);
   };
 
   if (loading) {
@@ -180,50 +201,69 @@ export default function AdminUsers() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <AlertDialog open={inviteOpen} onOpenChange={(v) => { setInviteOpen(v); if (!v) { setInviteEmail(""); setInviteRole("admin"); } }}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Invite New User</AlertDialogTitle>
-            <AlertDialogDescription>
+      <Dialog open={inviteOpen} onOpenChange={closeInvite}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Invite New User</DialogTitle>
+            <DialogDescription>
               Send an invitation email. The recipient will set up their own password to join the app.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <div className="space-y-3 py-2">
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-1 block">Email Address</label>
-              <input
-                type="email"
-                value={inviteEmail}
-                onChange={(e) => setInviteEmail(e.target.value)}
-                placeholder="support@cardscan-pro.com"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                autoFocus
-              />
+            </DialogDescription>
+          </DialogHeader>
+
+          {inviteStatus === "sent" ? (
+            <div className="flex flex-col items-center py-6 gap-2">
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <Check className="w-6 h-6 text-green-600" />
+              </div>
+              <p className="text-center font-medium text-gray-900">Invitation sent!</p>
             </div>
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-1 block">Role</label>
-              <select
-                value={inviteRole}
-                onChange={(e) => setInviteRole(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          ) : (
+            <div className="space-y-3 py-2">
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Email Address</label>
+                <input
+                  type="email"
+                  value={inviteEmail}
+                  onChange={(e) => setInviteEmail(e.target.value)}
+                  placeholder="support@cardscan-pro.com"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && inviteEmail.trim() && !inviting) handleInvite();
+                  }}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Role</label>
+                <select
+                  value={inviteRole}
+                  onChange={(e) => setInviteRole(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="admin">Admin (full access)</option>
+                  <option value="user">User (standard access)</option>
+                </select>
+              </div>
+              {inviteStatus === "error" && (
+                <p className="text-sm text-red-600">{inviteError}</p>
+              )}
+            </div>
+          )}
+
+          {inviteStatus !== "sent" && (
+            <DialogFooter>
+              <Button variant="outline" onClick={() => closeInvite(false)}>Cancel</Button>
+              <Button
+                onClick={handleInvite}
+                disabled={!inviteEmail.trim() || inviting}
+                className="bg-blue-600 hover:bg-blue-700"
               >
-                <option value="admin">Admin (full access)</option>
-                <option value="user">User (standard access)</option>
-              </select>
-            </div>
-          </div>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleInvite}
-              disabled={!inviteEmail.trim() || inviting}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              {inviting ? "Sending..." : "Send Invitation"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+                {inviting ? "Sending..." : "Send Invitation"}
+              </Button>
+            </DialogFooter>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
