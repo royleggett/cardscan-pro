@@ -102,8 +102,8 @@ Deno.serve(async (req) => {
             contact.phone_mobile || null
           ].filter(Boolean).join(" | ");
 
-          const yesUrl = `${appUrl}/FollowUpResponse?contact_id=${contact.id}&action=yes`;
-          const noUrl = `${appUrl}/FollowUpResponse?contact_id=${contact.id}&action=no`;
+          const yesUrl = `${appUrl}/api/functions/updateFollowUpStatus?contact_id=${contact.id}&action=yes`;
+          const noUrl = `${appUrl}/api/functions/updateFollowUpStatus?contact_id=${contact.id}&action=no`;
 
           textBody += `\n- ${contact.full_name}`;
           if (contactInfo) textBody += `\n  ${contactInfo}`;
