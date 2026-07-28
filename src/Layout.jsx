@@ -4,6 +4,7 @@ import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { Home, FolderOpen, Users, LogOut, Compass, HelpCircle, Menu, Trophy, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import InstallBanner from "@/components/InstallBanner";
 import {
   Sheet,
   SheetContent,
@@ -124,6 +125,8 @@ export default function Layout({ children }) {
           </div>
         </header>
       )}
+
+      {!isSuccessPage && <InstallBanner />}
 
       <main className={isSuccessPage ? "min-h-screen" : ""}>{children}</main>
 

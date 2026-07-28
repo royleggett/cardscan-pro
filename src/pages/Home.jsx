@@ -7,7 +7,7 @@ import { Plus, FolderOpen, Users, Upload, Settings, Flame, Thermometer, Snowflak
 import JoinExhibitionDialog from "@/components/exhibitions/JoinExhibitionDialog";
 import LandingPage from "@/components/LandingPage";
 import AddPlaceDialog from "@/components/places/AddPlaceDialog";
-import InstallBanner from "@/components/InstallBanner";
+
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -238,7 +238,6 @@ export default function Home() {
         onOpenChange={setShowAddPlace}
         onPlaceAdded={() => setShowAddPlace(false)}
       />
-      <InstallBanner bottomClass="bottom-24" />
     </div>
   );
 }
