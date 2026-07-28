@@ -108,8 +108,8 @@ Deno.serve(async (req) => {
           textBody += `\n- ${contact.full_name}`;
           if (contactInfo) textBody += `\n  ${contactInfo}`;
           textBody += `\n  Have you contacted them?`;
-          textBody += `\n  YES: ${yesUrl}`;
-          textBody += `\n  NO:  ${noUrl}\n`;
+          textBody += `\n  YES: <${yesUrl}>`;
+          textBody += `\n  NO:  <${noUrl}>\n`;
         }
       }
 
