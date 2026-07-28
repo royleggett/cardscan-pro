@@ -65,6 +65,34 @@ export default function Help() {
             <p className="mt-2">You can set this when saving a card, or change it later from the contact's detail page.</p>
           </HelpSection>
 
+          <HelpSection icon="🔔" title="What are Follow-Up Reminders?">
+            <p>Never let a hot lead go cold again! When you tag a contact as <strong>Hot</strong>, <strong>Warm</strong>, or <strong>Cool</strong>, CardScan-Pro automatically sends you a <strong>follow-up reminder email</strong> when it's time to reach out.</p>
+            <ul className="list-disc pl-5 space-y-1 mt-2">
+              <li>🔥 <strong>Hot</strong> — reminder after 1 day</li>
+              <li>🌡️ <strong>Warm</strong> — reminder after 3 days</li>
+              <li>❄️ <strong>Cool</strong> — reminder after 7 days</li>
+            </ul>
+            <p className="mt-2">The email includes a link for each lead — just tap <strong>"Yes, I've contacted them"</strong> or <strong>"Not yet"</strong> to update their status.</p>
+            <p className="mt-2">Once marked as contacted, a green <strong>"Contacted"</strong> badge appears on the contact card. You can also toggle this manually by expanding any contact and tapping the Contacted button.</p>
+          </HelpSection>
+
+          <HelpSection icon="📱" title="Can I install CardScan-Pro on my phone?">
+            <p>Yes! CardScan-Pro is a <strong>Progressive Web App (PWA)</strong>, which means you can install it directly on your phone — no App Store or Google Play needed.</p>
+            <p className="mt-2"><strong>On iPhone (Safari):</strong></p>
+            <ul className="list-disc pl-5 space-y-1 mt-1">
+              <li>Tap the <strong>Share</strong> button at the bottom</li>
+              <li>Tap <strong>"Add to Home Screen"</strong></li>
+              <li>Tap <strong>"Add"</strong> to confirm</li>
+            </ul>
+            <p className="mt-2"><strong>On Android (Chrome):</strong></p>
+            <ul className="list-disc pl-5 space-y-1 mt-1">
+              <li>Tap the <strong>3 dots</strong> at the top right</li>
+              <li>Tap <strong>"Install and Create Shortcut"</strong></li>
+              <li>Then tap <strong>"Create Shortcut"</strong></li>
+            </ul>
+            <p className="mt-2">Once installed, CardScan-Pro launches full screen — just like a native app! If you need a walkthrough, the banner at the top of the app has a link to a step-by-step guide with video.</p>
+          </HelpSection>
+
           <HelpSection icon="📧" title="How do I send a Thank You email?">
             <p>After scanning a card, you'll be asked if you'd like to send the contact a friendly <strong>Thank You email</strong>. Just tick the box and it goes automatically!</p>
             <p className="mt-2">You can also customise the email template to match your own style. Go to <em>Settings → Email Templates</em> to personalise the message.</p>
