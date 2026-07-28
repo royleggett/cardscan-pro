@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Trash2, Mail, Shield, User, ArrowLeft } from "lucide-react";
+import { Trash2, Mail, Shield, User, ArrowLeft, UserPlus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
@@ -14,6 +14,10 @@ export default function AdminUsers() {
   const [currentUser, setCurrentUser] = useState(null);
   const [userToDelete, setUserToDelete] = useState(null);
   const [userToPromote, setUserToPromote] = useState(null);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState("admin");
+  const [inviting, setInviting] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -44,6 +48,21 @@ export default function AdminUsers() {
     setUserToPromote(null);
   };
 
+  const handleInvite = async () => {
+    setInviting(true);
+    try {
+      await base44.users.inviteUser(inviteEmail.trim(), inviteRole);
+      setInviteOpen(false);
+      setInviteEmail("");
+      alert(`Invitation sent to ${inviteEmail} as ${inviteRole}. They'll receive an email to set up their account.`);
+      loadData();
+    } catch (err) {
+      alert("Failed to send invite: " + (err?.message || "Unknown error"));
+    } finally {
+      setInviting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -68,6 +87,14 @@ export default function AdminUsers() {
         <Link to={createPageUrl("AdminPlaces")} className="mb-6 block">
           <Button variant="outline" className="w-full">Moderate Community Places</Button>
         </Link>
+
+        <Button
+          onClick={() => setInviteOpen(true)}
+          className="w-full mb-6 bg-blue-600 hover:bg-blue-700"
+        >
+          <UserPlus className="w-4 h-4 mr-2" />
+          Invite New User
+        </Button>
 
         <div className="space-y-3">
           {users.map(u => (
@@ -148,6 +175,51 @@ export default function AdminUsers() {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
               Delete User
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={inviteOpen} onOpenChange={(v) => { setInviteOpen(v); if (!v) { setInviteEmail(""); setInviteRole("admin"); } }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Invite New User</AlertDialogTitle>
+            <AlertDialogDescription>
+              Send an invitation email. The recipient will set up their own password to join the app.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="space-y-3 py-2">
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">Email Address</label>
+              <input
+                type="email"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                placeholder="support@cardscan-pro.com"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                autoFocus
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-1 block">Role</label>
+              <select
+                value={inviteRole}
+                onChange={(e) => setInviteRole(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="admin">Admin (full access)</option>
+                <option value="user">User (standard access)</option>
+              </select>
+            </div>
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleInvite}
+              disabled={!inviteEmail.trim() || inviting}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              {inviting ? "Sending..." : "Send Invitation"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
