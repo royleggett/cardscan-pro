@@ -31,9 +31,9 @@ export default function AddToHomeScreen() {
   ];
 
   const androidSteps = [
-    { icon: MoreVertical, text: "Tap the three-dot menu in the top right of Chrome" },
-    { text: 'Tap "Add to Home screen"' },
-    { text: 'Tap "Add" to confirm' },
+    { icon: MoreVertical, text: "Tap the 3 dots at the top right" },
+    { text: 'Tap "Install and Create Shortcut"' },
+    { text: 'Then tap "Create Shortcut"' },
     { icon: Check, text: "CardScan-Pro now appears on your home screen!" },
   ];
 
