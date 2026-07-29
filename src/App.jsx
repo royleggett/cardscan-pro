@@ -9,6 +9,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 import Features from './pages/Features';
 import AddToHomeScreen from './pages/AddToHomeScreen';
 import PageTransition from "@/components/PageTransition";
@@ -87,6 +88,7 @@ const AuthenticatedApp = () => {
         </LayoutWrapper>
       } />
       <Route path="/PrivacyPolicy" element={<PrivacyPolicy />} />
+      <Route path="/TermsOfService" element={<TermsOfService />} />
       <Route path="/Features" element={
         <LayoutWrapper currentPageName="Features">
           <Features />

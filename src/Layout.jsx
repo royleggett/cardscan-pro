@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
-import { Home, FolderOpen, Users, LogOut, Compass, HelpCircle, Menu, Trophy, CreditCard, UserPlus } from "lucide-react";
+import { Home, FolderOpen, Users, LogOut, Compass, HelpCircle, Menu, Trophy, CreditCard, UserPlus, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import InstallBanner from "@/components/InstallBanner";
 import InviteDialog from "@/components/InviteDialog";
@@ -83,6 +83,7 @@ export default function Layout({ children }) {
     { label: "Rewards", icon: Trophy, path: "Rewards" },
     { label: "Plans", icon: CreditCard, path: "Pricing" },
     { label: "Help", icon: HelpCircle, path: "Help" },
+    { label: "Terms", icon: FileText, path: "TermsOfService" },
   ];
 
   const moreActive = isActive("Rewards") || isActive("Pricing") || isActive("Help");
