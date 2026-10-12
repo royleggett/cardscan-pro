@@ -100,7 +100,10 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
       const { latitude, longitude } = position.coords;
       
       // Use reverse geocoding API
-      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+      const revController = new AbortController();
+      const revTimeout = setTimeout(() => revController.abort(), 8000);
+      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`, { signal: revController.signal });
+      clearTimeout(revTimeout);
       const data = await response.json();
       
       if (data.display_name) {
@@ -116,10 +119,12 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
   };
 
   const geocodeAddress = async (address, placeName) => {
+    // Search worldwide first so places abroad (e.g. Germany) resolve, then a
+    // UK-biased query as a fallback for vague UK addresses.
     const queries = [
       address,
-      `${address}, UK`,
       placeName ? `${placeName}, ${address}` : null,
+      `${address}, UK`,
     ].filter(Boolean);
     const postcodeMatch = address.match(/[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}/i);
     if (postcodeMatch) queries.push(postcodeMatch[0]);
@@ -127,9 +132,13 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
     for (const q of queries) {
       try {
         const encoded = encodeURIComponent(q);
-        const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encoded}&limit=1&countrycodes=gb`, {
-          headers: { 'User-Agent': 'CardScanPro/1.0 (geocoding)' }
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encoded}&limit=1`, {
+          headers: { 'Accept-Language': 'en' },
+          signal: controller.signal
         });
+        clearTimeout(timeoutId);
         const data = await resp.json();
         if (data && data.length > 0) {
           const lat = parseFloat(data[0].lat);
