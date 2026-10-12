@@ -23,6 +23,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import DrawerSelect from "@/components/ui/drawer-select";
+import { geocodeAddress, enqueuePlace } from "@/lib/placeSyncQueue";
+import { useToast } from "@/components/ui/use-toast";
 
 const PLACE_CATEGORIES = [
   { value: "Restaurant", label: "Restaurant" },
@@ -53,6 +55,7 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
   const [isAdmin, setIsAdmin] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
   const [selectedUserEmail, setSelectedUserEmail] = useState(null);
+  const { toast } = useToast();
   const [teamMembers, setTeamMembers] = useState([]);
 
   useEffect(() => {
@@ -118,66 +121,33 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
     setLocating(false);
   };
 
-  const geocodeAddress = async (address, placeName) => {
-    // Search worldwide first so places abroad (e.g. Germany) resolve, then a
-    // UK-biased query as a fallback for vague UK addresses.
-    const queries = [
-      address,
-      placeName ? `${placeName}, ${address}` : null,
-      `${address}, UK`,
-    ].filter(Boolean);
-    const postcodeMatch = address.match(/[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}/i);
-    if (postcodeMatch) queries.push(postcodeMatch[0]);
-
-    for (const q of queries) {
-      try {
-        const encoded = encodeURIComponent(q);
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000);
-        const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encoded}&limit=1`, {
-          headers: { 'Accept-Language': 'en' },
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-        const data = await resp.json();
-        if (data && data.length > 0) {
-          const lat = parseFloat(data[0].lat);
-          const lon = parseFloat(data[0].lon);
-          if (!isNaN(lat) && !isNaN(lon)) return { latitude: lat, longitude: lon };
-        }
-      } catch (err) {
-        console.error("Geocoding error:", err);
-      }
-    }
-    return null;
-  };
-
   const handleSave = async () => {
     if (!placeData.name) return;
     setSaving(true);
-    try {
-      // Auto-geocode from address if user didn't use Locate Me
-      let finalData = { ...placeData };
-      if (!finalData.latitude && finalData.address && finalData.address.trim()) {
-        const coords = await geocodeAddress(finalData.address, finalData.name);
-        if (coords) finalData = { ...finalData, ...coords };
-      }
 
-      const createData = {
-        exhibition_id: exhibitionId || "none",
-        ...finalData,
-        team_members: teamMembers
-      };
-      
-      const phantomEmails = [
-        "sarah.mitchell@demo.app",
-        "james.chen@demo.app",
-        "maria.rodriguez@demo.app",
-        "david.thompson@demo.app",
-        "emily.watson@demo.app"
-      ];
-      const isPostingAsPhantom = isAdmin && selectedUserEmail && phantomEmails.includes(selectedUserEmail);
-      
+    // Auto-geocode from address if user didn't use Locate Me
+    let finalData = { ...placeData };
+    if (!finalData.latitude && finalData.address && finalData.address.trim()) {
+      const coords = await geocodeAddress(finalData.address, finalData.name);
+      if (coords) finalData = { ...finalData, ...coords };
+    }
+
+    const createData = {
+      exhibition_id: exhibitionId || "none",
+      ...finalData,
+      team_members: teamMembers
+    };
+
+    const phantomEmails = [
+      "sarah.mitchell@demo.app",
+      "james.chen@demo.app",
+      "maria.rodriguez@demo.app",
+      "david.thompson@demo.app",
+      "emily.watson@demo.app"
+    ];
+    const isPostingAsPhantom = isAdmin && selectedUserEmail && phantomEmails.includes(selectedUserEmail);
+
+    try {
       if (isPostingAsPhantom) {
         // Admin creating as a phantom user - use backend function
         await createPlaceAsUser({
@@ -194,7 +164,21 @@ export default function AddPlaceDialog({ open, onOpenChange, exhibitionId, onPla
       onOpenChange(false);
     } catch (error) {
       console.error("Save error:", error);
-      alert(`Failed to save: ${error.message}`);
+      if (!navigator.onLine) {
+        // No connection: keep the place on this device and sync when back online
+        enqueuePlace({
+          data: createData,
+          asUserEmail: isPostingAsPhantom ? selectedUserEmail : null
+        });
+        toast({
+          title: "Saved on your device",
+          description: "No internet connection — this place will sync automatically when you're back online."
+        });
+        setPlaceData({ name: "", category: "Restaurant", address: "", website: "", notes: "", rating: 0, is_public: false, attributes: [] });
+        onOpenChange(false);
+      } else {
+        alert(`Failed to save: ${error.message}`);
+      }
     } finally {
       setSaving(false);
     }

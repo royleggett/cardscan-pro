@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import DrawerSelect from "@/components/ui/drawer-select";
+import { geocodeAddress } from "@/lib/placeSyncQueue";
 
 const PLACE_CATEGORIES = [
   { value: "Restaurant", label: "Restaurant" },
@@ -78,40 +79,6 @@ export default function EditPlaceDialog({ open, onOpenChange, place, onPlaceUpda
       alert("Could not get location. Please enable location access.");
     }
     setLocating(false);
-  };
-
-  const geocodeAddress = async (address, placeName) => {
-    // Search worldwide first so places abroad (e.g. Germany) resolve, then a
-    // UK-biased query as a fallback for vague UK addresses.
-    const queries = [
-      address,
-      placeName ? `${placeName}, ${address}` : null,
-      `${address}, UK`,
-    ].filter(Boolean);
-    const postcodeMatch = address.match(/[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}/i);
-    if (postcodeMatch) queries.push(postcodeMatch[0]);
-
-    for (const q of queries) {
-      try {
-        const encoded = encodeURIComponent(q);
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000);
-        const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encoded}&limit=1`, {
-          headers: { 'Accept-Language': 'en' },
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-        const data = await resp.json();
-        if (data && data.length > 0) {
-          const lat = parseFloat(data[0].lat);
-          const lon = parseFloat(data[0].lon);
-          if (!isNaN(lat) && !isNaN(lon)) return { latitude: lat, longitude: lon };
-        }
-      } catch (err) {
-        console.error("Geocoding error:", err);
-      }
-    }
-    return null;
   };
 
   const handleSave = async () => {

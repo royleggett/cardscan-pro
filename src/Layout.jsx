@@ -6,6 +6,7 @@ import { Home, FolderOpen, Users, LogOut, Compass, HelpCircle, Menu, Trophy, Cre
 import { Button } from "@/components/ui/button";
 import InstallBanner from "@/components/InstallBanner";
 import InviteDialog from "@/components/InviteDialog";
+import PlaceSyncManager from "@/components/PlaceSyncManager";
 import {
   Sheet,
   SheetContent,
@@ -238,6 +239,7 @@ export default function Layout({ children }) {
       </Sheet>
 
       <InviteDialog open={inviteOpen} onOpenChange={setInviteOpen} />
+      <PlaceSyncManager />
     </div>
   );
 }
