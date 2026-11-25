@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
+import { BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import HelpSection from "../components/help/HelpSection";
 import FeedbackForm from "../components/help/FeedbackForm";
@@ -15,6 +18,14 @@ export default function Help() {
         <div className="text-5xl mb-3">💡</div>
         <h1 className="text-3xl font-bold text-gray-900">Help Centre</h1>
         <p className="text-gray-500 mt-2">Everything you need to know about CardScan-Pro — written in plain English, we promise!</p>
+
+        <Link
+          to={createPageUrl("UserManual")}
+          className="inline-flex items-center gap-2 mt-5 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-all active:scale-95"
+        >
+          <BookOpen className="w-4 h-4" />
+          Open the full User Manual
+        </Link>
       </div>
 
       {/* Tabs */}

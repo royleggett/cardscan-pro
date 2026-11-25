@@ -12,6 +12,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import Features from './pages/Features';
 import AddToHomeScreen from './pages/AddToHomeScreen';
+import UserManual from './pages/UserManual';
 import PageTransition from "@/components/PageTransition";
 import FollowUpResponse from './pages/FollowUpResponse';
 
@@ -85,6 +86,11 @@ const AuthenticatedApp = () => {
       <Route path="/AddToHomeScreen" element={
         <LayoutWrapper currentPageName="AddToHomeScreen">
           <AddToHomeScreen />
+        </LayoutWrapper>
+      } />
+      <Route path="/UserManual" element={
+        <LayoutWrapper currentPageName="UserManual">
+          <UserManual />
         </LayoutWrapper>
       } />
       <Route path="/PrivacyPolicy" element={<PrivacyPolicy />} />

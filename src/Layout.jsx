@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
-import { Home, FolderOpen, Users, LogOut, Compass, HelpCircle, Menu, Trophy, CreditCard, UserPlus, FileText, Sun, Moon } from "lucide-react";
+import { Home, FolderOpen, Users, LogOut, Compass, HelpCircle, Menu, Trophy, CreditCard, UserPlus, FileText, Sun, Moon, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import useTheme from "@/hooks/useTheme";
 import InstallBanner from "@/components/InstallBanner";
@@ -77,10 +77,11 @@ export default function Layout({ children }) {
     { label: "Rewards", icon: Trophy, path: "Rewards" },
     { label: "Plans", icon: CreditCard, path: "Pricing" },
     { label: "Help", icon: HelpCircle, path: "Help" },
+    { label: "User Manual", icon: BookOpen, path: "UserManual" },
     { label: "Terms", icon: FileText, path: "TermsOfService" },
   ];
 
-  const moreActive = isActive("Rewards") || isActive("Pricing") || isActive("Help");
+  const moreActive = isActive("Rewards") || isActive("Pricing") || isActive("Help") || isActive("UserManual");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 pb-20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
