@@ -85,9 +85,5 @@
       "default": "free",
       "description": "Current subscription tier"
     }
-  },
-  "required": [
-    "resend_api_key",
-    "resend_from_email"
-  ]
+  }
 }
