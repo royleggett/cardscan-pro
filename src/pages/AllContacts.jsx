@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
 import ContactCard from "../components/contacts/ContactCard";
+import ContactFilters from "../components/contacts/ContactFilters";
 import ExportCsvDialog from "../components/contacts/ExportCsvDialog";
 import PullToRefresh from "@/components/PullToRefresh";
 
@@ -18,6 +19,7 @@ export default function AllContacts() {
   const [exhibitions, setExhibitions] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
   const [leadFilter, setLeadFilter] = useState("all");
+  const [filters, setFilters] = useState({ exhibition: "all", country: "all", fromDate: "", toDate: "" });
   const [showExport, setShowExport] = useState(false);
   const [defaultTags, setDefaultTags] = useState([]);
   const [user, setUser] = useState(null);
@@ -34,7 +36,7 @@ export default function AllContacts() {
       
       const [contactsList, exhibitionsList] = await Promise.all([
         Contact.filter({ created_by: currentUser.email }, "-created_date"),
-        Exhibition.filter({ created_by: currentUser.email })
+        Exhibition.filter({}, "-created_date")
       ]);
       
       const exhibitionsMap = {};
@@ -52,17 +54,35 @@ export default function AllContacts() {
     }
   };
 
+  const exhibitionOptions = Object.entries(exhibitions)
+    .map(([id, name]) => ({ id, name }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const countries = [...new Set(contacts.map(c => c.country).filter(Boolean))].sort();
+
   const filteredContacts = contacts.filter(contact => {
-    const query = searchQuery.toLowerCase();
-    const matchesSearch = (
-      (contact.full_name?.toLowerCase().includes(query)) ||
-      (contact.company?.toLowerCase().includes(query)) ||
-      (contact.email?.toLowerCase().includes(query)) ||
-      (contact.country?.toLowerCase().includes(query)) ||
-      (exhibitions[contact.exhibition_id]?.toLowerCase().includes(query))
-    );
+    const query = searchQuery.trim().toLowerCase();
+    const matchesSearch = !query || [
+      contact.full_name,
+      contact.company,
+      contact.email,
+      contact.phone_mobile,
+      contact.phone_landline,
+      contact.phone_other,
+      contact.phone_fax,
+      contact.position,
+      contact.country,
+      exhibitions[contact.exhibition_id],
+    ].some(value => value?.toLowerCase().includes(query));
+
     const matchesLead = leadFilter === "all" || (contact.follow_up_type || "none") === leadFilter;
-    return matchesSearch && matchesLead;
+    const matchesExhibition = filters.exhibition === "all" || contact.exhibition_id === filters.exhibition;
+    const matchesCountry = filters.country === "all" || contact.country === filters.country;
+    const addedDate = contact.created_date ? contact.created_date.slice(0, 10) : "";
+    const matchesFrom = !filters.fromDate || (addedDate && addedDate >= filters.fromDate);
+    const matchesTo = !filters.toDate || (addedDate && addedDate <= filters.toDate);
+
+    return matchesSearch && matchesLead && matchesExhibition && matchesCountry && matchesFrom && matchesTo;
   });
 
   if (loading) {
@@ -118,12 +138,19 @@ export default function AllContacts() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
-              placeholder="Search contacts or exhibitions..."
+              placeholder="Search name, email, phone, company or exhibition..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
             />
           </div>
+          <ContactFilters
+            exhibitions={exhibitionOptions}
+            countries={countries}
+            filters={filters}
+            onChange={setFilters}
+            onReset={() => setFilters({ exhibition: "all", country: "all", fromDate: "", toDate: "" })}
+          />
           <div className="flex gap-2 flex-wrap">
             {[
               { key: "all",  label: "All",  icon: Users,       color: "bg-gray-800 text-white",    inactive: "bg-white text-gray-500 border border-gray-200" },
