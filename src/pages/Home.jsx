@@ -79,6 +79,8 @@ export default function Home() {
     const alerts = [];
     for (const contact of contacts) {
       if (!contact.follow_up_type || contact.follow_up_type === "none") continue;
+      // Once a lead has been marked as contacted it should no longer be chased
+      if (contact.follow_up_contacted === true) continue;
       const rule = leadRules.find(r => r.type === contact.follow_up_type);
       if (!rule) continue;
       const exhibition = exhibitionMap[contact.exhibition_id];
