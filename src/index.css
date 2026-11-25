@@ -106,3 +106,208 @@
     user-select: text;
   }
 }
+
+/* ------------------------------------------------------------------
+   Dark theme palette mapping.
+   The screens are styled with light utility classes; these rules
+   re-map those surfaces and text colours whenever the app's own
+   theme (not the phone's) is dark, so every screen stays readable.
+   ------------------------------------------------------------------ */
+
+/* Surfaces */
+.dark .bg-white {
+  background-color: hsl(var(--card));
+}
+.dark .bg-gray-50,
+.dark .bg-gray-100,
+.dark .bg-slate-50,
+.dark .bg-slate-100 {
+  background-color: hsl(0 0% 12%);
+}
+.dark .bg-gray-200 {
+  background-color: hsl(0 0% 20%);
+}
+
+/* Text */
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-slate-900,
+.dark .text-slate-800 {
+  color: hsl(var(--foreground));
+}
+.dark .text-gray-700 {
+  color: hsl(0 0% 88%);
+}
+.dark .text-gray-600,
+.dark .text-slate-600 {
+  color: hsl(0 0% 80%);
+}
+.dark .text-gray-500 {
+  color: hsl(0 0% 70%);
+}
+.dark .text-gray-400 {
+  color: hsl(0 0% 62%);
+}
+.dark .text-gray-300 {
+  color: hsl(0 0% 55%);
+}
+
+/* Borders */
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-slate-200 {
+  border-color: hsl(var(--border));
+}
+.dark .border-gray-300 {
+  border-color: hsl(0 0% 28%);
+}
+
+/* Tinted surfaces */
+.dark .bg-blue-50 {
+  background-color: hsl(217 91% 60% / 0.14);
+}
+.dark .bg-blue-100 {
+  background-color: hsl(217 91% 60% / 0.2);
+}
+.dark .bg-purple-50 {
+  background-color: hsl(270 91% 65% / 0.14);
+}
+.dark .bg-indigo-50 {
+  background-color: hsl(239 84% 67% / 0.14);
+}
+.dark .bg-amber-50 {
+  background-color: hsl(38 92% 55% / 0.14);
+}
+.dark .bg-yellow-50 {
+  background-color: hsl(48 96% 55% / 0.14);
+}
+.dark .bg-orange-50 {
+  background-color: hsl(25 95% 55% / 0.14);
+}
+.dark .bg-green-50,
+.dark .bg-emerald-50 {
+  background-color: hsl(152 76% 45% / 0.16);
+}
+.dark .bg-teal-50 {
+  background-color: hsl(173 80% 40% / 0.16);
+}
+.dark .bg-red-50 {
+  background-color: hsl(0 84% 60% / 0.16);
+}
+.dark .bg-pink-50 {
+  background-color: hsl(330 81% 60% / 0.14);
+}
+
+/* Tinted text */
+.dark .text-blue-900,
+.dark .text-blue-800,
+.dark .text-blue-700 {
+  color: hsl(213 94% 78%);
+}
+.dark .text-blue-600 {
+  color: hsl(213 94% 70%);
+}
+.dark .text-purple-800,
+.dark .text-purple-700 {
+  color: hsl(270 91% 80%);
+}
+.dark .text-purple-600 {
+  color: hsl(270 91% 74%);
+}
+.dark .text-indigo-600 {
+  color: hsl(239 84% 76%);
+}
+.dark .text-amber-900,
+.dark .text-amber-800 {
+  color: hsl(43 96% 76%);
+}
+.dark .text-amber-700 {
+  color: hsl(43 96% 70%);
+}
+.dark .text-amber-600 {
+  color: hsl(43 96% 62%);
+}
+.dark .text-yellow-900,
+.dark .text-yellow-800 {
+  color: hsl(48 96% 74%);
+}
+.dark .text-yellow-700,
+.dark .text-yellow-600 {
+  color: hsl(48 96% 64%);
+}
+.dark .text-orange-800 {
+  color: hsl(25 95% 74%);
+}
+.dark .text-orange-600 {
+  color: hsl(25 95% 64%);
+}
+.dark .text-green-800,
+.dark .text-green-700 {
+  color: hsl(142 71% 66%);
+}
+.dark .text-green-600 {
+  color: hsl(142 71% 58%);
+}
+.dark .text-red-900,
+.dark .text-red-800,
+.dark .text-red-700 {
+  color: hsl(0 91% 78%);
+}
+.dark .text-red-600 {
+  color: hsl(0 91% 72%);
+}
+.dark .text-pink-800 {
+  color: hsl(330 81% 80%);
+}
+.dark .text-pink-600 {
+  color: hsl(330 81% 72%);
+}
+
+/* Hover states used on light cards */
+.dark .hover\:bg-gray-50:hover,
+.dark .hover\:bg-gray-100:hover,
+.dark .hover\:bg-slate-50:hover {
+  background-color: hsl(0 0% 16%);
+}
+.dark .hover\:bg-white:hover {
+  background-color: hsl(var(--card));
+}
+.dark .hover\:bg-blue-50:hover {
+  background-color: hsl(217 91% 60% / 0.16);
+}
+.dark .hover\:bg-purple-50:hover {
+  background-color: hsl(270 91% 65% / 0.16);
+}
+.dark .hover\:text-gray-900:hover,
+.dark .hover\:text-gray-800:hover {
+  color: hsl(var(--foreground));
+}
+.dark .hover\:text-gray-700:hover {
+  color: hsl(0 0% 88%);
+}
+
+/* Page background gradients */
+.dark .bg-gradient-to-br.from-blue-50.via-white.to-purple-50,
+.dark .bg-gradient-to-br.from-blue-50.via-white.to-purple-50.flex {
+  background-image: none;
+  background-color: hsl(var(--background));
+}
+.dark .bg-gradient-to-br.from-green-50.via-white.to-green-50 {
+  background-image: none;
+  background-color: hsl(var(--background));
+}
+.dark .bg-gradient-to-r.from-yellow-50.to-orange-50 {
+  background-image: none;
+  background-color: hsl(38 92% 55% / 0.12);
+}
+
+/* Form fields */
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: hsl(0 0% 55%);
+}
+.dark select,
+.dark option {
+  background-color: hsl(var(--card));
+  color: hsl(var(--foreground));
+}

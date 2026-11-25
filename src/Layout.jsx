@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
-import { Home, FolderOpen, Users, LogOut, Compass, HelpCircle, Menu, Trophy, CreditCard, UserPlus, FileText } from "lucide-react";
+import { Home, FolderOpen, Users, LogOut, Compass, HelpCircle, Menu, Trophy, CreditCard, UserPlus, FileText, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import useTheme from "@/hooks/useTheme";
 import InstallBanner from "@/components/InstallBanner";
 import InviteDialog from "@/components/InviteDialog";
 import PlaceSyncManager from "@/components/PlaceSyncManager";
@@ -25,16 +26,8 @@ export default function Layout({ children }) {
   const [inviteOpen, setInviteOpen] = useState(false);
   const tapTimerRef = useRef(null);
 
-  // Auto-detect system dark mode
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const applyTheme = (e) => {
-      document.documentElement.classList.toggle('dark', e.matches);
-    };
-    applyTheme(mq);
-    mq.addEventListener('change', applyTheme);
-    return () => mq.removeEventListener('change', applyTheme);
-  }, []);
+  // Theme is chosen in the app (not taken from the phone's system setting)
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -103,29 +96,40 @@ export default function Layout({ children }) {
               className={`h-10 w-10 cursor-pointer select-none transition-all ${showAdminFlash ? "opacity-30 scale-95" : "opacity-100 hover:scale-105"}`}
               onClick={handleLogoTap}
             />
-            {!loading && (
-              isAuthenticated ? (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleLogout}
-                  className="text-gray-600 dark:text-gray-300 hover:text-gray-900"
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Logout
-                </Button>
-              ) : (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleLogin}
-                  className="text-gray-600 dark:text-gray-300 hover:text-gray-900"
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Login
-                </Button>
-              )
-            )}
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleTheme}
+                aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                className="text-gray-600 dark:text-gray-300 hover:text-gray-900"
+              >
+                {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </Button>
+              {!loading && (
+                isAuthenticated ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleLogout}
+                    className="text-gray-600 dark:text-gray-300 hover:text-gray-900"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </Button>
+                ) : (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleLogin}
+                    className="text-gray-600 dark:text-gray-300 hover:text-gray-900"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Login
+                  </Button>
+                )
+              )}
+            </div>
           </div>
         </header>
       )}
