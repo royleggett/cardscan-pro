@@ -72,6 +72,11 @@
       "default": false,
       "description": "Whether the automated follow-up reminder has been sent"
     },
+    "follow_up_reminder_last_sent": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the automated follow-up reminder was last sent for this lead"
+    },
     "follow_up_contacted": {
       "type": "boolean",
       "default": false,

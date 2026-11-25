@@ -19,10 +19,11 @@ Deno.serve(async (req) => {
       if (!user.email) continue;
 
       // Build list of lead types this user wants reminders for
+      // Same defaults as the home screen, so a user who never opened Settings still gets reminders
       const leadTypes = [];
-      if (user.followup_remind_hot) leadTypes.push({ type: "hot", days: user.followup_days_hot ?? 1, label: "🔥 Hot" });
-      if (user.followup_remind_warm) leadTypes.push({ type: "warm", days: user.followup_days_warm ?? 3, label: "🌡️ Warm" });
-      if (user.followup_remind_cool) leadTypes.push({ type: "cool", days: user.followup_days_cool ?? 7, label: "❄️ Cool" });
+      if (user.followup_remind_hot ?? true) leadTypes.push({ type: "hot", days: user.followup_days_hot ?? 1, label: "🔥 Hot" });
+      if (user.followup_remind_warm ?? true) leadTypes.push({ type: "warm", days: user.followup_days_warm ?? 3, label: "🌡️ Warm" });
+      if (user.followup_remind_cool ?? false) leadTypes.push({ type: "cool", days: user.followup_days_cool ?? 7, label: "❄️ Cool" });
 
       console.log(`User ${user.email}: leadTypes = ${JSON.stringify(leadTypes)}`);
 
@@ -46,30 +47,37 @@ Deno.serve(async (req) => {
 
       console.log(`User ${user.email}: ${contacts.length} contacts, ${Object.keys(exhibitionMap).length} exhibitions`);
 
-      // Find contacts due for follow-up (based on lead scan date + N days)
+      // Find contacts due for follow-up. This mirrors the home-screen alert exactly:
+      // the clock starts when the exhibition ends, not when the card was scanned.
+      // A lead is nudged again weekly while it is still due and not yet contacted.
+      const REMINDER_INTERVAL_DAYS = 7;
       const dueContacts = [];
 
       for (const contact of contacts) {
         if (!contact.follow_up_type || contact.follow_up_type === "none") continue;
-        if (contact.follow_up_reminder_sent) continue;
+        // The user has already dealt with this lead, so stop chasing it
+        if (contact.follow_up_contacted === true) continue;
 
         const matchingRule = leadTypes.find(lt => lt.type === contact.follow_up_type);
         if (!matchingRule) continue;
 
-        if (!contact.created_date) continue;
+        const lastSent = contact.follow_up_reminder_last_sent ? new Date(contact.follow_up_reminder_last_sent) : null;
+        if (!lastSent && contact.follow_up_reminder_sent) continue;
+        if (lastSent && today.getTime() - lastSent.getTime() < REMINDER_INTERVAL_DAYS * 86400000) continue;
 
-        const scanDate = new Date(contact.created_date);
-        scanDate.setHours(0, 0, 0, 0);
+        const exhibition = exhibitionMap[contact.exhibition_id];
+        if (!exhibition?.to_date) continue;
 
-        const reminderDate = new Date(scanDate);
+        const exhibitionEnd = new Date(exhibition.to_date);
+        exhibitionEnd.setHours(0, 0, 0, 0);
+
+        const reminderDate = new Date(exhibitionEnd);
         reminderDate.setDate(reminderDate.getDate() + matchingRule.days);
-
-        console.log(`Contact ${contact.full_name}: type=${contact.follow_up_type}, scan date=${scanDate.toISOString()}, reminder date=${reminderDate.toISOString()}, due=${reminderDate.getTime() <= today.getTime()}`);
 
         if (reminderDate.getTime() <= today.getTime()) {
           dueContacts.push({
             contact,
-            exhibition: exhibitionMap[contact.exhibition_id],
+            exhibition,
             label: matchingRule.label
           });
         }
@@ -125,9 +133,13 @@ Deno.serve(async (req) => {
 
         console.log(`Email sent to ${user.email} via Gmail:`, JSON.stringify(emailResult));
 
-        // Mark contacts as reminded so we don't re-send
+        // Record when the user was last nudged about each lead
+        const sentAt = new Date().toISOString();
         for (const { contact } of dueContacts) {
-          await base44.asServiceRole.entities.Contact.update(contact.id, { follow_up_reminder_sent: true });
+          await base44.asServiceRole.entities.Contact.update(contact.id, {
+            follow_up_reminder_sent: true,
+            follow_up_reminder_last_sent: sentAt
+          });
         }
 
         totalSent++;
